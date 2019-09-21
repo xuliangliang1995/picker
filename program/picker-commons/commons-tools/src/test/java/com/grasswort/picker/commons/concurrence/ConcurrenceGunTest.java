@@ -1,4 +1,4 @@
-package com.grasswort.picker.concurrence;
+package com.grasswort.picker.commons.concurrence;
 
 import org.junit.Assert;
 import org.junit.Test;

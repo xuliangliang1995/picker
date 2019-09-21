@@ -1,4 +1,4 @@
-package com.grasswort.picker.concurrence;
+package com.grasswort.picker.commons.concurrence;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
