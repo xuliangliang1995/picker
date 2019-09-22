@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: picker-user
+  profiles:
+    active: dev
+server:
+  port: 10001
