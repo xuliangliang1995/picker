@@ -5,9 +5,12 @@ dubbo:
   protocol:
     name: dubbo
     port: 20880
+  config-center:
+    address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
+    group: picker-dev
   registry:
     address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
-    check: true
+    check: false
     simplified: true
     group: picker-dev
   metadata-report:

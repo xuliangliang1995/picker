@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
-    @Reference(timeout = 3000)
+    @Reference(version = "1.0",  timeout = 3000)
     private IUserRegisterService iUserRegisterService;
 
     @PostMapping

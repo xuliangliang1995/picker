@@ -15,7 +15,7 @@ import org.apache.dubbo.config.annotation.Service;
  * @blame Java Team
  */
 @Slf4j
-@Service
+@Service(version = "1.0", timeout = 1000)
 public class UserRegisterServiceImpl implements IUserRegisterService {
 
     @Override
