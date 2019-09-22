@@ -6,7 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="userserviceapi" />
+        <module name="user-service-provider" />
+        <module name="user-service-api" />
       </profile>
     </annotationProcessing>
   </component>

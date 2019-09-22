@@ -1,0 +1,19 @@
+dubbo:
+  application:
+    name: picker-user-service-provider
+    owner: xuliangliang
+  protocol:
+    name: dubbo
+    port: 20880
+  registry:
+    address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
+    check: true
+    simplified: true
+    group: picker-dev
+  metadata-report:
+    address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
+    retry-times: 30
+    cycle-report: false
+    group: picker-dev
+  scan:
+    base-packages: com.grasswort.picker.user.service
