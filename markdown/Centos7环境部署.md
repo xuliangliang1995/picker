@@ -3,6 +3,7 @@
 1. 创建新用户
 
    ```shell
+   # wheel 组是 Centos 默认存在的用户组，该用户组可以使用 sudo 命令来提高自己的权限
    useradd -g wheel xuliang
    passwd xuliang
    su xuliang
@@ -12,7 +13,11 @@
 2. 安装 JDK
 
    ```shell
-   // 先从 ORACLE 官网下载 rpm 包, rpm 安装方式默认安装在 /usr/java 路径下，不需要配置 JAVA_HOME
+   # 先从 ORACLE 官网下载 rpm 包, rpm 安装方式默认安装在 /usr/java 路径下，不需要配置 JAVA_HOME
+   # 这里记录一下 4（r）代表“读”的权限， 2（w）代表“写”的权限， 1（x）代表“执行”的权限。
+   # +1 就代表给所属者添加“执行”权限，+1 也可以改为 +x。
+   # +6 因为 6 = 4 + 2 ，表示的就是添加“读”+“写”的权限。
+   # +666 依次代表给 所属者、所属组、其它用户 添加 6 的权限。
    chmod +1 jdk-11.0.2_linux-x64_bin.rpm 
    sudo rpm -ivh jdk-11.0.2_linux-x64_bin.rpm 
    ```
