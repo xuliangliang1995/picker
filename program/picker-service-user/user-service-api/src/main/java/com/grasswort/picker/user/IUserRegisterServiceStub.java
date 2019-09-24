@@ -1,6 +1,5 @@
-package com.grasswort.picker.user.stub;
+package com.grasswort.picker.user;
 
-import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
@@ -12,11 +11,11 @@ import com.grasswort.picker.user.dto.UserRegisterResponse;
  * @Date 2019/9/24 20:05
  * @blame Java Team
  */
-public class UserRegisterServiceStub implements IUserRegisterService {
+public class IUserRegisterServiceStub implements IUserRegisterService {
 
     private final IUserRegisterService iUserRegisterService;
 
-    public UserRegisterServiceStub(IUserRegisterService iUserRegisterService) {
+    public IUserRegisterServiceStub(IUserRegisterService iUserRegisterService) {
         this.iUserRegisterService = iUserRegisterService;
     }
 

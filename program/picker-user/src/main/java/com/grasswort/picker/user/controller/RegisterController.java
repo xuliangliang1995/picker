@@ -23,12 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
-    @Reference(
-            timeout = 1,
-            validation = TOrF.TRUE,
-            version = "1.0",
-            stub = "com.grasswort.picker.user.stub.UserRegisterServiceStub"
-    )
+
+    @Reference(timeout = 1000, version = "1.0", validation = TOrF.TRUE, stub = TOrF.TRUE)
     private IUserRegisterService iUserRegisterService;
 
     @PostMapping
