@@ -5,6 +5,7 @@ dubbo:
   protocol:
     name: dubbo
     port: 20880
+#    serialization: kryo
   config-center:
     address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
     group: dubbo
@@ -22,5 +23,3 @@ dubbo:
 #    group: picker-dev
 #  monitor:
 #    address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
-  scan:
-    base-packages: com.grasswort.picker.user.controller

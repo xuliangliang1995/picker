@@ -1,5 +1,8 @@
 package com.grasswort.picker.user.service;
 
+import com.grasswort.picker.commons.constants.TOrF;
+import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
+import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
@@ -15,7 +18,13 @@ import org.apache.dubbo.config.annotation.Service;
  * @blame Java Team
  */
 @Slf4j
-@Service(version = "1.0", timeout = 1000)
+@Service(
+        timeout = 1000,
+        loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
+        cluster = ClusterFaultMechanism.FAIL_FAST,
+        validation = TOrF.TRUE,
+        version = "1.0"
+)
 public class UserRegisterServiceImpl implements IUserRegisterService {
 
     @Override

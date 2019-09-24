@@ -5,10 +5,14 @@ dubbo:
   protocol:
     name: dubbo
     port: 20880
+#    serialization: kryo
   config-center:
     address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
     group: dubbo
     check: true
+  scan:
+    base-packages: com.grasswort.picker.user.service
+# 被注释内容已在配置中心设置，这里注释掉，是为了测试配置中心是否生效
 #  registry:
 #    address: zookeeper://127.0.0.1:2181
 #    group: picker-dev
@@ -21,6 +25,4 @@ dubbo:
 #    cycle-report: false
 #  monitor:
 #    address: zookeeper://127.0.0.1:2181
-  scan:
-    base-packages: com.grasswort.picker.user.service
 

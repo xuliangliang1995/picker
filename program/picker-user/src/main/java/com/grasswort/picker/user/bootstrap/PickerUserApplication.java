@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @blame Java Team
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.grasswort.picker.user.controller"})
+@ComponentScan(basePackages = {"com.grasswort.picker.user"})
 public class PickerUserApplication {
 
     public static void main(String[] args) {

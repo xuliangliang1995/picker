@@ -1,5 +1,6 @@
 package com.grasswort.picker.user.controller;
 
+import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.IUserRegisterService;
@@ -22,12 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
-    @Reference(version = "1.0",  timeout = 3000)
+    @Reference(
+            timeout = 1,
+            validation = TOrF.TRUE,
+            version = "1.0",
+            stub = "com.grasswort.picker.user.stub.UserRegisterServiceStub"
+    )
     private IUserRegisterService iUserRegisterService;
 
     @PostMapping
     public ResponseData register(@RequestBody UserRegisterRequest body) {
-        body.requestCheck();
         UserRegisterResponse result = iUserRegisterService.register(body);
         if (result.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
             return new ResponseUtil<>().setData(null);

@@ -2,6 +2,7 @@ package com.grasswort.picker.user;
 
 import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author xuliangliang
@@ -17,5 +18,5 @@ public interface IUserRegisterService {
      * @param request
      * @return
      */
-    UserRegisterResponse register(UserRegisterRequest request);
+    UserRegisterResponse register(@Validated UserRegisterRequest request);
 }
