@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/register")
 public class RegisterController {
 
-    @Reference(timeout = 1000, version = "1.0", validation = TOrF.TRUE, stub = TOrF.TRUE)
+    @Reference(timeout = 1000, version = "1.0", validation = TOrF.TRUE, stub = TOrF.TRUE, mock = TOrF.TRUE)
     private IUserRegisterService iUserRegisterService;
 
     @PostMapping

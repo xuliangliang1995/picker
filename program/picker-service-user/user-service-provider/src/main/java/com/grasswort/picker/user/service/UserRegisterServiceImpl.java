@@ -30,6 +30,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
     @Override
     public UserRegisterResponse register(UserRegisterRequest request) {
         log.info("\n用户注册：{}", request.getUsername());
+        // System.out.println(1 / 0); 故意抛异常测试 Mock 是否生效
         UserRegisterResponse response = new UserRegisterResponse();
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
