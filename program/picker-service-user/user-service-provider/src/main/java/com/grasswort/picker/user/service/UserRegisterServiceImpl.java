@@ -5,10 +5,12 @@ import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author xuliangliang
@@ -26,6 +28,8 @@ import org.apache.dubbo.config.annotation.Service;
         version = "1.0"
 )
 public class UserRegisterServiceImpl implements IUserRegisterService {
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public UserRegisterResponse register(UserRegisterRequest request) {
@@ -37,4 +41,5 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         log.info("\n注册成功：{}", request.getUsername());
         return response;
     }
+
 }

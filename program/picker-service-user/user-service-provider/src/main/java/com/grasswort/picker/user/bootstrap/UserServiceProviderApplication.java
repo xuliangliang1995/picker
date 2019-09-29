@@ -1,7 +1,18 @@
 package com.grasswort.picker.user.bootstrap;
 
+import com.grasswort.picker.user.config.db.DBLocalHolder;
+import com.grasswort.picker.user.dao.entity.User;
+import com.grasswort.picker.user.dao.persistence.UserMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.spring.annotation.MapperScan;
+
+import java.util.List;
 
 /**
  * @author xuliangliang
@@ -11,9 +22,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @blame Java Team
  */
 @SpringBootApplication
+@ComponentScan(basePackages = "com.grasswort.picker.user")
+@MapperScan("com.grasswort.picker.user.dao.persistence")
+@Slf4j
 public class UserServiceProviderApplication {
 
+
     public static void main(String[] args) {
-        SpringApplication.run(UserServiceProviderApplication.class, args);
+        ApplicationContext ctx = SpringApplication.run(UserServiceProviderApplication.class, args);
+        DBLocalHolder.slave();
+        UserMapper userMapper = ctx.getBean(UserMapper.class);
+        Example example = new Example(User.class);
+        List<User> users = userMapper.selectByExample(example);
+        log.info("注册用户数为：{}", users.size());
     }
 }
