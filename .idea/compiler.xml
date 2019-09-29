@@ -11,6 +11,7 @@
         <module name="user-service-provider" />
         <module name="commons-tools" />
         <module name="picker-user" />
+        <module name="commons-multidb" />
         <module name="commons-core" />
       </profile>
     </annotationProcessing>

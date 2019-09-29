@@ -1,10 +1,9 @@
 package com.grasswort.picker.user.bootstrap;
 
-import com.grasswort.picker.user.config.db.DBLocalHolder;
+import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +21,11 @@ import java.util.List;
  * @blame Java Team
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "com.grasswort.picker.user")
+@ComponentScan(basePackages = {
+        "com.grasswort.picker.user",
+        "com.grasswort.picker.commons.config",
+        "com.grasswort.picker.commons.aspect"
+})
 @MapperScan("com.grasswort.picker.user.dao.persistence")
 @Slf4j
 public class UserServiceProviderApplication {

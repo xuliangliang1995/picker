@@ -1,4 +1,4 @@
-package com.grasswort.picker.user.config.db;
+package com.grasswort.picker.commons.config;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
@@ -6,7 +6,7 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
  * @author xuliangliang
  * @Classname MyRoutingDataSource
  * @Description TODO
- * @Date 2019/9/29 16:51
+ * @Date 2019/9/29 19:00
  * @blame Java Team
  */
 public class MyRoutingDataSource extends AbstractRoutingDataSource {

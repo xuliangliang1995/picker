@@ -73,9 +73,9 @@
 
     <!-- db -->
     <dependency>
-      <groupId>tk.mybatis</groupId>
-      <artifactId>mapper-spring-boot-starter</artifactId>
-      <optional>true</optional>
+      <groupId>com.grasswort.picker</groupId>
+      <artifactId>commons-multidb</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>

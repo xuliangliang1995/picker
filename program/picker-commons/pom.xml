@@ -11,6 +11,7 @@
     <modules>
         <module>commons-tools</module>
         <module>commons-core</module>
+        <module>commons-multidb</module>
     </modules>
 
 </project>
