@@ -2,27 +2,26 @@ dubbo:
   application:
     name: picker-user-service-provider
     owner: xuliangliang
-  protocol:
-    name: dubbo
-    port: 20880
-#    serialization: kryo
   config-center:
-    address: zookeeper://182.92.3.187:2181?backup=182.92.160.62:2181,39.96.42.239:2181
+    address: zookeeper://zookeeper.grasswort.com:2181
     group: dubbo
     check: true
   scan:
     base-packages: com.grasswort.picker.user.service
-# 被注释内容已在配置中心设置，这里注释掉，是为了测试配置中心是否生效
+#  protocol:
+#    name: dubbo
+#    port: 20880
+#    serialization: kryo
 #  registry:
-#    address: zookeeper://127.0.0.1:2181
+#    address: zookeeper://zookeeper.grasswort.com:2181
 #    group: picker-dev
 #    check: false
 #    simplified: true
 #  metadata-report:
-#    address: zookeeper://127.0.0.1:2181
+#    address: zookeeper://zookeeper.grasswort.com:2181
 #    group: picker-dev
 #    retry-times: 30
 #    cycle-report: false
 #  monitor:
-#    address: zookeeper://127.0.0.1:2181
+#    protocol: registry
 

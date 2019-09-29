@@ -7,11 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="user-service-api" />
+        <module name="picker-zookeeper" />
         <module name="user-service-provider" />
         <module name="commons-tools" />
-        <module name="commons-core" />
-        <module name="picker-zookeeper" />
         <module name="picker-user" />
+        <module name="commons-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

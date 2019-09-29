@@ -26,6 +26,7 @@ public class IUserRegisterServiceStub implements IUserRegisterService {
         try {
             return iUserRegisterService.register(request);
         } catch (Exception e) {
+            e.printStackTrace();
             UserRegisterResponse response = new UserRegisterResponse();
             response.setCode(SysRetCodeConstants.SYSTEM_TIMEOUT.getCode());
             response.setMsg(SysRetCodeConstants.SYSTEM_TIMEOUT.getMsg());

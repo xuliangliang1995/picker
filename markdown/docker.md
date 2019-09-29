@@ -6,6 +6,12 @@ http://tooleek.gitee.io/lock-spring-boot-starter/
 
 
 
+## Nacos 集群 搭建
+
+https://www.cnblogs.com/hellxz/p/nacos-cluster-docker.html
+
+
+
 ## Docker（[文档](https://www.runoob.com/docker/centos-docker-install.html)）
 
 ### 版本
@@ -59,6 +65,24 @@ $ sudo rm -rf /var/lib/docker
 # 配置 docker 服务
 sudo usermod -aG docker xuliang
 ```
+
+### 安装 docker-compose
+
+```shell
+# 先查看是否安装 pip
+pip -V 
+# 安装 pip
+yum -y install epel-release
+yum -y install python-pip
+#升级
+pip install --upgrade pip
+# 安装 docker-compose
+pip install docker-compose
+```
+
+
+
+
 
 ### 镜像
 
