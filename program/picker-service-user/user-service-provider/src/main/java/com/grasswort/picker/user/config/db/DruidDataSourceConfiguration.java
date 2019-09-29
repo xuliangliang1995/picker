@@ -28,7 +28,6 @@ public class DruidDataSourceConfiguration {
     private final static String MASTER_PREFIX = "spring.datasource.master";
     private final static String SLAVE_1 = "slaveDataSource1";
     private final static String SLAVE_1_PREFIX = "spring.datasource.slave1";
-    private final static String DATA_SOURCE = "dataSource";
     private final static String MAPPER_XML_LOCATION = "classpath:com.grasswort.picker.user.dao.persistence.*Mapper.xml";
 
     @Bean(name = MASTER)
