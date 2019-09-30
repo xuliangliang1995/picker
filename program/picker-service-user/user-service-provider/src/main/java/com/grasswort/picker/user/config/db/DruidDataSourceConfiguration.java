@@ -1,9 +1,8 @@
 package com.grasswort.picker.user.config.db;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.grasswort.picker.commons.wrapper.DataSourceWrapper;
-import com.grasswort.picker.commons.wrapper.MultiDataSourceWrapper;
-import com.grasswort.picker.commons.constant.DBType;
+import com.grasswort.picker.commons.constant.ConstantMultiDB;
+import com.grasswort.picker.commons.wrapper.DataSourceWrapperList;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
@@ -24,46 +24,21 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class DruidDataSourceConfiguration {
-    private final static String MASTER = "masterDataSource";
-    private final static String MASTER_PREFIX = "spring.datasource.master";
-    private final static String SLAVE_1 = "slaveDataSource1";
-    private final static String SLAVE_1_PREFIX = "spring.datasource.slave1";
+    private final static String DATA_SOURCE_WRAPPERS_PREFIX = "spring.dbwrappers";
     private final static String MAPPER_XML_LOCATION = "classpath:com.grasswort.picker.user.dao.persistence.*Mapper.xml";
 
-    @Bean(name = MASTER)
-    @ConfigurationProperties(prefix = MASTER_PREFIX)
-    public DataSource masterDataSource() {
-        return new DruidDataSource();
-    }
 
-    @Bean(name = SLAVE_1)
-    @ConfigurationProperties(prefix = SLAVE_1_PREFIX)
-    public DataSource slaveDataSource1() {
-        return new DruidDataSource();
+    @Bean
+    @ConfigurationProperties(prefix = DATA_SOURCE_WRAPPERS_PREFIX)
+    public DataSourceWrapperList masterDataSourceWrapper() {
+        return new DataSourceWrapperList(DruidDataSource.class);
     }
 
     @Bean
-    public DataSourceWrapper masterDataSourceWrapper(@Autowired @Qualifier(MASTER) DataSource dataSource) {
-        DataSourceWrapper wrapper = new DataSourceWrapper();
-        wrapper.setDataSource(dataSource);
-        wrapper.setDbType(DBType.MASTER);
-        wrapper.setWeight(1);
-        return wrapper;
-    }
-
-    @Bean
-    public DataSourceWrapper slaveDataSourceWrapper(@Autowired @Qualifier(SLAVE_1) DataSource dataSource) {
-        DataSourceWrapper wrapper = new DataSourceWrapper();
-        wrapper.setDataSource(dataSource);
-        wrapper.setDbType(DBType.SLAVE);
-        wrapper.setWeight(1);
-        return wrapper;
-    }
-
-    @Bean
-    public SqlSessionFactory sqlSessionFactory(MultiDataSourceWrapper wrapper) throws Exception {
+    @Lazy
+    public SqlSessionFactory sqlSessionFactory(@Autowired @Qualifier(ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME) DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(wrapper.getDataSource());
+        sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setMapperLocations(
                 new PathMatchingResourcePatternResolver().getResources(MAPPER_XML_LOCATION));
         return sqlSessionFactoryBean.getObject();

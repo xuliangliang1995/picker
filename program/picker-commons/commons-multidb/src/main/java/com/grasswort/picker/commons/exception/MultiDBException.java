@@ -7,7 +7,7 @@ package com.grasswort.picker.commons.exception;
  * @Date 2019/9/29 19:27
  * @blame Java Team
  */
-public class MultiDBException extends Exception {
+public class MultiDBException extends RuntimeException {
 
     public MultiDBException(String message) {
         super(message);

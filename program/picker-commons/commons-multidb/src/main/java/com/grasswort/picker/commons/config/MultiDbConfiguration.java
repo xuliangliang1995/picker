@@ -1,18 +1,24 @@
 package com.grasswort.picker.commons.config;
 
+import com.grasswort.picker.commons.constant.ConstantMultiDB;
 import com.grasswort.picker.commons.constant.DBType;
 import com.grasswort.picker.commons.exception.MultiDBException;
 import com.grasswort.picker.commons.wrapper.DataSourceWrapper;
+import com.grasswort.picker.commons.wrapper.DataSourceWrapperList;
 import com.grasswort.picker.commons.wrapper.MultiDataSourceWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
+import javax.sql.DataSource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author xuliangliang
@@ -27,17 +33,74 @@ public class MultiDbConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    @Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
+    @Lazy
+    @ConditionalOnBean(DataSourceWrapperList.class)
+    @ConditionalOnMissingBean(DataSource.class)
+    public DataSource dataSource1() {
+        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
     }
 
-    @Bean
+    @Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
     @Lazy
-    public MultiDataSourceWrapper dataSource() throws MultiDBException {
-        Map<String, DataSourceWrapper> wrappers = applicationContext.getBeansOfType(DataSourceWrapper.class);
-        Set<Map.Entry<String, DataSourceWrapper>> entries = wrappers.entrySet();
+    @ConditionalOnMissingBean({DataSourceWrapperList.class, DataSource.class})
+    public DataSource dataSource2() {
+        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
+    }
+
+    @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
+    @Lazy
+    @ConditionalOnBean({DataSourceWrapperList.class, DataSource.class})
+    public MultiDataSourceWrapper dataSourceWrapper1() {
+        DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
+        return wrapperMultiDataSource(dataSource);
+    }
+
+    @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
+    @Lazy
+    @ConditionalOnBean(DataSource.class)
+    @ConditionalOnMissingBean(DataSourceWrapperList.class)
+    public MultiDataSourceWrapper dataSourceWrapper2() {
+        DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
+        return wrapperMultiDataSource(dataSource);
+    }
+
+    /**
+     * 根据 wrapperList 获取 wrapperMap
+     * @return
+     */
+    private Map<String, DataSourceWrapper> getWrapperMapByDataSourceWrapperList() {
+        DataSourceWrapperList wrapperList = applicationContext.getBean(DataSourceWrapperList.class);
+        List<DataSourceWrapper> wrappers = wrapperList.getWrappers();
+        Map<String, DataSourceWrapper> wrapperMap = new HashMap<>();
+        AtomicInteger master = new AtomicInteger();
+        AtomicInteger slave = new AtomicInteger();
+        wrappers.forEach(wrapper -> {
+            if (DBType.MASTER.equals(wrapper.getDbType())) {
+                wrapperMap.put(String.format("%s-%s", DBType.MASTER, master.incrementAndGet()), wrapper);
+            } else if (DBType.SLAVE.equals(wrapper.getDbType())) {
+                wrapperMap.put(String.format("%s-%s", DBType.SLAVE, slave.incrementAndGet()), wrapper);
+            }
+        });
+        return wrapperMap;
+    }
+
+    /**
+     * 根据 wrapper 获取 wrapperMap
+     * @return
+     */
+    private Map<String, DataSourceWrapper> getWrapperMapByDataSourceWrapper() {
+        Map<String, DataSourceWrapper> wrapperMap = applicationContext.getBeansOfType(DataSourceWrapper.class);
+        return wrapperMap;
+    }
+
+    /**
+     * 生成 routingDataSource
+     * @param wrapperMap
+     * @return
+     */
+    private DataSource generateMyRoutingDataSource(Map<String, DataSourceWrapper> wrapperMap) {
+        Set<Map.Entry<String, DataSourceWrapper>> entries = wrapperMap.entrySet();
         List<String> masterKeys = new ArrayList<>();
         List<String> slaveKeys = new ArrayList<>();
         String maxWeightMasterKey = null;
@@ -70,6 +133,7 @@ public class MultiDbConfiguration implements ApplicationContextAware {
                     slaveKeys.add(key);
                 }
             }
+            log.info("检测到数据源：{}，权重：{}", key, weight);
             targetDataSources.put(key, wrapper.getDataSource());
         }
 
@@ -82,12 +146,25 @@ public class MultiDbConfiguration implements ApplicationContextAware {
 
         MyRoutingDataSource myRoutingDataSource = new MyRoutingDataSource();
         myRoutingDataSource.setDefaultTargetDataSource(targetDataSources.get(maxWeightMasterKey));
-        log.info("数据源数量：{}", targetDataSources.size());
+        log.info("数据源总数量：{}", targetDataSources.size());
         myRoutingDataSource.setTargetDataSources(targetDataSources);
         myRoutingDataSource.afterPropertiesSet();
+        return myRoutingDataSource;
+    }
 
+    /**
+     * 封装了 dataSource
+     * @param dataSource
+     * @return
+     */
+    private MultiDataSourceWrapper wrapperMultiDataSource(DataSource dataSource) {
         MultiDataSourceWrapper wrapper = new MultiDataSourceWrapper();
-        wrapper.setDataSource(myRoutingDataSource);
+        wrapper.setDataSource(dataSource);
         return wrapper;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
