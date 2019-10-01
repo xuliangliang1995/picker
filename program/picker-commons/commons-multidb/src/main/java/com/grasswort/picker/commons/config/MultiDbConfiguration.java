@@ -33,7 +33,7 @@ public class MultiDbConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    @Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
+    /*@Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
     @Lazy
     @ConditionalOnBean(DataSourceWrapperList.class)
     @ConditionalOnMissingBean(DataSource.class)
@@ -46,11 +46,11 @@ public class MultiDbConfiguration implements ApplicationContextAware {
     @ConditionalOnMissingBean({DataSourceWrapperList.class, DataSource.class})
     public DataSource dataSource2() {
         return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
-    }
+    }*/
 
     @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
     @Lazy
-    @ConditionalOnBean({DataSourceWrapperList.class, DataSource.class})
+    @ConditionalOnBean({DataSourceWrapperList.class})
     public MultiDataSourceWrapper dataSourceWrapper1() {
         DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
         return wrapperMultiDataSource(dataSource);
@@ -58,7 +58,6 @@ public class MultiDbConfiguration implements ApplicationContextAware {
 
     @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
     @Lazy
-    @ConditionalOnBean(DataSource.class)
     @ConditionalOnMissingBean(DataSourceWrapperList.class)
     public MultiDataSourceWrapper dataSourceWrapper2() {
         DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());

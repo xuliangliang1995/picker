@@ -1,0 +1,26 @@
+# 之前使用 zookeeper 配置示例
+dubbo:
+  application:
+    name: picker-user-service-provider
+    owner: xuliangliang
+  config-center:
+    address: zookeeper://zookeeper.grasswort.com:2181
+    check: true
+  scan:
+    base-packages: com.grasswort.picker.user.service
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: zookeeper://zookeeper.grasswort.com:2181
+    group: picker-dev
+    check: false
+    simplified: true
+  metadata-report:
+    address: zookeeper://zookeeper.grasswort.com:2181
+    group: picker-dev
+    retry-times: 30
+    cycle-report: false
+  monitor:
+    protocol: registry

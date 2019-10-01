@@ -1,27 +1,23 @@
+spring:
+  application:
+    name: picker-user
 dubbo:
   application:
     name: picker-user
     owner: xuliangliang
-  config-center:
-    address: zookeeper://zookeeper.grasswort.com:2181
-    group: dubbo
-    check: true
   scan:
     base-packages: com.grasswort.picker.user.controller
-#  protocol:
-#    name: dubbo
-#    port: 20880
-#    serialization: kryo
-#  registry:
-#    address: zookeeper://zookeeper.grasswort.com:2181
-#    simplified: true
-#    group: picker-dev
-#  consumer:
-#    check: false
-#  metadata-report:
-#    address: zookeeper://zookeeper.grasswort.com:2181
-#    retry-times: 30
-#    cycle-report: false
-#    group: picker-dev
-#  monitor:
-#    protocol: registry
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+  consumer:
+    check: false
+nacos:
+  config:
+    server-addr: nacos://nacos.grasswort.com:8848
+    namespace: 714709d9-ff45-4e48-873f-f468f3dd90ad
+
+

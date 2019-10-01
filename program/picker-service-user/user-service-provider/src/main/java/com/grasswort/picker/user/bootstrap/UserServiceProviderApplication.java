@@ -1,5 +1,7 @@
 package com.grasswort.picker.user.bootstrap;
 
+import com.alibaba.nacos.api.annotation.NacosProperties;
+import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
@@ -26,10 +28,9 @@ import java.util.List;
         "com.grasswort.picker.commons.config",
         "com.grasswort.picker.commons.aspect"
 })
-@MapperScan("com.grasswort.picker.user.dao.persistence")
 @Slf4j
+@MapperScan("com.grasswort.picker.user.dao.persistence")
 public class UserServiceProviderApplication {
-
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(UserServiceProviderApplication.class, args);

@@ -2,10 +2,6 @@ dubbo:
   application:
     name: picker-user-service-provider
     owner: xuliangliang
-  config-center:
-    address: zookeeper://zookeeper.grasswort.com:2181
-    group: dubbo
-    check: true
   scan:
     base-packages: com.grasswort.picker.user.service
   protocol:
@@ -13,19 +9,16 @@ dubbo:
     port: 20880
     serialization: kryo
   registry:
-    address: zookeeper://zookeeper.grasswort.com:2181
-    group: picker-dev
+    address: nacos://nacos.grasswort.com:8848
     check: false
-    simplified: true
-  metadata-report:
-    address: zookeeper://zookeeper.grasswort.com:2181
-    group: picker-dev
-    retry-times: 30
-    cycle-report: false
-  monitor:
-    protocol: registry
+nacos:
+  config:
+    server-addr: nacos://nacos.grasswort.com:8848
+    namespace: 714709d9-ff45-4e48-873f-f468f3dd90ad
 
 spring:
+  application:
+    name: picker-user-service-provider
   dbwrappers:
     wrappers:
       - dbType: MASTER
@@ -73,5 +66,6 @@ spring:
           filters: stat,config
           connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
           useGlobalDataSourceStat: true
+
 
 

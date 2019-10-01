@@ -3,6 +3,7 @@ package com.grasswort.picker.user.config.db;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.grasswort.picker.commons.constant.ConstantMultiDB;
 import com.grasswort.picker.commons.wrapper.DataSourceWrapperList;
+import com.grasswort.picker.commons.wrapper.MultiDataSourceWrapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,13 @@ public class DruidDataSourceConfiguration {
     }
 
     @Bean
+    public DataSource dataSource(@Autowired @Qualifier(ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME) MultiDataSourceWrapper wrapper) {
+        return wrapper.getDataSource();
+    }
+
+    @Bean
     @Lazy
-    public SqlSessionFactory sqlSessionFactory(@Autowired @Qualifier(ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME) DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Autowired DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setMapperLocations(
