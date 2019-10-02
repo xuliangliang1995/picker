@@ -6,13 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="picker-user" />
         <module name="user-service-api" />
         <module name="user-service-provider" />
         <module name="commons-tools" />
+        <module name="commons-core" />
         <module name="picker-zookeeper" />
         <module name="commons-multidb" />
-        <module name="commons-core" />
+        <module name="picker-user" />
+        <module name="user-service-sdk" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

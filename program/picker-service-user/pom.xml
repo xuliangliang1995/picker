@@ -10,6 +10,7 @@
   <modules>
     <module>user-service-api</module>
       <module>user-service-provider</module>
+      <module>user-service-sdk</module>
   </modules>
   <packaging>pom</packaging>
 

@@ -2,6 +2,7 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author xuliangliang
@@ -12,7 +13,7 @@ import lombok.Data;
  */
 @Data
 public class CheckAuthRequest extends AbstractRequest {
-
+    @NotEmpty
     private String token;
 
     @Override

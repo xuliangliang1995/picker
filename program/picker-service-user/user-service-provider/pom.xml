@@ -65,6 +65,12 @@
       <artifactId>kryo</artifactId>
     </dependency>
 
+    <!-- msgpack 序列化 -->
+    <dependency>
+      <groupId>org.msgpack</groupId>
+      <artifactId>msgpack</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>de.javakaffee</groupId>
       <artifactId>kryo-serializers</artifactId>
@@ -92,6 +98,24 @@
       <artifactId>druid</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+
+
 
     <!-- 单元测试 -->
     <dependency>
@@ -104,6 +128,12 @@
           <artifactId>objenesis</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

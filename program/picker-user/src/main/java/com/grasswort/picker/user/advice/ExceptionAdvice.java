@@ -2,6 +2,7 @@ package com.grasswort.picker.user.advice;
 
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
+import com.grasswort.picker.user.exception.AbstractTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,23 @@ public class ExceptionAdvice {
     ) {
         String message = exception.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage).get();
         log.info("\n【参数校验失败】：{}", message);
+        return new ResponseUtil<>().setErrorMsg(message);
+    }
+
+    /**
+     * token 校验异常
+     * @param request
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(AbstractTokenException.class)
+    @ResponseBody
+    public ResponseData tokenException(
+            HttpServletRequest request,
+            AbstractTokenException exception
+    ) {
+        String message = exception.getMessage();
+        log.info("\n【token异常】:{}", message);
         return new ResponseUtil<>().setErrorMsg(message);
     }
 }

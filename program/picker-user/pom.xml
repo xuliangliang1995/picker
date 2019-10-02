@@ -89,6 +89,11 @@
       <artifactId>kryo-serializers</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.grasswort.picker</groupId>
+      <artifactId>user-service-sdk</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

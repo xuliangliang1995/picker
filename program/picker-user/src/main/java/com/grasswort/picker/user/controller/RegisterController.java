@@ -4,6 +4,7 @@ import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.IUserRegisterService;
+import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @blame Java Team
  */
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/user")
 public class RegisterController {
 
     @Reference(timeout = 2000, version = "1.0", validation = TOrF.TRUE, mock = TOrF.TRUE)
-    private IUserRegisterService iUserRegisterService;
+    IUserRegisterService iUserRegisterService;
 
-    @PostMapping
+    @Anoymous
+    @PostMapping("/register")
     public ResponseData register(@RequestBody UserRegisterRequest body) {
         UserRegisterResponse result = iUserRegisterService.register(body);
         if (result.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {

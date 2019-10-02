@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/program/picker-parent" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/program/picker-service-user/user-service-api" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/program/picker-service-user/user-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/program/picker-service-user/user-service-sdk" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/program/picker-user" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>

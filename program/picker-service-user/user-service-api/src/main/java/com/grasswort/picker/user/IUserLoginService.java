@@ -4,6 +4,7 @@ import com.grasswort.picker.user.dto.CheckAuthRequest;
 import com.grasswort.picker.user.dto.CheckAuthResponse;
 import com.grasswort.picker.user.dto.UserLoginRequest;
 import com.grasswort.picker.user.dto.UserLoginResponse;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author xuliangliang
@@ -25,6 +26,6 @@ public interface IUserLoginService {
      * @param request
      * @return
      */
-    CheckAuthResponse validToken(CheckAuthRequest request);
+    CheckAuthResponse validToken(@Validated CheckAuthRequest request);
 
 }

@@ -36,7 +36,11 @@ public class MultiDBAspect {
     @Around("masterPointCut()")
     public Object masterAround(ProceedingJoinPoint joinPoint) throws Throwable {
         DBLocalHolder.master();
-        return joinPoint.proceed();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            DBLocalHolder.clear();
+        }
     }
 
     /**
