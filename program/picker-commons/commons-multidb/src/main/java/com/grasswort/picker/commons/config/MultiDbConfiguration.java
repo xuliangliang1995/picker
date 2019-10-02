@@ -1,7 +1,6 @@
 package com.grasswort.picker.commons.config;
 
 import com.grasswort.picker.commons.constant.ConstantMultiDB;
-import com.grasswort.picker.commons.constant.DBType;
 import com.grasswort.picker.commons.exception.MultiDBException;
 import com.grasswort.picker.commons.wrapper.DataSourceWrapper;
 import com.grasswort.picker.commons.wrapper.DataSourceWrapperList;
@@ -15,6 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -72,14 +72,20 @@ public class MultiDbConfiguration implements ApplicationContextAware {
         DataSourceWrapperList wrapperList = applicationContext.getBean(DataSourceWrapperList.class);
         List<DataSourceWrapper> wrappers = wrapperList.getWrappers();
         Map<String, DataSourceWrapper> wrapperMap = new HashMap<>();
-        AtomicInteger master = new AtomicInteger();
-        AtomicInteger slave = new AtomicInteger();
+        // 设置默认数据库
+        String defaultGroup = wrapperList.getDefaultGroup();
+        if (StringUtils.isEmpty(defaultGroup)) {
+            defaultGroup = DBLocalHolder.DEFAULT_GROUP;
+        }
+        DBLocalHolder.DEFAULT_GROUP = defaultGroup;
+        // 生成数据源的 key
+        final Map<String, AtomicInteger> atomicIntegerMap =  new HashMap<>();
         wrappers.forEach(wrapper -> {
-            if (DBType.MASTER.equals(wrapper.getDbType())) {
-                wrapperMap.put(String.format("%s-%s", DBType.MASTER, master.incrementAndGet()), wrapper);
-            } else if (DBType.SLAVE.equals(wrapper.getDbType())) {
-                wrapperMap.put(String.format("%s-%s", DBType.SLAVE, slave.incrementAndGet()), wrapper);
+            String group = wrapper.getGroup();
+            if (! atomicIntegerMap.containsKey(group)) {
+                atomicIntegerMap.put(group, new AtomicInteger());
             }
+            wrapperMap.put(String.format("%s-%s", group, atomicIntegerMap.get(group).incrementAndGet()), wrapper);
         });
         return wrapperMap;
     }
@@ -100,10 +106,8 @@ public class MultiDbConfiguration implements ApplicationContextAware {
      */
     private DataSource generateMyRoutingDataSource(Map<String, DataSourceWrapper> wrapperMap) {
         Set<Map.Entry<String, DataSourceWrapper>> entries = wrapperMap.entrySet();
-        List<String> masterKeys = new ArrayList<>();
-        List<String> slaveKeys = new ArrayList<>();
-        String maxWeightMasterKey = null;
-        int maxMasterWeight = 0;
+        Map<String, List<String>> groupKeys = DBLocalHolder.GROUP_KEY_MAP;
+        final String defaultGroup = DBLocalHolder.DEFAULT_GROUP;
 
         Map<Object, Object> targetDataSources = new HashMap<>();
         for (Map.Entry<String, DataSourceWrapper> entry: entries) {
@@ -116,35 +120,27 @@ public class MultiDbConfiguration implements ApplicationContextAware {
             if (weight == 0) {
                 continue;
             }
-            boolean isMasterDB = DBType.MASTER.equals(wrapper.getDbType());
-            if (isMasterDB) {
-                if (weight > maxMasterWeight) {
-                    maxWeightMasterKey = key;
+
+            String group = wrapper.getGroup();
+            if (weight > 0) {
+                if (! groupKeys.containsKey(group)) {
+                    groupKeys.put(group, new ArrayList<>());
                 }
-                for (int i = 0; i < weight; i++) {
-                    // 重复添加多次是为了增加随机权重
-                    masterKeys.add(key);
-                }
-            }
-            boolean isSlaveDB = DBType.SLAVE.equals(wrapper.getDbType());
-            if (isSlaveDB) {
-                for (int i = 0; i < weight; i++) {
-                    slaveKeys.add(key);
+                for (int i = 0; i < weight ; i++) {
+                    groupKeys.get(group).add(key);
                 }
             }
+
             log.info("检测到数据源：{}，权重：{}", key, weight);
             targetDataSources.put(key, wrapper.getDataSource());
         }
 
-        if (masterKeys.size() == 0) {
-            throw new MultiDBException("检测到主库数量为 0，主库的数量至少为 1。");
+        if (groupKeys.get(defaultGroup) == null || groupKeys.get(defaultGroup).isEmpty()) {
+            throw new MultiDBException(String.format("检测到主库[%s]数量为 0，主库的数量至少为 1。", defaultGroup));
         }
 
-        DBLocalHolder.MASTER_KEYS.addAll(masterKeys);
-        DBLocalHolder.SLAVE_KEYS.addAll(slaveKeys);
-
         MyRoutingDataSource myRoutingDataSource = new MyRoutingDataSource();
-        myRoutingDataSource.setDefaultTargetDataSource(targetDataSources.get(maxWeightMasterKey));
+        myRoutingDataSource.setDefaultTargetDataSource(targetDataSources.get(groupKeys.get(defaultGroup).get(0)));
         log.info("数据源总数量：{}", targetDataSources.size());
         myRoutingDataSource.setTargetDataSources(targetDataSources);
         myRoutingDataSource.afterPropertiesSet();

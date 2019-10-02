@@ -1,7 +1,11 @@
-package com.grasswort.picker.user.dto;
+package com.grasswort.picker.user;
 
 import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dto.CheckAuthRequest;
+import com.grasswort.picker.user.dto.CheckAuthResponse;
+import com.grasswort.picker.user.dto.UserLoginRequest;
+import com.grasswort.picker.user.dto.UserLoginResponse;
 
 /**
  * @author xuliangliang

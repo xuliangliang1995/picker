@@ -15,6 +15,8 @@ import java.util.List;
 @Data
 public class DataSourceWrapperList {
 
+    private String defaultGroup;
+
     private List<DataSourceWrapper> wrappers;
 
     public DataSourceWrapperList(Class<? extends DataSource> claz) {

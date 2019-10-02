@@ -3,6 +3,7 @@ package com.grasswort.picker.user.bootstrap;
 import com.alibaba.nacos.api.annotation.NacosProperties;
 import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import com.grasswort.picker.commons.config.DBLocalHolder;
+import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class UserServiceProviderApplication {
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(UserServiceProviderApplication.class, args);
-        DBLocalHolder.slave();
+        DBLocalHolder.selectDBGroup(DBGroup.SLAVE);
         UserMapper userMapper = ctx.getBean(UserMapper.class);
         Example example = new Example(User.class);
         List<User> users = userMapper.selectByExample(example);

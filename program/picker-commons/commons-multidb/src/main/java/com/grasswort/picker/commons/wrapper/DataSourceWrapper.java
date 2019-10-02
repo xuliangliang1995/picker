@@ -1,6 +1,5 @@
 package com.grasswort.picker.commons.wrapper;
 
-import com.grasswort.picker.commons.constant.DBType;
 import com.grasswort.picker.commons.exception.MultiDBException;
 import lombok.Data;
 
@@ -22,7 +21,7 @@ public class DataSourceWrapper {
      */
     private DataSource dataSource;
 
-    private DBType dbType;
+    private String group;
 
     private int weight = 1;
 

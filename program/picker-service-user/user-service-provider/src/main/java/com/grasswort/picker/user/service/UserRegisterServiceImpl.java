@@ -1,10 +1,11 @@
 package com.grasswort.picker.user.service;
 
-import com.grasswort.picker.commons.annotation.Master;
+import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.user.IUserRegisterService;
+import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
@@ -37,8 +38,8 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
     @Autowired
     UserMapper userMapper;
 
+    @DB(DBGroup.MASTER)
     @Override
-    @Master
     public UserRegisterResponse register(UserRegisterRequest request) {
         log.info("\n用户注册：{}", request.getUsername());
         UserRegisterResponse response = new UserRegisterResponse();

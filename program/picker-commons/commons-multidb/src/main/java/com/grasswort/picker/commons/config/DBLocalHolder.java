@@ -1,11 +1,11 @@
 package com.grasswort.picker.commons.config;
 
+import com.grasswort.picker.commons.exception.MultiDBException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author xuliangliang
@@ -18,32 +18,25 @@ import java.util.Random;
 public class DBLocalHolder {
 
     private static final ThreadLocal<String> HOLDER = new ThreadLocal<>();
-    /**
-     * master datasource keys
-     */
-    protected static final List<String> MASTER_KEYS = new ArrayList<>();
-    /**
-     * slave datasource keys
-     */
-    protected static final List<String> SLAVE_KEYS = new ArrayList<>();
+
+    protected static final Map<String, List<String>> GROUP_KEY_MAP = new ConcurrentHashMap<>();
+
+    protected static String DEFAULT_GROUP = "MASTER";
+
     /**
      * 随机
      */
     private static final Random random = new Random();
 
     /**
-     * 选择主库
+     * 选择数据库组
      */
-    public static void master() {
-        HOLDER.set(MASTER_KEYS.get(random.nextInt(MASTER_KEYS.size())));
-    }
-    /**
-     * 选择从库
-     */
-    public static void slave() {
-        if (SLAVE_KEYS.size() > 0) {
-            HOLDER.set(SLAVE_KEYS.get(random.nextInt(SLAVE_KEYS.size())));
+    public static void selectDBGroup(String group) {
+        List<String> dbKeys = GROUP_KEY_MAP.get(group);
+        if (dbKeys == null || dbKeys.isEmpty()) {
+            return ;
         }
+        HOLDER.set(dbKeys.get(random.nextInt(dbKeys.size())));
     }
 
     /**
@@ -59,8 +52,16 @@ public class DBLocalHolder {
     public static String get() {
         String key = HOLDER.get();
         if (StringUtils.isEmpty(key)) {
-            DBLocalHolder.master();
+            DBLocalHolder.selectDBGroup(DEFAULT_GROUP);
             key = HOLDER.get();
+            if (StringUtils.isEmpty(key)) {
+                if (StringUtils.isEmpty(DEFAULT_GROUP)) {
+                    throw new MultiDBException("未指定默认数据源组");
+                }
+                if (GROUP_KEY_MAP.get(DEFAULT_GROUP) == null || GROUP_KEY_MAP.get(DEFAULT_GROUP).isEmpty()) {
+                    throw new MultiDBException("默认数据源配置个数不能为 0");
+                }
+            }
         }
         log.info("切换数据源：{}", key);
         return key;
