@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-multidb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-tools" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-parent" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-sdk" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-user" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

@@ -38,3 +38,13 @@ zookeeper://zookeeper.grasswort.com:2181
 nacos://nacos.grasswort.com:8848
 ```
 
+
+
+## Kafka 集群
+
+```shell
+182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
+```
+
+
+

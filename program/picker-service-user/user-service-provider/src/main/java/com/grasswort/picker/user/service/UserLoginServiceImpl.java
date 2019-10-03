@@ -33,7 +33,7 @@ import java.util.Optional;
 @Service(
         timeout = 1000,
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
-        cluster = ClusterFaultMechanism.FAIL_FAST,
+        cluster = ClusterFaultMechanism.FAIL_OVER,
         validation = TOrF.FALSE,
         version = "1.0"
 )
@@ -88,11 +88,11 @@ public class UserLoginServiceImpl implements IUserLoginService {
         CheckAuthResponse response = new CheckAuthResponse();
         String token = request.getToken();
         try {
-            String userClamimText = JwtTokenUtil.freeJwt(token);
-            JwtTokenUserClaim userClamim = MsgPackUtil.read(userClamimText, JwtTokenUserClaim.class);
+            String userClaimText = JwtTokenUtil.freeJwt(token);
+            JwtTokenUserClaim userClaim = MsgPackUtil.read(userClaimText, JwtTokenUserClaim.class);
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-            response.setUserInfo(userClamim.getName());
+            response.setUserInfo(userClaim.getName());
             return response;
         } catch (IOException e) {
             e.printStackTrace();

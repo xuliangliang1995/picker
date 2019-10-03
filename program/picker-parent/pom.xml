@@ -40,6 +40,8 @@
     <kryo.version>4.0.1</kryo.version>
     <kryo.serializers.version>0.42</kryo.serializers.version>
     <nacos.starter.version>0.2.3</nacos.starter.version>
+    <msgpack.version>0.6.12</msgpack.version>
+    <lombok.version>1.18.8</lombok.version>
   </properties>
 
   <distributionManagement>
@@ -305,7 +307,13 @@
       <dependency>
         <groupId>org.msgpack</groupId>
         <artifactId>msgpack</artifactId>
-        <version>0.6.12</version>
+        <version>${msgpack.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
