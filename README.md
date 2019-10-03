@@ -1,8 +1,21 @@
 # picker
 ### 初学分布式 —— 练习项目
-* /program 中放置项目
-* /demo 中放置相关的一些练习 demo
-* /markdown 学习过程中记录的笔记
+* [program](https://github.com/xuliangliang1995/picker/tree/master/program) // 项目根目录
+  * [picker-parent](https://github.com/xuliangliang1995/picker/tree/master/program/picker-parent)  // 依赖管理
+  * [picker-commons](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons)
+    * [commons-core](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons/commons-core) // 定义了公共常量和规范
+    * [commons-multidb](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons/commons-multidb) // 多数据源配置公共模块
+      * [README.md](https://github.com/xuliangliang1995/picker/blob/master/program/picker-commons/commons-multidb/README.md) // 多数据源模块引入说明文档
+    * [commons-tools](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons/commons-tools)	// 通用工具
+  * [picker-service-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user)
+    * [user-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-api) // 用户服务 API
+    * [user-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-provider) // 用户服务 提供者
+    * [user-service-sdk](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-sdk) // 用户服务 SDK
+  * [picker-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-user) // web 
+* [demo](https://github.com/xuliangliang1995/picker/tree/master/demo) // 简单 demo
+  * [picker-zookeeper](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-zookeeper) // zookeeper 分布式锁
+  * [picker-kafka](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-kafka) 
+* [markdown](https://github.com/xuliangliang1995/picker/tree/master/markdown) // 部分环境搭建文档记录
 
 
 
