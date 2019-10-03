@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xuliangliang
@@ -19,7 +20,7 @@ import java.util.concurrent.Future;
  * @blame Java Team
  */
 @SpringBootApplication
-public class App {
+public class ProducerDemo {
     /**
      * 发送消息的三种方式
      * 1. 发送并忘记 fire-and-forget
@@ -45,7 +46,7 @@ public class App {
      * @param args
      */
     public static void main(String[] args) {
-        SpringApplication.run(App.class);
+        SpringApplication.run(ProducerDemo.class);
         Properties kafkaProps = new Properties();
         kafkaProps.put("bootstrap.servers", "182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092");
         kafkaProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -65,8 +66,11 @@ public class App {
         }
 
         try {
-            // 异步发送
-            producer.send(news, new DemoProducerCallback());
+            while (true) {
+                // 异步发送
+                producer.send(news, new DemoProducerCallback());
+                TimeUnit.SECONDS.sleep(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
