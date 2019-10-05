@@ -3,9 +3,15 @@ package com.grasswort.picker.demo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -16,6 +22,7 @@ import java.util.Properties;
  * @blame Java Team
  */
 public class ConsumerDemo {
+
     /**
      * 重要参数介绍
      * 1.fetch.min.bytes 消费者从服务器获取记录的最小字节数。该值设置大一点可以降低 broker 的工作负载
@@ -36,10 +43,16 @@ public class ConsumerDemo {
         kafkaProps.put("group.id", "Test");
         kafkaProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaProps.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaProps.put("enable.auto.commit", false);
         // 创建消费者
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(kafkaProps);
         // 订阅主题
         consumer.subscribe(Collections.singletonList("test"));
+
+        Map<TopicPartition, OffsetAndMetadata> currentOffSets = new HashMap<>();
+        int count = 0;
+
+        // consumer.seek(partitions, offset); 消费者可以自己选择开始读取的偏移量（如果本地存有偏移量）
         // 轮询
         try {
             while (true) {
@@ -52,10 +65,35 @@ public class ConsumerDemo {
                             record.key(),
                             record.value()
                             ));
+
+                    // 提交特定偏移量
+                    /*currentOffSets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1, "no metadata"));
+                    if (count % 1000 == 0) {
+                        consumer.commitAsync(currentOffSets, null);
+                    }
+                    count ++;*/
                 }
+                /*try {
+                    // 同步提交偏移量，失败了会重试
+                    consumer.commitSync();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("提交偏移量失败！！！");
+                }*/
+                // 异步提交偏移量
+                consumer.commitAsync();
             }
+        } catch (WakeupException e) {
+            // 在别的线程调用 consumer.wakeUp() 会导致该异常，类似 线程的 InterruptException
+        } catch (Exception e) {
+            System.out.println("Unexpected error " + e.getMessage());
         } finally {
-            consumer.close();
+            try {
+                // 同步、异步组合提交
+                consumer.commitSync();
+            } finally {
+                consumer.close();
+            }
         }
     }
 }
