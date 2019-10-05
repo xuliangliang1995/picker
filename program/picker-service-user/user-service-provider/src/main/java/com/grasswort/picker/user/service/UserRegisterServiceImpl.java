@@ -58,10 +58,10 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(DigestUtils.md5DigestAsHex(request.getPassword().getBytes()));
-        System.out.println(user.getPassword());
         user.setEmail(request.getEmail());
         user.setName(request.getUsername());
         user.setSex((byte) 0);
+        user.setActivated(false);
         user.setGmtCreate(now);
         user.setGmtModified(now);
         int result = 0;
@@ -70,13 +70,14 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         } catch (Exception e) {
             log.info("\n操作数据库异常：{}", e.getMessage());
         }
+
         if (result <= 0) {
             response.setCode(SysRetCodeConstants.DB_EXCEPTION.getCode());
             response.setMsg(SysRetCodeConstants.DB_EXCEPTION.getMsg());
             log.info("\n注册失败：{}", request.getUsername());
             return response;
-
         }
+
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         log.info("\n注册成功：{}", request.getUsername());

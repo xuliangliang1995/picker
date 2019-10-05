@@ -31,7 +31,7 @@ public class App
         try {
             //request.setVersion("2017-06-22");// 如果是除杭州region外的其它region（如新加坡region）,必须指定为2017-06-22
             request.setAccountName("xuliangliang@notice.grasswort.com");
-            request.setFromAlias("picker");
+            request.setFromAlias("Picker");
             request.setAddressType(1);
             request.setReplyToAddress(false);
             request.setToAddress("835547206@qq.com");

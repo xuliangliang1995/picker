@@ -1,7 +1,5 @@
 package com.grasswort.picker.user.bootstrap;
 
-import com.alibaba.nacos.api.annotation.NacosProperties;
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.dao.entity.User;
@@ -26,8 +24,7 @@ import java.util.List;
 @SpringBootApplication
 @ComponentScan(basePackages = {
         "com.grasswort.picker.user",
-        "com.grasswort.picker.commons.config",
-        "com.grasswort.picker.commons.aspect"
+        "com.grasswort.picker.commons.config"
 })
 @Slf4j
 @MapperScan("com.grasswort.picker.user.dao.persistence")

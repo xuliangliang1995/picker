@@ -16,7 +16,7 @@ public class User {
      * 账号是否激活 0、否 1、是
      */
     @Column(name = "is_activated")
-    private Boolean activated;
+    private Byte isActivated;
 
     private String name;
 
@@ -91,17 +91,17 @@ public class User {
      *
      * @return is_activated - 账号是否激活 0、否 1、是
      */
-    public Boolean isActivated() {
-        return activated;
+    public Byte getIsActivated() {
+        return isActivated;
     }
 
     /**
      * 设置账号是否激活 0、否 1、是
      *
-     * @param activated 账号是否激活 0、否 1、是
+     * @param isActivated 账号是否激活 0、否 1、是
      */
-    public void setActivated(Boolean activated) {
-        this.activated = activated;
+    public void setIsActivated(Byte isActivated) {
+        this.isActivated = isActivated;
     }
 
     /**

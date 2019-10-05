@@ -1,5 +1,6 @@
 package com.grasswort.picker.commons.config;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.grasswort.picker.commons.constant.ConstantMultiDB;
 import com.grasswort.picker.commons.exception.MultiDBException;
 import com.grasswort.picker.commons.wrapper.DataSourceWrapper;
@@ -8,12 +9,14 @@ import com.grasswort.picker.commons.wrapper.MultiDataSourceWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
@@ -29,40 +32,30 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @Configuration
+@ComponentScan({
+        "com.grasswort.picker.commons.aspect",
+        "com.grasswort.picker.commons.wrapper"
+})
+@EnableConfigurationProperties({DataSourceWrapperList.class})
 public class MultiDbConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    /*@Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
-    @Lazy
-    @ConditionalOnBean(DataSourceWrapperList.class)
-    @ConditionalOnMissingBean(DataSource.class)
-    public DataSource dataSource1() {
-        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
-    }
 
-    @Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
-    @Lazy
-    @ConditionalOnMissingBean({DataSourceWrapperList.class, DataSource.class})
-    public DataSource dataSource2() {
-        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
+    /*@Bean
+    @ConditionalOnClass(DruidDataSource.class)
+
+    public DataSourceWrapperList dataSourceWrapperList() {
+        return new DataSourceWrapperList(DruidDataSource.class);
     }*/
 
     @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
-    @Lazy
     @ConditionalOnBean({DataSourceWrapperList.class})
     public MultiDataSourceWrapper dataSourceWrapper1() {
         DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
         return wrapperMultiDataSource(dataSource);
     }
 
-    @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
-    @Lazy
-    @ConditionalOnMissingBean(DataSourceWrapperList.class)
-    public MultiDataSourceWrapper dataSourceWrapper2() {
-        DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
-        return wrapperMultiDataSource(dataSource);
-    }
 
     /**
      * 根据 wrapperList 获取 wrapperMap
@@ -90,14 +83,7 @@ public class MultiDbConfiguration implements ApplicationContextAware {
         return wrapperMap;
     }
 
-    /**
-     * 根据 wrapper 获取 wrapperMap
-     * @return
-     */
-    private Map<String, DataSourceWrapper> getWrapperMapByDataSourceWrapper() {
-        Map<String, DataSourceWrapper> wrapperMap = applicationContext.getBeansOfType(DataSourceWrapper.class);
-        return wrapperMap;
-    }
+
 
     /**
      * 生成 routingDataSource
@@ -162,4 +148,38 @@ public class MultiDbConfiguration implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+
+    /// 自动封装成 DataSource 代码，如果项目还有其他的 DataSource, 可能会造成 Spring 循环依赖
+    /*@Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
+    @Lazy
+    @ConditionalOnBean(DataSourceWrapperList.class)
+    @ConditionalOnMissingBean(DataSource.class)
+    public DataSource dataSource1() {
+        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapperList());
+    }
+
+    @Bean(name = ConstantMultiDB.MULTIDB_DATA_SOURCE_BEAN_NAME)
+    @Lazy
+    @ConditionalOnMissingBean({DataSourceWrapperList.class, DataSource.class})
+    public DataSource dataSource2() {
+        return generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
+    }
+    @Bean(name = ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME)
+    @Lazy
+    @ConditionalOnMissingBean(DataSourceWrapperList.class)
+    public MultiDataSourceWrapper dataSourceWrapper2() {
+        DataSource dataSource = generateMyRoutingDataSource(getWrapperMapByDataSourceWrapper());
+        return wrapperMultiDataSource(dataSource);
+    }
+
+    */
+
+    /**
+     * 根据 wrapper 获取 wrapperMap
+     * @return
+     */
+    /*private Map<String, DataSourceWrapper> getWrapperMapByDataSourceWrapper() {
+        Map<String, DataSourceWrapper> wrapperMap = applicationContext.getBeansOfType(DataSourceWrapper.class);
+        return wrapperMap;
+    }*/
 }

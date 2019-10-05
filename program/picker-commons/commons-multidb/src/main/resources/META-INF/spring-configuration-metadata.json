@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "multidb",
+      "type": "com.grasswort.picker.commons.wrapper.DataSourceWrapperList",
+      "sourceType": "com.grasswort.picker.commons.wrapper.DataSourceWrapperList"
+    }
+  ],
+  "properties": [
+    {
+      "name": "multidb.default-group",
+      "type": "java.lang.String",
+      "sourceType": "com.grasswort.picker.commons.wrapper.DataSourceWrapperList"
+    },
+    {
+      "name": "multidb.wrappers",
+      "type": "java.util.List<com.grasswort.picker.commons.wrapper.DataSourceWrapper>",
+      "sourceType": "com.grasswort.picker.commons.wrapper.DataSourceWrapperList"
+    }
+  ],
+  "hints": []
+}
