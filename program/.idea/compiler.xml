@@ -8,7 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="user-service-api" />
         <module name="user-service-provider" />
+        <module name="email-center" />
         <module name="commons-tools" />
+        <module name="email-center-sdk" />
         <module name="picker-user" />
         <module name="commons-multidb" />
         <module name="commons-core" />

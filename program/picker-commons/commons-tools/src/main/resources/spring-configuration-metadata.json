@@ -1,0 +1,61 @@
+{
+  "groups": [
+    {
+      "name": "email",
+      "type": "com.grasswort.picker.commons.email.EmailSmtpConfig",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "email.auth",
+      "type": "java.lang.Boolean",
+      "description": "是否需要授权",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig",
+      "defaultValue": false
+    },
+    {
+      "name": "email.from-address",
+      "type": "java.lang.String",
+      "description": "发信地址",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.from-alias",
+      "type": "java.lang.String",
+      "description": "发信地址（别名）",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.password",
+      "type": "java.lang.String",
+      "description": "授权信息：密码",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.smtp-host",
+      "type": "java.lang.String",
+      "description": "邮箱服务器地址",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.smtp-port",
+      "type": "java.lang.String",
+      "description": "IP",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.template-path",
+      "type": "java.lang.String",
+      "description": "模板路径",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    },
+    {
+      "name": "email.user",
+      "type": "java.lang.String",
+      "description": "授权信息：用户名",
+      "sourceType": "com.grasswort.picker.commons.email.EmailSmtpConfig"
+    }
+  ],
+  "hints": []
+}

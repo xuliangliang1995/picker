@@ -1,7 +1,3 @@
-spring:
-  application:
-    name: picker-user-service-provider
-
 # dubbo
 dubbo:
   application:
@@ -20,6 +16,7 @@ nacos:
   config:
     server-addr: nacos://nacos.grasswort.com:8848
     namespace: 714709d9-ff45-4e48-873f-f468f3dd90ad
+
 
 # 多数据源配置
 multidb:
@@ -71,4 +68,9 @@ multidb:
         connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
         useGlobalDataSourceStat: true
 
-
+# kafka
+spring:
+  kafka:
+    bootstrap-servers: 182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
+    producer:
+      acks: 1

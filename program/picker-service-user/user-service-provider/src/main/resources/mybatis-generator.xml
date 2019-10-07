@@ -39,13 +39,20 @@
         <javaClientGenerator targetPackage="com.grasswort.picker.user.dao.persistence"
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
-        <!--已生成的表
-        -->
-        <table tableName="pk_user" domainObjectName="User"
+
+        <table tableName="pk_user_activation_code" domainObjectName="UserActivationCode"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>
 
+
+        <!--已生成的表
+        <table tableName="pk_user" domainObjectName="User"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        -->
     </context>
 </generatorConfiguration>

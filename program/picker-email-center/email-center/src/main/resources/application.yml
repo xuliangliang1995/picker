@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: picker-email-center
+  profiles:
+    active: dev
+
+
