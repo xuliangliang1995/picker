@@ -1,3 +1,5 @@
 spring:
+  application:
+    name: picker-user-service-provider
   profiles:
     active: dev

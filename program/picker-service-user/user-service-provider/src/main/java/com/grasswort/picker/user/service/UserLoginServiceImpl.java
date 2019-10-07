@@ -41,6 +41,9 @@ public class UserLoginServiceImpl implements IUserLoginService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    UserActivateServiceImpl userActivateServiceImpl;
+
     @DB(DBGroup.SLAVE)
     @Override
     public UserLoginResponse login(UserLoginRequest request) {
@@ -51,34 +54,40 @@ public class UserLoginServiceImpl implements IUserLoginService {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("username", username);
         User user = userMapper.selectOneByExample(example);
+
         boolean loginSuccess = Optional.ofNullable(user).map(User::getPassword)
                 .filter(pwd -> DigestUtils.md5DigestAsHex(password.getBytes()).equals(pwd))
                 .isPresent();
-
-        if (loginSuccess) {
-            JwtTokenUserClaim claim = new JwtTokenUserClaim();
-            claim.setId(user.getId());
-            claim.setName(user.getName());
-
-            try {
-                String token = JwtTokenUtil.creatJwtToken(MsgPackUtil.write(claim));
-                response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-                response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-                response.setUsername(user.getUsername());
-                response.setPhone(user.getPhone());
-                response.setEmail(user.getEmail());
-                response.setSex(user.getSex().intValue());
-                response.setToken(token);
-            } catch (IOException e) {
-                e.printStackTrace();
-                response.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
-                response.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
-            }
-            return response;
-
-        } else {
+        if (! loginSuccess) {
             response.setCode(SysRetCodeConstants.USER_OR_PASSWORD_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.USER_OR_PASSWORD_ERROR.getMsg());
+            return response;
+        }
+
+        boolean isActivated = user.isActivated();
+        if (! isActivated) {
+            userActivateServiceImpl.sendActivateEmail(user.getId());
+            response.setCode(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getCode());
+            response.setMsg(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getMsg());
+            return response;
+        }
+
+        JwtTokenUserClaim claim = new JwtTokenUserClaim();
+        claim.setId(user.getId());
+        claim.setName(user.getName());
+        try {
+            String token = JwtTokenUtil.creatJwtToken(MsgPackUtil.write(claim));
+            response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+            response.setUsername(user.getUsername());
+            response.setPhone(user.getPhone());
+            response.setEmail(user.getEmail());
+            response.setSex(user.getSex().intValue());
+            response.setToken(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
+            response.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
         }
         return response;
     }

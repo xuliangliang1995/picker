@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.grasswort.picker.user.dao.persistence.UserActivationCodeMapper">
+  <resultMap id="BaseResultMap" type="com.grasswort.picker.user.dao.entity.UserActivationCode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="activation_code" jdbcType="VARCHAR" property="activationCode" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="is_activated" jdbcType="TINYINT" property="activated" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+</mapper>

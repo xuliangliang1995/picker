@@ -8,6 +8,9 @@
         <option value="$PROJECT_DIR$/picker-parent/pom.xml" />
         <option value="$PROJECT_DIR$/picker-commons/pom.xml" />
         <option value="$PROJECT_DIR$/picker-service-user/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-email-center/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-email-center/email-center/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-email-center/email-center-sdk/pom.xml" />
       </list>
     </option>
   </component>

@@ -37,6 +37,8 @@ import java.util.Date;
 public class UserRegisterServiceImpl implements IUserRegisterService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserActivateServiceImpl userActivateServiceImpl;
 
     @DB(DBGroup.MASTER)
     @Override
@@ -81,7 +83,10 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         log.info("\n注册成功：{}", request.getUsername());
+        // 发送激活邮件
+        userActivateServiceImpl.sendActivateEmail(user.getId());
         return response;
     }
+
 
 }
