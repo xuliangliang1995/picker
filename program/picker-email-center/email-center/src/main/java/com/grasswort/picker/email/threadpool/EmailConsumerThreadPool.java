@@ -1,7 +1,6 @@
 package com.grasswort.picker.email.threadpool;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import sun.plugin2.jvm.RemoteJVMLauncher;
 
 import java.util.concurrent.*;
 
