@@ -127,9 +127,9 @@ public class UserActivationCode {
     /**
      * 设置是否激活 0、否 1、是
      *
-     * @param isActivated 是否激活 0、否 1、是
+     * @param activated 是否激活 0、否 1、是
      */
-    public void setActivated(Boolean isActivated) {
+    public void setActivated(Boolean activated) {
         this.activated = activated;
     }
 

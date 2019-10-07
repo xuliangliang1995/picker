@@ -68,7 +68,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         user.setGmtModified(now);
         int result = 0;
         try {
-            result = userMapper.insert(user);
+            result = userMapper.insertUseGeneratedKeys(user);
         } catch (Exception e) {
             log.info("\n操作数据库异常：{}", e.getMessage());
         }

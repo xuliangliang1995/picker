@@ -40,15 +40,16 @@
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="pk_user_activation_code" domainObjectName="UserActivationCode"
-               enableCountByExample="false" enableUpdateByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false">
-        </table>
+
 
 
         <!--已生成的表
         <table tableName="pk_user" domainObjectName="User"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="pk_user_activation_code" domainObjectName="UserActivationCode"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">

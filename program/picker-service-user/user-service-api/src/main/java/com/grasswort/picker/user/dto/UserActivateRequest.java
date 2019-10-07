@@ -21,6 +21,8 @@ public class UserActivateRequest extends AbstractRequest {
     @NotNull
     @Size(min = 32, max = 32)
     private String activationCode;
+    @NotNull
+    private Long activateId;
 
     @Override
     public void requestCheck() {

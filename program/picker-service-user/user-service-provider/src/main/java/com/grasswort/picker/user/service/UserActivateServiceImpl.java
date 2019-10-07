@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.service;
 
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
@@ -9,6 +10,7 @@ import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.PickerActivateMetaData;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
 import com.grasswort.picker.user.dao.persistence.UserActivationCodeMapper;
@@ -23,6 +25,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import java.io.IOException;
@@ -42,7 +45,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @Service(
         version = "1.0",
-        timeout = 1000,
+        timeout = 2000,
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
         cluster = ClusterFaultMechanism.FAIL_SAFE,
         validation = TOrF.FALSE
@@ -56,10 +59,47 @@ public class UserActivateServiceImpl implements IUserActivateService {
     KafkaTemplate<String, Mail> kafkaTemplate;
 
     @Override
+    @DB(DBGroup.SLAVE)
     public UserActivateResponse activate(UserActivateRequest request) {
-        return null;
+        UserActivateResponse response = null;
+        response = new UserActivateResponse();
+
+        Long activateId = request.getActivateId();
+        UserActivationCode activationCode = userActivationCodeMapper.selectByPrimaryKey(activateId);
+        boolean success = activationCode != null && activationCode.getUsername().equals(request.getUsername())
+                && activationCode.getActivationCode().equals(request.getActivationCode()) && activationCode.getExpireTime().after(DateTime.now().toDate());
+        if (success) {
+            if (! activationCode.isActivated()) {
+                DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+                this.executeActivate(activationCode);
+            }
+            response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+            return response;
+        }
+
+        response.setCode(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getCode());
+        response.setMsg(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getMsg());
+        return response;
     }
 
+    /**
+     * 执行真正的激活
+     * @param activationCode
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void executeActivate(UserActivationCode activationCode) {
+        activationCode.setActivated(true);
+        activationCode.setGmtModified(DateTime.now().toDate());
+        userActivationCodeMapper.updateByPrimaryKey(activationCode);
+
+        User user = new User();
+        user.setId(activationCode.getPkUserId());
+        user.setActivated(true);
+        user.setGmtModified(DateTime.now().toDate());
+        DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+        userMapper.updateByPrimaryKeySelective(user);
+    }
 
     /**
      * 发送激活邮件（允许极小几率发送失败）
@@ -81,9 +121,9 @@ public class UserActivateServiceImpl implements IUserActivateService {
         activationCode.setGmtCreate(now);
         activationCode.setGmtModified(now);
         activationCode.setActivationCode(RandomStringUtils.randomAlphabetic(32));
-        userActivationCodeMapper.insert(activationCode);
+        userActivationCodeMapper.insertUseGeneratedKeys(activationCode);
 
-        final String ACTIVATE_URL = String.format("https://picker.grasswort.com/user/activate?username=&s&code=%s&activateId=%s", activationCode.getUsername(), activationCode.getActivationCode(), activationCode.getId());
+        final String ACTIVATE_URL = String.format("https://picker.grasswort.com/user/activate?username=%s&code=%s&activateId=%s", activationCode.getUsername(), activationCode.getActivationCode(), activationCode.getId());
 
         Map<String, Object> map = new HashMap<>();
         map.put(PickerActivateMetaData.Key.TITLE, PickerActivateMetaData.SUBJECT);
