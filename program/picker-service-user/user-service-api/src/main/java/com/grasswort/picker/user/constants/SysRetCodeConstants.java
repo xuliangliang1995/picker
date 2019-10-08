@@ -25,8 +25,9 @@ public enum SysRetCodeConstants {
     USERNAME_IS_ACTIVATED               ("003203", "账户已激活"),
     // 登录
     USER_OR_PASSWORD_ERROR               ("003301","用户名或密码不正确"),
-    TOKEN_VALID_FAILED                  ("003302","token校验失败"),
-    USER_IS_VERIFIED_ERROR                ("003303","用户名尚未激活");
+    TOKEN_VALID_FAILED                  ("003302","accessToken校验失败"),
+    USER_IS_VERIFIED_ERROR                ("003303","用户名尚未激活"),
+    REFRESH_TOKEN_VALID_FAILED          ("003304", "refreshToken校验失败");
 
     private String code;
     private String msg;

@@ -12,9 +12,17 @@ import org.msgpack.annotation.Message;
  */
 @Message
 @Data
-public class JwtTokenUserClaim {
-
+public class JwtAccessTokenUserClaim {
+    /**
+     * 用户 ID
+     */
     private Long id;
-
+    /**
+     * 用户姓名
+     */
     private String name;
+    /**
+     * 版本
+     */
+    private Integer version;
 }

@@ -65,6 +65,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         user.setName(request.getUsername());
         user.setSex((byte) 0);
         user.setActivated(false);
+        user.setVersion(1);
         user.setGmtCreate(now);
         user.setGmtModified(now);
         int result = 0;

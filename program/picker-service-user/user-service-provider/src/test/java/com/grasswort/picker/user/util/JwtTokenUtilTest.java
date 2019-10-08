@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.util;
 
 import com.grasswort.picker.user.exception.JwtFreeException;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,10 +17,15 @@ public class JwtTokenUtilTest {
     @Test
     public void test() {
         String msg = "grasswort_xuliangliang";
-        String token = JwtTokenUtil.creatJwtToken(msg);
+        String token = JwtTokenUtil.creatJwtToken(
+                JwtTokenUtil.JwtBody.builder()
+                        .msg(msg)
+                        .expiresAt(DateTime.now().plusHours(1).toDate())
+                        .build()
+        );
         String freeMsg = null;
         try {
-            freeMsg = JwtTokenUtil.freeJwt(token);
+            freeMsg = JwtTokenUtil.freeJwt(token).getMsg();
         } catch (JwtFreeException e) {
             Assert.assertTrue("JwtToken 解析异常", false);
         }

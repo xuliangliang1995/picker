@@ -5,17 +5,20 @@ import lombok.Data;
 
 /**
  * @author xuliangliang
- * @Classname UserLoginResponse
- * @Description TODO
- * @Date 2019/9/21 16:57
+ * @Classname RefreshAccessTokenResponse
+ * @Description 刷新 token 结果
+ * @Date 2019/10/8 21:33
  * @blame Java Team
  */
 @Data
-public class UserLoginResponse extends AbstractResponse {
-    private String username;
-    private String phone;
-    private String email;
-    private Integer sex;
+public class RefreshAccessTokenResponse extends AbstractResponse  {
+    /**
+     * access_token
+     */
     private String accessToken;
+    /**
+     * refresh_token
+     */
     private String refreshToken;
+
 }

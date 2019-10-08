@@ -9,7 +9,8 @@ package com.grasswort.picker.user.constants;
  */
 public class JwtTokenConstants {
 
-    public static final String JWT_TOKEN_KEY = "picker_access_token";
+    public static final String JWT_ACCESS_TOKEN_KEY = "access_token";
 
-    public static final String PICKER_INFO_KEY = "picker_info";
+    public static final String JWT_REFRESH_TOKEN_KEY = "refresh_token";
+
 }
