@@ -5,14 +5,15 @@ import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.annotation.Anoymous;
+import com.grasswort.picker.user.constants.ActivateUrlConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dto.SendActivateEmailRequest;
+import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
 import com.grasswort.picker.user.vo.UserActivateForm;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author xuliangliang
@@ -22,11 +23,30 @@ import org.springframework.web.bind.annotation.RestController;
  * @blame Java Team
  */
 @RestController
-@RequestMapping("/user/activate")
+@RequestMapping(ActivateUrlConstants.PATH)
 public class UserActivateController {
 
-    @Reference(version = "1.0", timeout = 1000, validation = TOrF.TRUE)
+    @Reference(version = "1.0", timeout = 2000, validation = TOrF.TRUE)
     IUserActivateService iUserActivateService;
+
+    /**
+     * 发送激活邮件
+     * @param username
+     * @return
+     */
+    @Anoymous
+    @GetMapping("/email")
+    public ResponseData activateEmail(
+            @RequestParam("username") String username) {
+        SendActivateEmailRequest emailRequest = new SendActivateEmailRequest();
+        emailRequest.setUsername(username);
+        SendActivateEmailResponse result = iUserActivateService.sendActivateEmail(emailRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(result.getCode())) {
+            return new ResponseUtil().setData(result.getEmail());
+        }
+        return new ResponseUtil<>().setErrorMsg(result.getMsg());
+    }
+
     /**
      * 激活
      * @param activateForm
@@ -45,4 +65,6 @@ public class UserActivateController {
         }
         return new ResponseUtil().setErrorMsg(activateResponse.getMsg());
     }
+
+
 }

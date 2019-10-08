@@ -21,6 +21,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
+
     <!-- user-service-api -->
     <dependency>
       <groupId>com.grasswort.picker</groupId>

@@ -41,9 +41,6 @@ public class UserLoginServiceImpl implements IUserLoginService {
     @Autowired
     UserMapper userMapper;
 
-    @Autowired
-    UserActivateServiceImpl userActivateServiceImpl;
-
     @DB(DBGroup.SLAVE)
     @Override
     public UserLoginResponse login(UserLoginRequest request) {
@@ -66,7 +63,6 @@ public class UserLoginServiceImpl implements IUserLoginService {
         // 账户尚未激活
         boolean isNotActivated = ! user.isActivated();
         if (isNotActivated) {
-            userActivateServiceImpl.sendActivateEmail(user.getId());
             response.setCode(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getMsg());
             return response;
@@ -102,7 +98,8 @@ public class UserLoginServiceImpl implements IUserLoginService {
             JwtTokenUserClaim userClaim = MsgPackUtil.read(userClaimText, JwtTokenUserClaim.class);
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-            response.setUserInfo(userClaim.getName());
+            response.setId(userClaim.getId());
+            response.setName(userClaim.getName());
             return response;
         } catch (IOException e) {
             e.printStackTrace();
