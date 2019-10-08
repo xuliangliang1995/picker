@@ -31,6 +31,10 @@ public class User {
      * 性别 0、未知 1、男 2、女
      */
     private Byte sex;
+    /**
+     * 版本
+     */
+    private Integer version;
 
     /**
      * 创建时间
@@ -202,5 +206,13 @@ public class User {
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

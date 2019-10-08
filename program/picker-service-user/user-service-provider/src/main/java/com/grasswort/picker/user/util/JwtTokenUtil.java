@@ -5,9 +5,12 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.grasswort.picker.user.exception.JwtFreeException;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+
+import java.util.Date;
 
 /**
  * @author xuliangliang
@@ -25,13 +28,13 @@ public class JwtTokenUtil {
 
     /**
      * 生成 token
-     * @param msg
+     * @param body
      * @return
      */
-    public static String creatJwtToken (String msg) {
+    public static String creatJwtToken (JwtBody body) {
         String token = JWT.create()
-                .withIssuer(ISSUER).withExpiresAt(DateTime.now().plusDays(1).toDate())
-                .withClaim(USER, msg)
+                .withIssuer(ISSUER).withExpiresAt(body.getExpiresAt())
+                .withClaim(USER, body.getMsg())
                 .sign(Algorithm.HMAC256(SECRET));
         return token;
     }
@@ -40,7 +43,7 @@ public class JwtTokenUtil {
      * 解析 token
      * @return
      */
-    public static String freeJwt (String token) throws JwtFreeException {
+    public static JwtBody freeJwt (String token) throws JwtFreeException {
         DecodedJWT decodedJWT = null;
         try {
             // 使用hmac256加密算法
@@ -63,9 +66,19 @@ public class JwtTokenUtil {
             throw JwtFreeException.instance();
         }
         String result = decodedJWT.getClaim(USER).asString();
-        if (StringUtils.isNotBlank(result)) {
+        if (StringUtils.isBlank(result)) {
             throw JwtFreeException.instance();
         }
-        return result;
+        Date expiresAt = decodedJWT.getExpiresAt();
+        return JwtBody.builder().msg(result).expiresAt(expiresAt).build();
+    }
+
+    @Data
+    @Builder
+    public static final class JwtBody {
+
+        private String msg;
+
+        private Date expiresAt;
     }
 }

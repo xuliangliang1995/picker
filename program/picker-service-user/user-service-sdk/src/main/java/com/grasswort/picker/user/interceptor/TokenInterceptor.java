@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
  * @blame Java Team
  */
 public class TokenInterceptor extends HandlerInterceptorAdapter {
-    @Reference(version = "1.0", timeout = 1000)
+    @Reference(version = "1.0", timeout = 2000)
     IUserLoginService iUserLoginService;
 
     @Override
@@ -44,7 +44,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
 
-        String token = request.getHeader(JwtTokenConstants.JWT_TOKEN_KEY);
+        String token = request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY);
         if (StringUtils.isBlank(token)) {
             throw TokenExpiredException.getInstance();
         }

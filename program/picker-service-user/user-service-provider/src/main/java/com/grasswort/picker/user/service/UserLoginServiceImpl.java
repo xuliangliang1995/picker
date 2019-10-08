@@ -13,8 +13,10 @@ import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.exception.JwtFreeException;
 import com.grasswort.picker.user.util.JwtTokenUtil;
 import com.grasswort.picker.user.util.MsgPackUtil;
+import com.grasswort.picker.user.util.UserTokenGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -68,18 +70,17 @@ public class UserLoginServiceImpl implements IUserLoginService {
             return response;
         }
         // 登录成功，生成 JwtToken
-        JwtTokenUserClaim claim = new JwtTokenUserClaim();
-        claim.setId(user.getId());
-        claim.setName(user.getName());
         try {
-            String token = JwtTokenUtil.creatJwtToken(MsgPackUtil.write(claim));
+            String accessToken = UserTokenGenerator.generateAccessToken(user);
+            String refreshToken = UserTokenGenerator.generateRefreshToken(user);
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
             response.setUsername(user.getUsername());
             response.setPhone(user.getPhone());
             response.setEmail(user.getEmail());
             response.setSex(user.getSex().intValue());
-            response.setToken(token);
+            response.setAccessToken(accessToken);
+            response.setRefreshToken(refreshToken);
         } catch (IOException e) {
             // 程序不该到达的地方
             e.printStackTrace();
@@ -94,13 +95,15 @@ public class UserLoginServiceImpl implements IUserLoginService {
         CheckAuthResponse response = new CheckAuthResponse();
         String token = request.getToken();
         try {
-            String userClaimText = JwtTokenUtil.freeJwt(token);
-            JwtTokenUserClaim userClaim = MsgPackUtil.read(userClaimText, JwtTokenUserClaim.class);
-            response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-            response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-            response.setId(userClaim.getId());
-            response.setName(userClaim.getName());
-            return response;
+            JwtTokenUtil.JwtBody jwtBody = JwtTokenUtil.freeJwt(token);
+            if (jwtBody.getExpiresAt().after(DateTime.now().toDate())) {
+                JwtAccessTokenUserClaim userClaim = MsgPackUtil.read(jwtBody.getMsg(), JwtAccessTokenUserClaim.class);
+                response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+                response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+                response.setId(userClaim.getId());
+                response.setName(userClaim.getName());
+                return response;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             log.info("\nToken 解析用户信息失败！");

@@ -9,13 +9,11 @@ import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserLoginRequest;
 import com.grasswort.picker.user.dto.UserLoginResponse;
+import com.grasswort.picker.user.model.PickInfoHolder;
 import com.grasswort.picker.user.vo.LoginForm;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,17 +33,23 @@ public class LoginController {
 
     @Anoymous
     @PostMapping("/login")
-    public ResponseData<UserLoginResponse> login(@RequestBody @Validated LoginForm loginForm, HttpServletResponse response) {
+    public ResponseData login(@RequestBody @Validated LoginForm loginForm, HttpServletResponse response) {
         UserLoginRequest loginRequest = new UserLoginRequest();
         loginRequest.setUsername(loginForm.getUsername());
         loginRequest.setPassword(loginForm.getPassword());
 
         UserLoginResponse loginResponse = iUserLoginService.login(loginRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(loginResponse.getCode())) {
-            response.setHeader(JwtTokenConstants.JWT_TOKEN_KEY, loginResponse.getToken());
-            return new ResponseUtil<UserLoginResponse>().setData(loginResponse);
+            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, loginResponse.getAccessToken());
+            response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, loginResponse.getRefreshToken());
+            return new ResponseUtil<>().setData(null, "登录成功");
         } else {
-            return new ResponseUtil<UserLoginResponse>().setErrorMsg(loginResponse.getMsg());
+            return new ResponseUtil<>().setErrorMsg(loginResponse.getMsg());
         }
+    }
+
+    @GetMapping
+    public ResponseData pickerInfo() {
+        return new ResponseUtil<>().setData(PickInfoHolder.getPickerInfo().getName());
     }
 }
