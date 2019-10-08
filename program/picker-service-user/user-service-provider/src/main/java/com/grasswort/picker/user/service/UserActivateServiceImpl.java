@@ -24,16 +24,13 @@ import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author xuliangliang
@@ -57,30 +54,48 @@ public class UserActivateServiceImpl implements IUserActivateService {
     UserMapper userMapper;
     @Autowired
     KafkaTemplate<String, Mail> kafkaTemplate;
+    /**
+     * 账号激活链接模板
+     */
+    final String ACTIVATED_URL_TEMPLATE = "https://picker.grasswort.com/user/activate?username=%s&code=%s&activateId=%s";
+    /**
+     * 账号激活链接有效分钟数
+     */
+    final int ACTIVATED_URL_EFFECTIVE_MINUTES = 10;
+    /**
+     * 激活码长度（固定 32）
+     */
+    final int ACTIVATED_CODE_LENGTH = 32;
 
     @Override
     @DB(DBGroup.SLAVE)
     public UserActivateResponse activate(UserActivateRequest request) {
-        UserActivateResponse response = null;
-        response = new UserActivateResponse();
-
+        UserActivateResponse response = new UserActivateResponse();
+        // 判断是否有效
         Long activateId = request.getActivateId();
         UserActivationCode activationCode = userActivationCodeMapper.selectByPrimaryKey(activateId);
-        boolean success = activationCode != null && activationCode.getUsername().equals(request.getUsername())
+        boolean efficacious = activationCode != null && activationCode.getUsername().equals(request.getUsername())
                 && activationCode.getActivationCode().equals(request.getActivationCode()) && activationCode.getExpireTime().after(DateTime.now().toDate());
-        if (success) {
-            if (! activationCode.isActivated()) {
-                DBLocalHolder.selectDBGroup(DBGroup.MASTER);
-                this.executeActivate(activationCode);
-            }
-            response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-            response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+
+        boolean loseEfficacy = ! efficacious;
+        if (loseEfficacy) {
+            // 链接已失效
+            response.setCode(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getCode());
+            response.setMsg(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getMsg());
             return response;
         }
 
-        response.setCode(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getCode());
-        response.setMsg(SysRetCodeConstants.ACTIVATE_URL_LOSE_EFFICACY.getMsg());
+        boolean isNotActivated = ! activationCode.isActivated();
+        if (isNotActivated) {
+            // 账号尚未激活
+            DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+            this.executeActivate(activationCode);
+        }
+        // 激活成功
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return response;
+
     }
 
     /**
@@ -97,7 +112,6 @@ public class UserActivateServiceImpl implements IUserActivateService {
         user.setId(activationCode.getPkUserId());
         user.setActivated(true);
         user.setGmtModified(DateTime.now().toDate());
-        DBLocalHolder.selectDBGroup(DBGroup.MASTER);
         userMapper.updateByPrimaryKeySelective(user);
     }
 
@@ -111,27 +125,28 @@ public class UserActivateServiceImpl implements IUserActivateService {
         if (user == null || user.isActivated()) {
             return ;
         }
-        Date now = new Date();
+        // 生成激活链接
+        Date now = DateTime.now().toDate();
         UserActivationCode activationCode = new UserActivationCode();
         activationCode.setPkUserId(user.getId());
         activationCode.setUsername(user.getUsername());
         activationCode.setActivated(false);
-        activationCode.setExpireTime(DateTime.now().plusMinutes(10).toDate());
-        activationCode.setActivated(false);
+        activationCode.setExpireTime(DateTime.now().plusMinutes(ACTIVATED_URL_EFFECTIVE_MINUTES).toDate());
         activationCode.setGmtCreate(now);
         activationCode.setGmtModified(now);
-        activationCode.setActivationCode(RandomStringUtils.randomAlphabetic(32));
+        activationCode.setActivationCode(RandomStringUtils.randomAlphabetic(ACTIVATED_CODE_LENGTH));
         userActivationCodeMapper.insertUseGeneratedKeys(activationCode);
+        final String ACTIVATE_URL = String.format(ACTIVATED_URL_TEMPLATE, activationCode.getUsername(), activationCode.getActivationCode(), activationCode.getId());
 
-        final String ACTIVATE_URL = String.format("https://picker.grasswort.com/user/activate?username=%s&code=%s&activateId=%s", activationCode.getUsername(), activationCode.getActivationCode(), activationCode.getId());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put(PickerActivateMetaData.Key.TITLE, PickerActivateMetaData.SUBJECT);
-        map.put(PickerActivateMetaData.Key.URL, ACTIVATE_URL);
-
+        // 封装邮件内容
         Mail mail = new Mail();
         mail.setSubject(PickerActivateMetaData.SUBJECT);
+        mail.setToAddress(Collections.singletonList(user.getEmail()));
+        mail.setCcAddress(Collections.emptyList());
         try {
+            Map<String, Object> map = new HashMap<>();
+            map.put(PickerActivateMetaData.Key.TITLE, PickerActivateMetaData.SUBJECT);
+            map.put(PickerActivateMetaData.Key.URL, ACTIVATE_URL);
             mail.setContent(FreeMarkerUtil.getMailTextForTemplate(PickerActivateMetaData.TEMPLATE_PATH, PickerActivateMetaData.TEMPLATE_NAME, map));
             mail.setHtml(true);
         } catch (IOException | TemplateException e) {
@@ -140,15 +155,8 @@ public class UserActivateServiceImpl implements IUserActivateService {
             mail.setContent("激活链接：".concat(ACTIVATE_URL));
             mail.setHtml(false);
         }
-        mail.setToAddress(Collections.singletonList(user.getEmail()));
-        mail.setCcAddress(Collections.emptyList());
-        ListenableFuture<SendResult<String, Mail>> future = kafkaTemplate.send(PickerActivateMetaData.PICKER_ACTIVATE_TOPIC, mail);
-        try {
-            log.info(future.get().getProducerRecord().value().getContent());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
+        // 发布到 kafka
+        kafkaTemplate.send(PickerActivateMetaData.PICKER_ACTIVATE_TOPIC, mail);
     }
 }
