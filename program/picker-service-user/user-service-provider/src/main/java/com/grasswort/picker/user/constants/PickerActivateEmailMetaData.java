@@ -9,11 +9,11 @@ import com.grasswort.picker.email.constants.EmailCenterConstant;
  * @Date 2019/10/6 22:57
  * @blame Java Team
  */
-public class PickerActivateMetaData {
+public class PickerActivateEmailMetaData {
 
     public static final String PICKER_ACTIVATE_TOPIC = EmailCenterConstant.TOPIC_EMAIL_PREFIX.concat("user-activate-email");
 
-    public static final int PATITIONS = 5;
+    public static final int PARTITIONS = 5;
 
     public static final short REPLICATION_FACTOR = 2;
 

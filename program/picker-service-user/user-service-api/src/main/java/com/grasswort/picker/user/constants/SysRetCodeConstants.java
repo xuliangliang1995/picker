@@ -23,11 +23,16 @@ public enum SysRetCodeConstants {
     USERNAME_NOT_EXISTS                 ("003201", "用户名不存在"),
     ACTIVATE_URL_LOSE_EFFICACY         ("003202","账户激活链接已失效"),
     USERNAME_IS_ACTIVATED               ("003203", "账户已激活"),
+    USER_NOT_EXISTS                     ("003204", "用户不存在"),
     // 登录
     USER_OR_PASSWORD_ERROR               ("003301","用户名或密码不正确"),
     TOKEN_VALID_FAILED                  ("003302","accessToken校验失败"),
     USER_IS_VERIFIED_ERROR                ("003303","用户名尚未激活"),
-    REFRESH_TOKEN_VALID_FAILED          ("003304", "refreshToken校验失败");
+    REFRESH_TOKEN_VALID_FAILED          ("003304", "refreshToken校验失败"),
+
+    // 用户信息
+    PHONE_IS_NULL                       ("004001", "手机号为空"),
+    EMAIL_IS_NULL                       ("004002", "邮箱为空");
 
     private String code;
     private String msg;
