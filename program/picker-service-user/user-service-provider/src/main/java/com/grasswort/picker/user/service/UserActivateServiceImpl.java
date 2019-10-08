@@ -9,7 +9,7 @@ import com.grasswort.picker.commons.email.freemarker.FreeMarkerUtil;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.constants.DBGroup;
-import com.grasswort.picker.user.constants.PickerActivateMetaData;
+import com.grasswort.picker.user.constants.PickerActivateEmailMetaData;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
@@ -181,14 +181,14 @@ public class UserActivateServiceImpl implements IUserActivateService {
 
         // 封装邮件内容
         Mail mail = new Mail();
-        mail.setSubject(PickerActivateMetaData.SUBJECT);
+        mail.setSubject(PickerActivateEmailMetaData.SUBJECT);
         mail.setToAddress(Collections.singletonList(user.getEmail()));
         mail.setCcAddress(Collections.emptyList());
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put(PickerActivateMetaData.Key.TITLE, PickerActivateMetaData.SUBJECT);
-            map.put(PickerActivateMetaData.Key.URL, ACTIVATE_URL);
-            mail.setContent(FreeMarkerUtil.getMailTextForTemplate(PickerActivateMetaData.TEMPLATE_PATH, PickerActivateMetaData.TEMPLATE_NAME, map));
+            map.put(PickerActivateEmailMetaData.Key.TITLE, PickerActivateEmailMetaData.SUBJECT);
+            map.put(PickerActivateEmailMetaData.Key.URL, ACTIVATE_URL);
+            mail.setContent(FreeMarkerUtil.getMailTextForTemplate(PickerActivateEmailMetaData.TEMPLATE_PATH, PickerActivateEmailMetaData.TEMPLATE_NAME, map));
             mail.setHtml(true);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
@@ -198,6 +198,6 @@ public class UserActivateServiceImpl implements IUserActivateService {
         }
 
         // 发布到 kafka
-        kafkaTemplate.send(PickerActivateMetaData.PICKER_ACTIVATE_TOPIC, mail);
+        kafkaTemplate.send(PickerActivateEmailMetaData.PICKER_ACTIVATE_TOPIC, mail);
     }
 }

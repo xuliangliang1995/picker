@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.config.kafka;
 
-import com.grasswort.picker.user.constants.PickerActivateMetaData;
+import com.grasswort.picker.user.constants.CAPTCHAEmailMeta;
+import com.grasswort.picker.user.constants.PickerActivateEmailMetaData;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,11 @@ public class KafkaProducerConfiguration {
 
     @Bean
     public NewTopic userRegisterTopic() {
-        return new NewTopic(PickerActivateMetaData.PICKER_ACTIVATE_TOPIC, PickerActivateMetaData.PATITIONS, PickerActivateMetaData.REPLICATION_FACTOR);
+        return new NewTopic(PickerActivateEmailMetaData.PICKER_ACTIVATE_TOPIC, PickerActivateEmailMetaData.PARTITIONS, PickerActivateEmailMetaData.REPLICATION_FACTOR);
+    }
+
+    @Bean
+    public NewTopic userCaptchaTopic() {
+        return new NewTopic(CAPTCHAEmailMeta.CAPTCHA_EMAIL_TOPIC, CAPTCHAEmailMeta.PATITIONS, CAPTCHAEmailMeta.REPLICATION_FACTOR);
     }
 }
