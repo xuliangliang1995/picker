@@ -7,6 +7,9 @@
     * [commons-multidb](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons/commons-multidb) // 多数据源配置公共模块
       * [README.md](https://github.com/xuliangliang1995/picker/blob/master/program/picker-commons/commons-multidb/README.md) // 多数据源模块引入说明文档
     * [commons-tools](https://github.com/xuliangliang1995/picker/tree/master/program/picker-commons/commons-tools)	// 通用工具
+  * [picker-email-center](https://github.com/xuliangliang1995/picker/tree/master/program/picker-email-center) // 邮件中心
+    * [email-center](https://github.com/xuliangliang1995/picker/tree/master/program/picker-email-center/email-center) // 邮件中心
+    * [email-center-sdk](https://github.com/xuliangliang1995/picker/tree/master/program/picker-email-center/email-center-sdk) // SDK 
   * [picker-service-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user)
     * [user-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-api) // 用户服务 API
     * [user-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-provider) // 用户服务 提供者

@@ -36,6 +36,7 @@ public class ExceptionAdvice {
             HttpServletRequest request,
             ConstraintViolationException exception
     ) {
+        exception.printStackTrace();
         String message = exception.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage).get();
         log.info("\n【参数校验失败】：{}", message);
         return new ResponseUtil<>().setErrorMsg(message);
@@ -53,6 +54,7 @@ public class ExceptionAdvice {
             HttpServletRequest request,
             AbstractTokenException exception
     ) {
+        exception.printStackTrace();
         String message = exception.getMessage();
         log.info("\n【token异常】:{}", message);
         return new ResponseUtil<>().setErrorMsg(message);

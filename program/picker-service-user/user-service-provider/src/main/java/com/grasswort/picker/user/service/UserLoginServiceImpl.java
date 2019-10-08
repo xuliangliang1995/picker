@@ -54,24 +54,24 @@ public class UserLoginServiceImpl implements IUserLoginService {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("username", username);
         User user = userMapper.selectOneByExample(example);
-
-        boolean loginSuccess = Optional.ofNullable(user).map(User::getPassword)
+        // 账户名或密码错误
+        boolean loginFail = ! Optional.ofNullable(user).map(User::getPassword)
                 .filter(pwd -> DigestUtils.md5DigestAsHex(password.getBytes()).equals(pwd))
                 .isPresent();
-        if (! loginSuccess) {
+        if (loginFail) {
             response.setCode(SysRetCodeConstants.USER_OR_PASSWORD_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.USER_OR_PASSWORD_ERROR.getMsg());
             return response;
         }
-
-        boolean isActivated = user.isActivated();
-        if (! isActivated) {
+        // 账户尚未激活
+        boolean isNotActivated = ! user.isActivated();
+        if (isNotActivated) {
             userActivateServiceImpl.sendActivateEmail(user.getId());
             response.setCode(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.USER_IS_VERIFIED_ERROR.getMsg());
             return response;
         }
-
+        // 登录成功，生成 JwtToken
         JwtTokenUserClaim claim = new JwtTokenUserClaim();
         claim.setId(user.getId());
         claim.setName(user.getName());
@@ -85,6 +85,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
             response.setSex(user.getSex().intValue());
             response.setToken(token);
         } catch (IOException e) {
+            // 程序不该到达的地方
             e.printStackTrace();
             response.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());

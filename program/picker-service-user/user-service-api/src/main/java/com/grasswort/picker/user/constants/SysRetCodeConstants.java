@@ -17,7 +17,7 @@ public enum SysRetCodeConstants {
     SECURITY_CODE_ERROR                  ("003005","验证码不正确"),
     USER_IS_VERIFIED_ERROR                ("003006","用户名尚未激活"),
     USER_REGISTER_VERIFY_FAILED         ("003007","用户注册失败插入验证数据失败"),
-    USER_INFO_INVALID                  ("003004","用户信息不合法"),
+    ACTIVATE_URL_LOSE_EFFICACY         ("003008","账号激活链接已失效"),
 
     REQUEST_FORMAT_ILLEGAL              ("003060", "请求数据格式非法"),
     REQUEST_IP_ILLEGAL                  ("003061", "请求IP非法"),

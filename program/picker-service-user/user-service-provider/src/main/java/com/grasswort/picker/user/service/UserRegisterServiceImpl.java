@@ -13,6 +13,7 @@ import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -56,7 +57,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
             return response;
         }
 
-        Date now = new Date(System.currentTimeMillis());
+        Date now = DateTime.now().toDate();
         user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(DigestUtils.md5DigestAsHex(request.getPassword().getBytes()));
@@ -68,7 +69,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         user.setGmtModified(now);
         int result = 0;
         try {
-            result = userMapper.insert(user);
+            result = userMapper.insertUseGeneratedKeys(user);
         } catch (Exception e) {
             log.info("\n操作数据库异常：{}", e.getMessage());
         }
