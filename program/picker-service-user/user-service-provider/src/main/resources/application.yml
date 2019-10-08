@@ -3,3 +3,4 @@ spring:
     name: picker-user-service-provider
   profiles:
     active: dev
+

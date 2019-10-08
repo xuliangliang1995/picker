@@ -15,6 +15,8 @@ import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
 import com.grasswort.picker.user.dao.persistence.UserActivationCodeMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
+import com.grasswort.picker.user.dto.SendActivateEmailRequest;
+import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
 import freemarker.template.TemplateException;
@@ -25,6 +27,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -57,7 +60,7 @@ public class UserActivateServiceImpl implements IUserActivateService {
     /**
      * 账号激活链接模板
      */
-    final String ACTIVATED_URL_TEMPLATE = "https://picker.grasswort.com/user/activate?username=%s&code=%s&activateId=%s";
+    final String ACTIVATED_URL_TEMPLATE = "http://localhost:10001/user/activate?username=%s&code=%s&activateId=%s";
     /**
      * 账号激活链接有效分钟数
      */
@@ -67,6 +70,46 @@ public class UserActivateServiceImpl implements IUserActivateService {
      */
     final int ACTIVATED_CODE_LENGTH = 32;
 
+
+    /**
+     * 发送账户激活邮件
+     * @param request
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public SendActivateEmailResponse sendActivateEmail(SendActivateEmailRequest request) {
+        SendActivateEmailResponse response = new SendActivateEmailResponse();
+
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("username", request.getUsername());
+        User user = userMapper.selectOneByExample(example);
+
+        if (user == null) {
+            response.setCode(SysRetCodeConstants.USERNAME_NOT_EXISTS.getCode());
+            response.setMsg(SysRetCodeConstants.USERNAME_NOT_EXISTS.getMsg());
+            return response;
+        }
+
+        if (user.isActivated()) {
+            response.setCode(SysRetCodeConstants.USERNAME_IS_ACTIVATED.getCode());
+            response.setMsg(SysRetCodeConstants.USERNAME_IS_ACTIVATED.getMsg());
+            return response;
+        }
+
+        this.sendActivateEmail(user.getId());
+        response.setEmail(user.getEmail());
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return response;
+    }
+
+    /**
+     * 注册用户激活
+     *
+     * @param request
+     * @return
+     */
     @Override
     @DB(DBGroup.SLAVE)
     public UserActivateResponse activate(UserActivateRequest request) {
@@ -98,6 +141,7 @@ public class UserActivateServiceImpl implements IUserActivateService {
 
     }
 
+
     /**
      * 执行真正的激活
      * @param activationCode
@@ -119,12 +163,9 @@ public class UserActivateServiceImpl implements IUserActivateService {
      * 发送激活邮件（允许极小几率发送失败）
      * @param userId
      */
-    @DB(DBGroup.MASTER)
     public void sendActivateEmail(long userId) {
+        DBLocalHolder.selectDBGroup(DBGroup.MASTER);
         User user = userMapper.selectByPrimaryKey(userId);
-        if (user == null || user.isActivated()) {
-            return ;
-        }
         // 生成激活链接
         Date now = DateTime.now().toDate();
         UserActivationCode activationCode = new UserActivationCode();

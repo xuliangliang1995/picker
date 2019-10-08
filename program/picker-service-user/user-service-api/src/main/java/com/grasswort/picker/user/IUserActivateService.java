@@ -1,5 +1,7 @@
 package com.grasswort.picker.user;
 
+import com.grasswort.picker.user.dto.SendActivateEmailRequest;
+import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
 import org.springframework.validation.annotation.Validated;
@@ -12,10 +14,20 @@ import org.springframework.validation.annotation.Validated;
  * @blame Java Team
  */
 public interface IUserActivateService {
+
+    /**
+     * 发送账户激活邮件
+     * @param request
+     * @return
+     */
+    SendActivateEmailResponse sendActivateEmail(SendActivateEmailRequest request);
+
     /**
      * 注册用户激活
      * @param request
      * @return
      */
     UserActivateResponse activate(@Validated UserActivateRequest request);
+
+
 }
