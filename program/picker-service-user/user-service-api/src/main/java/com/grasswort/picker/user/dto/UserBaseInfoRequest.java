@@ -2,6 +2,7 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
  * @blame Java Team
  */
 @Data
+@EqualsAndHashCode
 public class UserBaseInfoRequest extends AbstractRequest {
     @NotNull
     @Min(1)

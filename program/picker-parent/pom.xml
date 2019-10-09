@@ -32,7 +32,7 @@
     <redisson.version>3.11.1</redisson.version>
     <pagehelper.version>5.1.10</pagehelper.version>
     <pagehelper.sprinboot.version>1.2.12</pagehelper.sprinboot.version>
-    <swagger-starter.version>1.8.0.RELEASE</swagger-starter.version>
+    <swagger-starter.version>1.9.0.RELEASE</swagger-starter.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
     <hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
     <javax.mail.version>1.6.2</javax.mail.version>

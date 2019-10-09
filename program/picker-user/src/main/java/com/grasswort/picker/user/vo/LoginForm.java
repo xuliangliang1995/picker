@@ -1,7 +1,7 @@
 package com.grasswort.picker.user.vo;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,10 +15,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class LoginForm {
     @NotNull
-    @Length(min = 8, max = 20)
+    @Size(min = 8, max = 20)
     private String username;
     @NotNull
-    @Length(min = 8, max = 20)
+    @Size(min = 8, max = 20)
     private String password;
 
     @Override

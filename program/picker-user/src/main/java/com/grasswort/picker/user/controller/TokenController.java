@@ -8,6 +8,8 @@ import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.RefreshAccessTokenRequest;
 import com.grasswort.picker.user.dto.RefreshAccessTokenResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2019/10/8 22:14
  * @blame Java Team
  */
+@Api(tags = "Token 刷新")
 @Anoymous
 @RestController
 @RequestMapping("/user/token")
@@ -36,6 +39,7 @@ public class TokenController {
      * @param response
      * @return
      */
+    @ApiOperation(value = "access_token", notes = "通过 refresh_token 获取新的 access_token")
     @GetMapping
     public ResponseData refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = request.getHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY);

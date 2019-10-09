@@ -13,6 +13,8 @@ import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
 import com.grasswort.picker.user.vo.UserActivateForm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -25,20 +27,22 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2019/10/7 13:04
  * @blame Java Team
  */
+@Api(tags = "Picker 账号激活")
 @Anoymous
 @RestController
 @RequestMapping(ActivateUrlConstants.PATH)
-public class UserActivateController {
+public class ActivateController {
 
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.TRUE)
     IUserActivateService iUserActivateService;
 
     /**
-     * 发送激活邮件
+     * 激活邮件
      * @param username
      * @return
      */
-    @GetMapping("/email")
+    @ApiOperation(value = "发送激活邮件")
+    @PostMapping("/email")
     public ResponseData activateEmail(
             @RequestParam("username") String username) {
         SendActivateEmailRequest emailRequest = new SendActivateEmailRequest();
@@ -55,6 +59,7 @@ public class UserActivateController {
      * @param activateForm
      * @return
      */
+    @ApiOperation(value = "账号激活（通过邮箱链接）")
     @GetMapping
     public ResponseData activate(@Validated UserActivateForm activateForm, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);

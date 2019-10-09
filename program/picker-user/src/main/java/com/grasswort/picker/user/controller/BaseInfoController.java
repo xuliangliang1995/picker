@@ -1,5 +1,6 @@
 package com.grasswort.picker.user.controller;
 
+import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
@@ -11,6 +12,8 @@ import com.grasswort.picker.user.dto.UserBaseInfoRequest;
 import com.grasswort.picker.user.dto.UserBaseInfoResponse;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.vo.EditBaseInfoForm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -23,13 +26,15 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2019/10/9 13:29
  * @blame Java Team
  */
+@Api(tags = "Picker 基本信息")
 @RestController
 @RequestMapping("/user/info")
-public class UserBaseInfoController {
+public class BaseInfoController {
 
-    @Reference(version = "1.0")
+    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.FALSE)
     IUserBaseInfoService iUserBaseInfoService;
 
+    @ApiOperation(value = "获取用户基本信息")
     @GetMapping
     public ResponseData<UserBaseInfoResponse> userInfo() {
         UserBaseInfoRequest baseInfoRequest = new UserBaseInfoRequest();
@@ -41,6 +46,7 @@ public class UserBaseInfoController {
         return new ResponseUtil<UserBaseInfoResponse>().setErrorMsg(baseInfoResponse.getMsg());
     }
 
+    @ApiOperation(value = "编辑用户基本信息")
     @PutMapping
     public ResponseData<UserBaseInfoEditResponse> editUserInfo(@RequestBody @Validated EditBaseInfoForm editBaseInfoForm,
                                      BindingResult bindingResult) {
