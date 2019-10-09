@@ -2,7 +2,7 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,10 +16,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserActivateRequest extends AbstractRequest {
     @NotNull
-    @Length(min = 8, max = 20)
+    @Size(min = 8, max = 20)
     private String username;
     @NotNull
-    @Length(min = 32, max = 32)
+    @Size(min = 32, max = 32)
     private String activationCode;
     @NotNull
     private Long activateId;

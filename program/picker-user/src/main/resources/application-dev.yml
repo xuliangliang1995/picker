@@ -20,5 +20,16 @@ nacos:
     server-addr: nacos://nacos.grasswort.com:8848
     namespace: 714709d9-ff45-4e48-873f-f468f3dd90ad
 
+swagger:
+  enabled: true
+  title: Picker-User 接口文档
+  contact:
+    name: xuliangliang
+    email: 835547206@qq.com
+  base-package: com.grasswort.picker.user.controller
+  authorization:
+    key-name: access_token
+  version: 1.0.0
+
 
 

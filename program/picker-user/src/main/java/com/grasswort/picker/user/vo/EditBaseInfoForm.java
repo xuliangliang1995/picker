@@ -1,7 +1,7 @@
 package com.grasswort.picker.user.vo;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
@@ -18,13 +18,13 @@ import javax.validation.constraints.NotNull;
 @Data
 public class EditBaseInfoForm {
     @NotNull
-    @Length(min = 2, max = 10)
+    @Size(min = 2, max = 10)
     private String name;
     @NotNull
     @Min(0)
     @Max(2)
     private Byte sex;
-    @Length(min = 11, max = 11)
+    @Size(min = 11, max = 11)
     private String phone;
     @NotNull
     @Email

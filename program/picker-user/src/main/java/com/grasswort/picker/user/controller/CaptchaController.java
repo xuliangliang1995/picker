@@ -8,6 +8,8 @@ import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
 import com.grasswort.picker.user.model.PickerInfoHolder;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Date 2019/10/8 23:36
  * @blame Java Team
  */
+@Api(tags = "Picker 获取验证码")
 @RestController
 @RequestMapping("/user/captcha")
 public class CaptchaController {
@@ -27,6 +30,7 @@ public class CaptchaController {
     @Reference(version = "1.0")
     ICAPTCHAService icaptchaService;
 
+    @ApiOperation(value = "登录状态发送验证码到邮箱")
     @GetMapping("/email")
     public ResponseData getEmailCaptcha() {
         CAPTCHARequest captchaRequest = new CAPTCHARequest();

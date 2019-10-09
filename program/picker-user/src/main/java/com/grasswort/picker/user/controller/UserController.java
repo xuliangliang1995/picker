@@ -5,12 +5,17 @@ import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserLoginService;
+import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserLoginRequest;
 import com.grasswort.picker.user.dto.UserLoginResponse;
+import com.grasswort.picker.user.dto.UserRegisterRequest;
+import com.grasswort.picker.user.dto.UserRegisterResponse;
 import com.grasswort.picker.user.vo.LoginForm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -23,20 +28,36 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author xuliangliang
- * @Classname LoginController
- * @Description 登录
- * @Date 2019/10/2 15:08
+ * @Classname SignController
+ * @Description 注册和登录
+ * @Date 2019/10/9 17:39
  * @blame Java Team
  */
+@Api(tags = "Picker 注册、登录")
 @Anoymous
 @RestController
 @RequestMapping("/user")
-public class LoginController {
+public class UserController {
+
+    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.TRUE)
+    IUserRegisterService iUserRegisterService;
 
     @Reference(version = "1.0", timeout = 3000, validation = TOrF.FALSE, mock = TOrF.TRUE)
     IUserLoginService iUserLoginService;
 
-    @PostMapping("/login")
+    @ApiOperation(value = "注册")
+    @PostMapping("/signUp")
+    public ResponseData register(@RequestBody @Validated UserRegisterRequest body, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+        UserRegisterResponse result = iUserRegisterService.register(body);
+        if (result.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+        return new ResponseUtil<>().setErrorMsg(result.getMsg());
+    }
+
+    @ApiOperation(value = "登录")
+    @PostMapping("/signIn")
     public ResponseData login(@RequestBody @Validated LoginForm loginForm, BindingResult bindingResult, HttpServletResponse response) {
         ValidatorTool.check(bindingResult);
 
@@ -53,5 +74,4 @@ public class LoginController {
             return new ResponseUtil<>().setErrorMsg(loginResponse.getMsg());
         }
     }
-
 }

@@ -1,11 +1,13 @@
 package com.grasswort.picker.user.configuration;
 
 import com.grasswort.picker.user.interceptor.TokenInterceptor;
+import com.spring4all.swagger.EnableSwagger2Doc;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -19,6 +21,8 @@ import javax.validation.ValidatorFactory;
  * @blame Java Team
  */
 @Configuration
+@EnableSwagger2Doc
+@EnableSwagger2
 public class WebConfiguration implements WebMvcConfigurer {
     @Bean
     public TokenInterceptor tokenInterceptor() {
@@ -28,7 +32,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor())
-                .addPathPatterns("/**");
+                .addPathPatterns("/user/**");
     }
 
     @Bean
