@@ -2,6 +2,7 @@ package com.grasswort.picker.user;
 
 import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author xuliangliang
@@ -16,6 +17,6 @@ public interface ICAPTCHAService {
      * @param captchaRequest
      * @return
      */
-    CAPTCHAResponse sendCAPCHA(CAPTCHARequest captchaRequest);
+    CAPTCHAResponse sendCAPCHA(@Validated CAPTCHARequest captchaRequest);
 
 }

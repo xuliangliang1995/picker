@@ -6,6 +6,7 @@ import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.constants.DBGroup;
+import com.grasswort.picker.user.constants.SexEnum;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
@@ -63,7 +64,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
         user.setPassword(DigestUtils.md5DigestAsHex(request.getPassword().getBytes()));
         user.setEmail(request.getEmail());
         user.setName(request.getUsername());
-        user.setSex((byte) 0);
+        user.setSex(SexEnum.PRIVARY.getValue());
         user.setActivated(false);
         user.setVersion(1);
         user.setGmtCreate(now);

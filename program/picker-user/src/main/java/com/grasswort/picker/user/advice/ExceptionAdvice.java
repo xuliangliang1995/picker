@@ -1,5 +1,6 @@
 package com.grasswort.picker.user.advice;
 
+import com.grasswort.picker.commons.exception.InvalidParamException;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.exception.AbstractTokenException;
@@ -26,14 +27,12 @@ public class ExceptionAdvice {
 
     /**
      * 参数校验失败异常
-     * @param request
      * @param exception
      * @return
      */
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler({ConstraintViolationException.class})
     @ResponseBody
-    public ResponseData validatorException(
-            HttpServletRequest request,
+    public ResponseData validatorException1(
             ConstraintViolationException exception
     ) {
         exception.printStackTrace();
@@ -43,15 +42,26 @@ public class ExceptionAdvice {
     }
 
     /**
+     * 参数校验
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler({InvalidParamException.class})
+    @ResponseBody
+    public ResponseData validatorException2(
+            InvalidParamException exception
+    ) {
+        return new ResponseUtil<>().setErrorMsg(exception.getMessage());
+    }
+
+    /**
      * token 校验异常
-     * @param request
      * @param exception
      * @return
      */
     @ExceptionHandler(AbstractTokenException.class)
     @ResponseBody
     public ResponseData tokenException(
-            HttpServletRequest request,
             AbstractTokenException exception
     ) {
         exception.printStackTrace();

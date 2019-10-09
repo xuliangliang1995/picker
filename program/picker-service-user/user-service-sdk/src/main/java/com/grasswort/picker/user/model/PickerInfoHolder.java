@@ -7,7 +7,7 @@ package com.grasswort.picker.user.model;
  * @Date 2019/10/8 16:02
  * @blame Java Team
  */
-public class PickInfoHolder {
+public class PickerInfoHolder {
 
     private final static ThreadLocal<PickerInfo> PICKER_INFO = new ThreadLocal<>();
 

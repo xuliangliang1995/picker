@@ -3,8 +3,8 @@ package com.grasswort.picker.user.dto;
 import com.grasswort.picker.commons.result.AbstractRequest;
 import com.grasswort.picker.user.constants.CAPTCHAReceiver;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -19,7 +19,7 @@ public class CAPTCHARequest extends AbstractRequest {
     @NotNull
     private CAPTCHAReceiver receiver;
     @NotNull
-    @Range(min = 1)
+    @Min(1)
     private Long userId;
 
     @Override

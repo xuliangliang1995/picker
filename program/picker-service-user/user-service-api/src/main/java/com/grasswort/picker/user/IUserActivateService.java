@@ -20,7 +20,7 @@ public interface IUserActivateService {
      * @param request
      * @return
      */
-    SendActivateEmailResponse sendActivateEmail(SendActivateEmailRequest request);
+    SendActivateEmailResponse sendActivateEmail(@Validated SendActivateEmailRequest request);
 
     /**
      * 注册用户激活
