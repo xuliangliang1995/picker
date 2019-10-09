@@ -9,6 +9,7 @@ import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
+import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.exception.JwtFreeException;
 import com.grasswort.picker.user.util.JwtTokenUtil;
@@ -42,6 +43,8 @@ import java.util.Optional;
 public class UserLoginServiceImpl implements IUserLoginService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserDao userDao;
 
     @DB(DBGroup.SLAVE)
     @Override
@@ -96,13 +99,19 @@ public class UserLoginServiceImpl implements IUserLoginService {
         String token = request.getToken();
         try {
             JwtTokenUtil.JwtBody jwtBody = JwtTokenUtil.freeJwt(token);
-            if (jwtBody.getExpiresAt().after(DateTime.now().toDate())) {
+            boolean isNotExpire = jwtBody.getExpiresAt().after(DateTime.now().toDate());
+            if (isNotExpire) {
                 JwtAccessTokenUserClaim userClaim = MsgPackUtil.read(jwtBody.getMsg(), JwtAccessTokenUserClaim.class);
-                response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-                response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-                response.setId(userClaim.getId());
-                response.setName(userClaim.getName());
-                return response;
+                int userVersion = userDao.selectVersionByUserId(userClaim.getId());
+                // 用户修改密码后，version 会改变，之前所有 token 都会失效
+                boolean isEffective = userVersion == userClaim.getVersion();
+                if (isEffective) {
+                    response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+                    response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+                    response.setId(userClaim.getId());
+                    response.setName(userClaim.getName());
+                    return response;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2019/10/8 22:14
  * @blame Java Team
  */
+@Anoymous
 @RestController
 @RequestMapping("/user/token")
 public class TokenController {
@@ -35,7 +36,6 @@ public class TokenController {
      * @param response
      * @return
      */
-    @Anoymous
     @GetMapping
     public ResponseData refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = request.getHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY);

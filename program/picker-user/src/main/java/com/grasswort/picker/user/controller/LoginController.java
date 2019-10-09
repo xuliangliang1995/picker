@@ -3,17 +3,21 @@ package com.grasswort.picker.user.controller;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
+import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserLoginRequest;
 import com.grasswort.picker.user.dto.UserLoginResponse;
-import com.grasswort.picker.user.model.PickInfoHolder;
 import com.grasswort.picker.user.vo.LoginForm;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,16 +28,18 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2019/10/2 15:08
  * @blame Java Team
  */
+@Anoymous
 @RestController
 @RequestMapping("/user")
 public class LoginController {
 
-    @Reference(version = "1.0", timeout = 3000, validation = TOrF.TRUE, mock = TOrF.TRUE)
+    @Reference(version = "1.0", timeout = 3000, validation = TOrF.FALSE, mock = TOrF.TRUE)
     IUserLoginService iUserLoginService;
 
-    @Anoymous
     @PostMapping("/login")
-    public ResponseData login(@RequestBody @Validated LoginForm loginForm, HttpServletResponse response) {
+    public ResponseData login(@RequestBody @Validated LoginForm loginForm, BindingResult bindingResult, HttpServletResponse response) {
+        ValidatorTool.check(bindingResult);
+
         UserLoginRequest loginRequest = new UserLoginRequest();
         loginRequest.setUsername(loginForm.getUsername());
         loginRequest.setPassword(loginForm.getPassword());
@@ -48,8 +54,4 @@ public class LoginController {
         }
     }
 
-    @GetMapping
-    public ResponseData pickerInfo() {
-        return new ResponseUtil<>().setData(PickInfoHolder.getPickerInfo().getName());
-    }
 }

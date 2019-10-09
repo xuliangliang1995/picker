@@ -3,6 +3,7 @@ package com.grasswort.picker.user.controller;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
+import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.ActivateUrlConstants;
@@ -13,6 +14,8 @@ import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
 import com.grasswort.picker.user.vo.UserActivateForm;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2019/10/7 13:04
  * @blame Java Team
  */
+@Anoymous
 @RestController
 @RequestMapping(ActivateUrlConstants.PATH)
 public class UserActivateController {
@@ -34,7 +38,6 @@ public class UserActivateController {
      * @param username
      * @return
      */
-    @Anoymous
     @GetMapping("/email")
     public ResponseData activateEmail(
             @RequestParam("username") String username) {
@@ -52,9 +55,9 @@ public class UserActivateController {
      * @param activateForm
      * @return
      */
-    @Anoymous
     @GetMapping
-    public ResponseData activate(UserActivateForm activateForm) {
+    public ResponseData activate(@Validated UserActivateForm activateForm, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
         UserActivateRequest activateRequest = new UserActivateRequest();
         activateRequest.setUsername(activateForm.getUsername());
         activateRequest.setActivationCode(activateForm.getCode());

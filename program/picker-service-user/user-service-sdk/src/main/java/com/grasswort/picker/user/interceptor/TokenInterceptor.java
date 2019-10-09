@@ -1,8 +1,5 @@
 package com.grasswort.picker.user.interceptor;
 
-import com.alibaba.fastjson.JSON;
-import com.grasswort.picker.commons.result.ResponseData;
-import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
@@ -11,7 +8,7 @@ import com.grasswort.picker.user.dto.CheckAuthRequest;
 import com.grasswort.picker.user.dto.CheckAuthResponse;
 import com.grasswort.picker.user.exception.TokenExpiredException;
 import com.grasswort.picker.user.exception.TokenVerifyFailException;
-import com.grasswort.picker.user.model.PickInfoHolder;
+import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.model.PickerInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
@@ -53,7 +50,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
         authRequest.setToken(token);
         CheckAuthResponse authResponse = iUserLoginService.validToken(authRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode())) {
-            PickInfoHolder.setPickerInfo(PickerInfo.builder()
+            PickerInfoHolder.setPickerInfo(PickerInfo.builder()
                     .id(authResponse.getId())
                     .name(authResponse.getName())
                     .build());
@@ -62,9 +59,14 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
        throw TokenVerifyFailException.getInstance();
     }
 
+    /**
+     * 是否允许匿名请求
+     * @param handlerMethod
+     * @return
+     */
     private boolean isAnoymous(HandlerMethod handlerMethod) {
         Object bean = handlerMethod.getBean();
-        Class clazz=bean.getClass();
+        Class clazz = bean.getClass();
         if (clazz.getAnnotation(Anoymous.class) != null) {
             return true;
         }

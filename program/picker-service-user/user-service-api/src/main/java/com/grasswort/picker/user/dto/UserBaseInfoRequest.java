@@ -2,22 +2,23 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author xuliangliang
- * @Classname SendActivateEmailRequest
- * @Description TODO
- * @Date 2019/10/8 16:11
+ * @Classname UserBaseInfoRequest
+ * @Description 获取基本信息请求
+ * @Date 2019/10/9 11:54
  * @blame Java Team
  */
 @Data
-public class SendActivateEmailRequest extends AbstractRequest {
+public class UserBaseInfoRequest extends AbstractRequest {
     @NotNull
-    @Length(min = 8, max = 20)
-    private String username;
+    @Min(1)
+    private Long userId;
+
     @Override
     public void requestCheck() {
 

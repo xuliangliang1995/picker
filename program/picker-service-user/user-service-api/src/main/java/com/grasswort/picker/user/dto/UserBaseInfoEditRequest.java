@@ -2,32 +2,34 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author xuliangliang
- * @Classname UserRegisterRequest
- * @Description TODO
- * @Date 2019/9/21 17:07
+ * @Classname UserBaseInfoEditRequest
+ * @Description 编辑用户基本信息
+ * @Date 2019/10/9 12:40
  * @blame Java Team
  */
 @Data
-public class UserRegisterRequest extends AbstractRequest {
+public class UserBaseInfoEditRequest extends AbstractRequest {
+    private Long userId;
     @NotNull
-    @Length(min = 8, max = 20)
-    private String username;
+    @Length(min = 2, max = 10)
+    private String name;
     @NotNull
-    @Length(min = 8, max = 20)
-    private String password;
-    @NotNull
+    @Length(min = 11, max = 11)
+    private String phone;
     @Email
     private String email;
+    @NotNull
+    private Byte sex;
 
     @Override
     public void requestCheck() {
-        System.out.println("执行参数校验！");
+
     }
 }
