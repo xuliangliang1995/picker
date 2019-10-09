@@ -19,11 +19,13 @@ import com.grasswort.picker.user.dto.SendActivateEmailRequest;
 import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
+import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,8 @@ public class UserActivateServiceImpl implements IUserActivateService {
     UserMapper userMapper;
     @Autowired
     KafkaTemplate<String, Mail> kafkaTemplate;
+    @Autowired
+    RedissonClient redissonClient;
     /**
      * 账号激活链接模板
      */
@@ -147,6 +151,7 @@ public class UserActivateServiceImpl implements IUserActivateService {
      * @param activationCode
      */
     @Transactional(rollbackFor = Exception.class)
+    @DB(DBGroup.MASTER)
     public void executeActivate(UserActivationCode activationCode) {
         activationCode.setActivated(true);
         activationCode.setGmtModified(DateTime.now().toDate());
@@ -157,12 +162,15 @@ public class UserActivateServiceImpl implements IUserActivateService {
         user.setActivated(true);
         user.setGmtModified(DateTime.now().toDate());
         userMapper.updateByPrimaryKeySelective(user);
+        // 存储用户版本
+        PkUserVersionCacheable.builder().userId(user.getId()).build().cache(redissonClient, 1);
     }
 
     /**
      * 发送激活邮件（允许极小几率发送失败）
      * @param userId
      */
+    @DB(DBGroup.MASTER)
     public void sendActivateEmail(long userId) {
         DBLocalHolder.selectDBGroup(DBGroup.MASTER);
         User user = userMapper.selectByPrimaryKey(userId);

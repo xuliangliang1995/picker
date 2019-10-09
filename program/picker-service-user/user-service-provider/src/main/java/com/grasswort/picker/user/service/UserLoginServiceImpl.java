@@ -12,17 +12,20 @@ import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.exception.JwtFreeException;
+import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.util.JwtTokenUtil;
 import com.grasswort.picker.user.util.MsgPackUtil;
 import com.grasswort.picker.user.util.UserTokenGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -45,6 +48,8 @@ public class UserLoginServiceImpl implements IUserLoginService {
     UserMapper userMapper;
     @Autowired
     UserDao userDao;
+    @Autowired
+    RedissonClient redissonClient;
 
     @DB(DBGroup.SLAVE)
     @Override
@@ -102,13 +107,21 @@ public class UserLoginServiceImpl implements IUserLoginService {
             boolean isNotExpire = jwtBody.getExpiresAt().after(DateTime.now().toDate());
             if (isNotExpire) {
                 JwtAccessTokenUserClaim userClaim = MsgPackUtil.read(jwtBody.getMsg(), JwtAccessTokenUserClaim.class);
-                int userVersion = userDao.selectVersionByUserId(userClaim.getId());
+                // verify token version
+                Long userId = userClaim.getId();
+                PkUserVersionCacheable userVersionCacheable = PkUserVersionCacheable.builder().userId(userId).build();
+                Integer userVersion = userVersionCacheable.value(redissonClient);
+                if (null == userVersion) {
+                    // 缓存中没有，则从数据库中取并重新放入缓存
+                    userVersion = userDao.selectVersionByUserId(userId);
+                    userVersionCacheable.cache(redissonClient, userVersion);
+                }
                 // 用户修改密码后，version 会改变，之前所有 token 都会失效
-                boolean isEffective = userVersion == userClaim.getVersion();
+                boolean isEffective = Objects.equals(userVersion, userClaim.getVersion());
                 if (isEffective) {
                     response.setCode(SysRetCodeConstants.SUCCESS.getCode());
                     response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-                    response.setId(userClaim.getId());
+                    response.setId(userId);
                     response.setName(userClaim.getName());
                     return response;
                 }
