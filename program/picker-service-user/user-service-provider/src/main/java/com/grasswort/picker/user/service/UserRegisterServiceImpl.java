@@ -37,10 +37,10 @@ import java.util.Date;
         version = "1.0"
 )
 public class UserRegisterServiceImpl implements IUserRegisterService {
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    UserActivateServiceImpl userActivateServiceImpl;
+
+    @Autowired UserMapper userMapper;
+
+    @Autowired UserActivateServiceImpl userActivateServiceImpl;
 
     @DB(DBGroup.MASTER)
     @Override

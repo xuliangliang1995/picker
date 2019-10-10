@@ -20,7 +20,6 @@ public interface IRedissonCacheable<T> {
     /**
      * 获取
      * @param redissonClient
-     * @param <T>
      * @return
      */
     T value(RedissonClient redissonClient);

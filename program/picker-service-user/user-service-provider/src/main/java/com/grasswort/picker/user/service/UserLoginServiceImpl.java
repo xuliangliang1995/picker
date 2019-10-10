@@ -13,9 +13,9 @@ import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.exception.JwtFreeException;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
+import com.grasswort.picker.user.service.token.UserTokenGenerator;
 import com.grasswort.picker.user.util.JwtTokenUtil;
 import com.grasswort.picker.user.util.MsgPackUtil;
-import com.grasswort.picker.user.util.UserTokenGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
@@ -44,12 +44,14 @@ import java.util.Optional;
         version = "1.0"
 )
 public class UserLoginServiceImpl implements IUserLoginService {
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    UserDao userDao;
-    @Autowired
-    RedissonClient redissonClient;
+
+    @Autowired UserMapper userMapper;
+
+    @Autowired UserDao userDao;
+
+    @Autowired RedissonClient redissonClient;
+
+    @Autowired UserTokenGenerator userTokenGenerator;
 
     @DB(DBGroup.SLAVE)
     @Override
@@ -79,8 +81,8 @@ public class UserLoginServiceImpl implements IUserLoginService {
         }
         // 登录成功，生成 JwtToken
         try {
-            String accessToken = UserTokenGenerator.generateAccessToken(user);
-            String refreshToken = UserTokenGenerator.generateRefreshToken(user);
+            String accessToken = userTokenGenerator.generateAccessToken(user);
+            String refreshToken = userTokenGenerator.generateRefreshToken(user);
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
             response.setUsername(user.getUsername());

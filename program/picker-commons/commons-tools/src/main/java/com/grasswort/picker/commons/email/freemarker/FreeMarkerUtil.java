@@ -1,5 +1,6 @@
 package com.grasswort.picker.commons.email.freemarker;
 
+import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class FreeMarkerUtil {
 
     public static String getMailTextForTemplate(String templatePath, String filename, Map datas) throws IOException, TemplateException {
-        Configuration configuration = new Configuration();
+        Configuration configuration = Singleton.configuration;
         //获取class下面的模板文件
         configuration.setDirectoryForTemplateLoading(new File(FreeMarkerUtil.class.getClass().getResource(
                 "/"+templatePath).getPath()));
@@ -28,4 +29,25 @@ public class FreeMarkerUtil {
         template.process(datas,out);
         return out.toString();
     }
+
+    public static String getMailTextFromText(String templateKey, String templateContent, long templateLastModified, Map datas) throws IOException, TemplateException {
+        Configuration configuration = Singleton.configuration;
+        StringTemplateLoader stringTemplateLoader = Singleton.stringTemplateLoader;
+        configuration.setTemplateLoader(stringTemplateLoader);
+        stringTemplateLoader.putTemplate(templateKey, templateContent, templateLastModified);
+        Template template = configuration.getTemplate(templateKey, "UTF-8");
+        StringWriter out = new StringWriter();
+        template.process(datas,out);
+        return out.toString();
+    }
+
+
+    /**
+     * 单例
+     */
+    private static class Singleton {
+        static Configuration configuration = new Configuration();
+        static StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
+    }
+
 }

@@ -5,11 +5,10 @@ import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
-import com.grasswort.picker.commons.email.freemarker.FreeMarkerUtil;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserActivateService;
+import com.grasswort.picker.user.config.kafka.TopicCaptcha;
 import com.grasswort.picker.user.constants.DBGroup;
-import com.grasswort.picker.user.constants.PickerActivateEmailMetaData;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
@@ -19,8 +18,9 @@ import com.grasswort.picker.user.dto.SendActivateEmailRequest;
 import com.grasswort.picker.user.dto.SendActivateEmailResponse;
 import com.grasswort.picker.user.dto.UserActivateRequest;
 import com.grasswort.picker.user.dto.UserActivateResponse;
+import com.grasswort.picker.user.service.mailbuilder.ActivateMailGenerator;
+import com.grasswort.picker.user.service.mailbuilder.wrapper.ActivateMailInfoWrapper;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
-import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.dubbo.config.annotation.Service;
@@ -31,11 +31,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author xuliangliang
@@ -53,18 +50,18 @@ import java.util.Map;
         validation = TOrF.FALSE
 )
 public class UserActivateServiceImpl implements IUserActivateService {
-    @Autowired
-    UserActivationCodeMapper userActivationCodeMapper;
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    KafkaTemplate<String, Mail> kafkaTemplate;
-    @Autowired
-    RedissonClient redissonClient;
-    /**
-     * 账号激活链接模板
-     */
-    final String ACTIVATED_URL_TEMPLATE = "http://localhost:10001/user/activate?username=%s&code=%s&activateId=%s";
+
+    @Autowired UserActivationCodeMapper userActivationCodeMapper;
+
+    @Autowired UserMapper userMapper;
+
+    @Autowired KafkaTemplate<String, Mail> kafkaTemplate;
+
+    @Autowired RedissonClient redissonClient;
+
+    @Autowired TopicCaptcha topicCaptcha;
+
+    @Autowired ActivateMailGenerator activateMailGenerator;
     /**
      * 账号激活链接有效分钟数
      */
@@ -73,7 +70,6 @@ public class UserActivateServiceImpl implements IUserActivateService {
      * 激活码长度（固定 32）
      */
     final int ACTIVATED_CODE_LENGTH = 32;
-
 
     /**
      * 发送账户激活邮件
@@ -145,7 +141,6 @@ public class UserActivateServiceImpl implements IUserActivateService {
 
     }
 
-
     /**
      * 执行真正的激活
      * @param activationCode
@@ -185,27 +180,14 @@ public class UserActivateServiceImpl implements IUserActivateService {
         activationCode.setGmtModified(now);
         activationCode.setActivationCode(RandomStringUtils.randomAlphabetic(ACTIVATED_CODE_LENGTH));
         userActivationCodeMapper.insertUseGeneratedKeys(activationCode);
-        final String ACTIVATE_URL = String.format(ACTIVATED_URL_TEMPLATE, activationCode.getUsername(), activationCode.getActivationCode(), activationCode.getId());
 
-        // 封装邮件内容
-        Mail mail = new Mail();
-        mail.setSubject(PickerActivateEmailMetaData.SUBJECT);
-        mail.setToAddress(Collections.singletonList(user.getEmail()));
-        mail.setCcAddress(Collections.emptyList());
-        try {
-            Map<String, Object> map = new HashMap<>();
-            map.put(PickerActivateEmailMetaData.Key.TITLE, PickerActivateEmailMetaData.SUBJECT);
-            map.put(PickerActivateEmailMetaData.Key.URL, ACTIVATE_URL);
-            mail.setContent(FreeMarkerUtil.getMailTextForTemplate(PickerActivateEmailMetaData.TEMPLATE_PATH, PickerActivateEmailMetaData.TEMPLATE_NAME, map));
-            mail.setHtml(true);
-        } catch (IOException | TemplateException e) {
-            e.printStackTrace();
-            log.info("\n邮件模板解析失败");
-            mail.setContent("激活链接：".concat(ACTIVATE_URL));
-            mail.setHtml(false);
-        }
-
-        // 发布到 kafka
-        kafkaTemplate.send(PickerActivateEmailMetaData.PICKER_ACTIVATE_TOPIC, mail);
+        ActivateMailInfoWrapper mailInfoWrapper = ActivateMailInfoWrapper.builder()
+                .activateId(activationCode.getId())
+                .username(activationCode.getUsername())
+                .activateCode(activationCode.getActivationCode())
+                .build();
+        mailInfoWrapper.setReceivers(Collections.singletonList(user.getEmail()));
+        Mail mail = activateMailGenerator.generate(mailInfoWrapper);
+        kafkaTemplate.send(topicCaptcha.getTopicName(), mail);
     }
 }

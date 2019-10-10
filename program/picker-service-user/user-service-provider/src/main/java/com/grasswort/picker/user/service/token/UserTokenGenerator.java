@@ -1,10 +1,14 @@
-package com.grasswort.picker.user.util;
+package com.grasswort.picker.user.service.token;
 
-import com.grasswort.picker.user.constants.TokenExpireConstants;
+import com.grasswort.picker.user.config.lifeline.LifelineConfiguration;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dto.JwtAccessTokenUserClaim;
 import com.grasswort.picker.user.dto.JwtRefreshTokenUserClaim;
+import com.grasswort.picker.user.util.JwtTokenUtil;
+import com.grasswort.picker.user.util.MsgPackUtil;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -15,13 +19,17 @@ import java.io.IOException;
  * @Date 2019/10/8 21:51
  * @blame Java Team
  */
+@Component
 public class UserTokenGenerator {
+
+    @Autowired LifelineConfiguration lifelineConfiguration;
+
     /**
      * 生成 access_token
      * @param user
      * @return
      */
-    public static String generateAccessToken(User user) throws IOException {
+    public String generateAccessToken(User user) throws IOException {
         JwtAccessTokenUserClaim accessTokenUserClaim = new JwtAccessTokenUserClaim();
         accessTokenUserClaim.setId(user.getId());
         accessTokenUserClaim.setName(user.getName());
@@ -30,7 +38,7 @@ public class UserTokenGenerator {
         String accessToken = JwtTokenUtil.creatJwtToken(
                 JwtTokenUtil.JwtBody.builder()
                         .msg(MsgPackUtil.write(accessTokenUserClaim))
-                        .expiresAt(DateTime.now().plusHours(TokenExpireConstants.ACCESS_TOKEN_EFFECTIVE_HOURS).toDate())
+                        .expiresAt(DateTime.now().plusHours(lifelineConfiguration.getAccessTokenLifeHours()).toDate())
                         .build()
         );
         return accessToken;
@@ -41,7 +49,7 @@ public class UserTokenGenerator {
      * @param user
      * @return
      */
-    public static String generateRefreshToken(User user) throws IOException {
+    public String generateRefreshToken(User user) throws IOException {
         JwtRefreshTokenUserClaim refreshTokenUserClaim = new JwtRefreshTokenUserClaim();
         refreshTokenUserClaim.setId(user.getId());
         refreshTokenUserClaim.setUsername(user.getUsername());
@@ -50,7 +58,7 @@ public class UserTokenGenerator {
         String refreshToken = JwtTokenUtil.creatJwtToken(
                 JwtTokenUtil.JwtBody.builder()
                         .msg(MsgPackUtil.write(refreshTokenUserClaim))
-                        .expiresAt(DateTime.now().plusHours(TokenExpireConstants.REFRESH_TOKEN_EFFECTIVE_HOURS).toDate())
+                        .expiresAt(DateTime.now().plusHours(lifelineConfiguration.getRefreshTokenLifeHours()).toDate())
                         .build()
         );
         return refreshToken;

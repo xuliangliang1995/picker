@@ -12,5 +12,4 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan("com.grasswort.picker.commons.configuration.redis")
-public class RedissonConfiguration {
-}
+public class RedissonConfiguration {}
