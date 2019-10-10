@@ -33,8 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
         validation = TOrF.FALSE
 )
 public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
-    @Autowired
-    UserMapper userMapper;
+
+    @Autowired UserMapper userMapper;
+
     /**
      * 获取用户基本信息
      *

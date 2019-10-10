@@ -12,9 +12,9 @@ import com.grasswort.picker.user.dto.JwtRefreshTokenUserClaim;
 import com.grasswort.picker.user.dto.RefreshAccessTokenRequest;
 import com.grasswort.picker.user.dto.RefreshAccessTokenResponse;
 import com.grasswort.picker.user.exception.JwtFreeException;
+import com.grasswort.picker.user.service.token.UserTokenGenerator;
 import com.grasswort.picker.user.util.JwtTokenUtil;
 import com.grasswort.picker.user.util.MsgPackUtil;
-import com.grasswort.picker.user.util.UserTokenGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
@@ -40,6 +40,8 @@ import java.util.Objects;
 public class UserTokenRefreshServiceImpl implements IUserTokenRefreshService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserTokenGenerator userTokenGenerator;
     /**
      * refresh accessToken
      *
@@ -58,8 +60,8 @@ public class UserTokenRefreshServiceImpl implements IUserTokenRefreshService {
                 User user = userMapper.selectByPrimaryKey(claim.getId());
                 isEffective = Objects.equals(user.getVersion(), claim.getVersion());
                 if (isEffective) {
-                    String accessToken = UserTokenGenerator.generateAccessToken(user);
-                    String refreshToken = UserTokenGenerator.generateRefreshToken(user);
+                    String accessToken = userTokenGenerator.generateAccessToken(user);
+                    String refreshToken = userTokenGenerator.generateRefreshToken(user);
                     refreshResponse.setAccessToken(accessToken);
                     refreshResponse.setRefreshToken(refreshToken);
                     refreshResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

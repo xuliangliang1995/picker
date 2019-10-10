@@ -19,4 +19,8 @@ public enum CAPTCHAReceiver {
     private int id;
 
     private String type;
+
+    public int getId() {
+        return id;
+    }
 }

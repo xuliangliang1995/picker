@@ -5,20 +5,28 @@ import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.ICAPTCHAService;
-import com.grasswort.picker.user.constants.CAPTCHAEmailMeta;
+import com.grasswort.picker.user.config.kafka.TopicActivateEmail;
+import com.grasswort.picker.user.config.lifeline.LifelineConfiguration;
+import com.grasswort.picker.user.constants.CAPTCHAReceiver;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dao.entity.Captcha;
 import com.grasswort.picker.user.dao.entity.User;
+import com.grasswort.picker.user.dao.persistence.CaptchaMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
+import com.grasswort.picker.user.service.mailbuilder.CaptchaMailGenerator;
+import com.grasswort.picker.user.service.mailbuilder.wrapper.CaptchaMailInfoWrapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * @author xuliangliang
@@ -34,11 +42,22 @@ import java.util.Collections;
         cluster = ClusterFaultMechanism.FAIL_FAST
 )
 public class CAPTCHAServiceImpl implements ICAPTCHAService {
-    @Autowired
-    UserMapper userMapper;
 
-    @Autowired
-    KafkaTemplate<String, Mail> kafkaTemplate;
+    @Autowired UserMapper userMapper;
+
+    @Autowired KafkaTemplate<String, Mail> kafkaTemplate;
+
+    @Autowired CaptchaMapper captchaMapper;
+
+    @Autowired TopicActivateEmail topicActivateEmail;
+
+    @Autowired LifelineConfiguration lifelineConfiguration;
+
+    @Autowired CaptchaMailGenerator captchaMailGenerator;
+    /**
+     * 验证码长度
+     */
+    private final int CAPTCHA_CODE_LENGTH = 6;
     /**
      * 发送验证码
      *
@@ -46,7 +65,7 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
      * @return
      */
     @Override
-    @DB(DBGroup.SLAVE)
+    @DB(DBGroup.MASTER)
     public CAPTCHAResponse sendCAPCHA(CAPTCHARequest captchaRequest) {
         CAPTCHAResponse captchaResponse = new CAPTCHAResponse();
 
@@ -93,20 +112,35 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
      */
     private void sendEmailCAPCHA(CAPTCHAResponse response, User user) {
         String email = user.getEmail();
-        if (StringUtils.isNotBlank(email)) {
-            response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-            response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-
-            Mail mail = new Mail();
-            mail.setSubject(CAPTCHAEmailMeta.SUBJECT);
-            mail.setToAddress(Collections.singletonList(user.getEmail()));
-            mail.setCcAddress(Collections.emptyList());
-            mail.setHtml(false);
-            mail.setContent(String.format("【验证码】尊敬的%s，您的验证码为%s，十分钟内有效。如非本人操作，为了您的账户安全，请尽快修改密码。", user.getName(), RandomStringUtils.randomNumeric(6)));
-            kafkaTemplate.send(CAPTCHAEmailMeta.CAPTCHA_EMAIL_TOPIC, mail);
-        } else {
+        if (StringUtils.isBlank(email)) {
             response.setCode(SysRetCodeConstants.EMAIL_IS_NULL.getCode());
             response.setMsg(SysRetCodeConstants.EMAIL_IS_NULL.getMsg());
+            return;
         }
+        // 生成验证码
+        String captchaCode = RandomStringUtils.randomNumeric(CAPTCHA_CODE_LENGTH);
+
+        // 记录到数据库中
+        Captcha captcha = new Captcha();
+        captcha.setReceiver((byte) CAPTCHAReceiver.EMAIL.getId());
+        captcha.setEmail(email);
+        captcha.setCaptcha(captchaCode);
+        captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
+        Date now = DateTime.now().toDate();
+        captcha.setGmtCreate(now);
+        captcha.setGmtModified(now);
+        captchaMapper.insertUseGeneratedKeys(captcha);
+
+        // 发送验证码邮件
+        CaptchaMailInfoWrapper mailInfoWrapper = CaptchaMailInfoWrapper.builder()
+                .name(user.getName())
+                .captcha(captchaCode)
+                .build();
+        mailInfoWrapper.setReceivers(Collections.singletonList(user.getEmail()));
+        Mail mail = captchaMailGenerator.generate(mailInfoWrapper);
+        kafkaTemplate.send(topicActivateEmail.getTopicName(), mail);
+
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
     }
 }

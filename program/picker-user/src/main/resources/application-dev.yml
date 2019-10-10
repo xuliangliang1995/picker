@@ -1,35 +1,48 @@
-spring:
-  application:
-    name: picker-user
-dubbo:
-  application:
-    name: picker-user
-    owner: xuliangliang
-  scan:
-    base-packages: com.grasswort.picker.user.controller
-  protocol:
-    name: dubbo
-    port: 20880
-    serialization: kryo
-  registry:
-    address: nacos://nacos.grasswort.com:8848
-  consumer:
-    check: false
 nacos:
   config:
-    server-addr: nacos://nacos.grasswort.com:8848
+    bootstrap:
+      enable: true
+      log:
+        enable: false
+    server-addr: nacos.grasswort.com:8848
     namespace: 714709d9-ff45-4e48-873f-f468f3dd90ad
+    group: DEFAULT_GROUP
+    data-id: picker-user.yml
+    type: yaml
+    max-retry: 10
+    auto-refresh: true
+    config-retry-time: 3000
+    config-long-poll-timeout: 46000
+    enable-remote-sync-config: false
 
-swagger:
-  enabled: true
-  title: Picker-User 接口文档
-  contact:
-    name: xuliangliang
-    email: 835547206@qq.com
-  base-package: com.grasswort.picker.user.controller
-  authorization:
-    key-name: access_token
-  version: 1.0.0
+#spring:
+#  application:
+#    name: picker-user
+#dubbo:
+#  application:
+#    name: picker-user
+#    owner: xuliangliang
+#  scan:
+#    base-packages: com.grasswort.picker.user.controller
+#  protocol:
+#    name: dubbo
+#    port: 20880
+#    serialization: kryo
+#  registry:
+#    address: nacos://nacos.grasswort.com:8848
+#  consumer:
+#    check: false
+#
+#swagger:
+#  enabled: true
+#  title: Picker-User 接口文档
+#  contact:
+#    name: xuliangliang
+#    email: 835547206@qq.com
+#  base-package: com.grasswort.picker.user.controller
+#  authorization:
+#    key-name: access_token
+#  version: 1.0.0
 
 
 
