@@ -66,5 +66,9 @@ nacos://nacos.grasswort.com:8848
 ## Redisson 中文文档
 https://github.com/redisson/redisson/wiki/%E7%9B%AE%E5%BD%95
 
+## Vue 笔记
+文档：Vue学习笔记.note
+链接：http://note.youdao.com/noteshare?id=2e3bb20465de85bc4115424b561a3cf4&sub=2473BD6A88DC4BAC88EFC0089AC62881
+
 
 
