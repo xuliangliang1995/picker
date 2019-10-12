@@ -109,23 +109,34 @@ public class UserLoginServiceImpl implements IUserLoginService {
             boolean isNotExpire = jwtBody.getExpiresAt().after(DateTime.now().toDate());
             if (isNotExpire) {
                 JwtAccessTokenUserClaim userClaim = MsgPackUtil.read(jwtBody.getMsg(), JwtAccessTokenUserClaim.class);
-                // verify token version
-                Long userId = userClaim.getId();
-                PkUserVersionCacheable userVersionCacheable = PkUserVersionCacheable.builder().userId(userId).build();
-                Integer userVersion = userVersionCacheable.value(redissonClient);
-                if (null == userVersion) {
-                    // 缓存中没有，则从数据库中取并重新放入缓存
-                    userVersion = userDao.selectVersionByUserId(userId);
-                    userVersionCacheable.cache(redissonClient, userVersion);
+                // 如果是高级 token , 需要校验 IP 地址
+                boolean isPrivilegeToken = userClaim.isPrivilege();
+                boolean privilegeVerifyPass = false;
+                if (isPrivilegeToken) {
+                    privilegeVerifyPass = Objects.equals(request.getIp(), userClaim.getIp());
                 }
-                // 用户修改密码后，version 会改变，之前所有 token 都会失效
-                boolean isEffective = Objects.equals(userVersion, userClaim.getVersion());
-                if (isEffective) {
-                    response.setCode(SysRetCodeConstants.SUCCESS.getCode());
-                    response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-                    response.setId(userId);
-                    response.setName(userClaim.getName());
-                    return response;
+
+                if (! isPrivilegeToken || privilegeVerifyPass) {
+                    // verify token version
+                    Long userId = userClaim.getId();
+                    PkUserVersionCacheable userVersionCacheable = PkUserVersionCacheable.builder().userId(userId).build();
+                    Integer userVersion = userVersionCacheable.value(redissonClient);
+                    if (null == userVersion) {
+                        // 缓存中没有，则从数据库中取并重新放入缓存
+                        userVersion = userDao.selectVersionByUserId(userId);
+                        userVersionCacheable.cache(redissonClient, userVersion);
+                    }
+                    // 用户修改密码后，version 会改变，之前所有 token 都会失效
+                    boolean isEffective = Objects.equals(userVersion, userClaim.getVersion());
+                    if (isEffective) {
+                        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+                        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+                        response.setId(userId);
+                        response.setName(userClaim.getName());
+                        response.setPrivilege(userClaim.isPrivilege());
+                        log.info("\nToken 校验结果：{}", response);
+                        return response;
+                    }
                 }
             }
         } catch (IOException e) {
@@ -133,9 +144,12 @@ public class UserLoginServiceImpl implements IUserLoginService {
             log.info("\nToken 解析用户信息失败！");
         } catch (JwtFreeException e) {
             // ignore
+            e.printStackTrace();
+            log.info("\nToken 解析用户信息失败！");
         }
         response.setCode(SysRetCodeConstants.TOKEN_VALID_FAILED.getCode());
         response.setMsg(SysRetCodeConstants.TOKEN_VALID_FAILED.getMsg());
+        log.info("\nToken 校验结果：{}", response);
         return response;
     }
 }

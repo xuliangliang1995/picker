@@ -1,5 +1,6 @@
 package com.grasswort.picker.user.interceptor;
 
+import com.grasswort.picker.commons.ip.PickerIpUtil;
 import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
@@ -48,11 +49,13 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 
         CheckAuthRequest authRequest = new CheckAuthRequest();
         authRequest.setToken(token);
+        authRequest.setIp(PickerIpUtil.getIp(request));
         CheckAuthResponse authResponse = iUserLoginService.validToken(authRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode())) {
             PickerInfoHolder.setPickerInfo(PickerInfo.builder()
                     .id(authResponse.getId())
                     .name(authResponse.getName())
+                    .privilege(authResponse.isPrivilege())
                     .build());
             return super.preHandle(request, response, handler);
         }

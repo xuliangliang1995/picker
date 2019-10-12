@@ -18,5 +18,4 @@ public interface ICAPTCHAService {
      * @return
      */
     CAPTCHAResponse sendCAPCHA(@Validated CAPTCHARequest captchaRequest);
-
 }

@@ -6,6 +6,7 @@ import com.grasswort.picker.user.dto.JwtAccessTokenUserClaim;
 import com.grasswort.picker.user.dto.JwtRefreshTokenUserClaim;
 import com.grasswort.picker.user.util.JwtTokenUtil;
 import com.grasswort.picker.user.util.MsgPackUtil;
+import lombok.Setter;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ import java.io.IOException;
 @Component
 public class UserTokenGenerator {
 
-    @Autowired LifelineConfiguration lifelineConfiguration;
+    @Autowired @Setter LifelineConfiguration lifelineConfiguration;
 
     /**
      * 生成 access_token
@@ -34,11 +35,37 @@ public class UserTokenGenerator {
         accessTokenUserClaim.setId(user.getId());
         accessTokenUserClaim.setName(user.getName());
         accessTokenUserClaim.setVersion(user.getVersion());
+        accessTokenUserClaim.setPrivilege(false);
+        accessTokenUserClaim.setIp(null);
 
         String accessToken = JwtTokenUtil.creatJwtToken(
                 JwtTokenUtil.JwtBody.builder()
                         .msg(MsgPackUtil.write(accessTokenUserClaim))
                         .expiresAt(DateTime.now().plusHours(lifelineConfiguration.getAccessTokenLifeHours()).toDate())
+                        .build()
+        );
+        return accessToken;
+    }
+
+    /**
+     * 生成高级 access_token
+     * @param user
+     * @param ip
+     * @return
+     * @throws IOException
+     */
+    public String generatePrivilegeAccessToken(User user, String ip) throws IOException {
+        JwtAccessTokenUserClaim accessTokenUserClaim = new JwtAccessTokenUserClaim();
+        accessTokenUserClaim.setId(user.getId());
+        accessTokenUserClaim.setName(user.getName());
+        accessTokenUserClaim.setVersion(user.getVersion());
+        accessTokenUserClaim.setPrivilege(true);
+        accessTokenUserClaim.setIp(ip);
+
+        String accessToken = JwtTokenUtil.creatJwtToken(
+                JwtTokenUtil.JwtBody.builder()
+                        .msg(MsgPackUtil.write(accessTokenUserClaim))
+                        .expiresAt(DateTime.now().plusMinutes(lifelineConfiguration.getTokenPrivilegeLifeMinutes()).toDate())
                         .build()
         );
         return accessToken;

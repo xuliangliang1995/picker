@@ -25,4 +25,12 @@ public class JwtAccessTokenUserClaim {
      * 版本
      */
     private Integer version;
+    /**
+     * 是否具备特权（完成身份认证）
+     */
+    private boolean privilege;
+    /**
+     * IP 地址（具备特权的 token 需要校验 IP 地址， IP 变更则立即失效）
+     */
+    private String ip;
 }
