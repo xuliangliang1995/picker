@@ -17,4 +17,6 @@ public class CheckAuthResponse extends AbstractResponse {
 
     private String name;
 
+    private boolean privilege;
+
 }

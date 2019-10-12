@@ -15,6 +15,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class CheckAuthRequest extends AbstractRequest {
     @NotEmpty
     private String token;
+    @NotEmpty
+    private String ip;
 
     @Override
     public void requestCheck() {

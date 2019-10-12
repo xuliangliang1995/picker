@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user/captcha")
 public class CaptchaController {
 
-    @Reference(version = "1.0")
+    @Reference(version = "1.0", timeout = 5000)
     ICAPTCHAService icaptchaService;
 
     @ApiOperation(value = "登录状态发送验证码到邮箱")

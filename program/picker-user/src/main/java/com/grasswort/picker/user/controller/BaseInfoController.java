@@ -1,16 +1,16 @@
 package com.grasswort.picker.user.controller;
 
 import com.grasswort.picker.commons.constants.TOrF;
+import com.grasswort.picker.commons.ip.PickerIpUtil;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserBaseInfoService;
+import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
-import com.grasswort.picker.user.dto.UserBaseInfoEditRequest;
-import com.grasswort.picker.user.dto.UserBaseInfoEditResponse;
-import com.grasswort.picker.user.dto.UserBaseInfoRequest;
-import com.grasswort.picker.user.dto.UserBaseInfoResponse;
+import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.model.PickerInfoHolder;
+import com.grasswort.picker.user.vo.ChangePasswordForm;
 import com.grasswort.picker.user.vo.EditBaseInfoForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +18,9 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author xuliangliang
@@ -62,5 +65,25 @@ public class BaseInfoController {
             return new ResponseUtil<UserBaseInfoEditResponse>().setData(editResponse);
         }
         return new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg());
+    }
+
+    @ApiOperation(value = "修改用户密码（需要提高权限）")
+    @PatchMapping("/password")
+    public ResponseData changePassword(
+            @RequestBody ChangePasswordForm changePasswordForm, BindingResult bindingResult,
+            HttpServletRequest request, HttpServletResponse response
+    ) {
+        ValidatorTool.check(bindingResult);
+        UserChangePwdRequest changePwdRequest = new UserChangePwdRequest();
+        changePwdRequest.setPassword(changePasswordForm.getPassword());
+        changePwdRequest.setIp(PickerIpUtil.getIp(request));
+        changePwdRequest.setAccessToken(request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY));
+        UserChangePwdResponse changePwdResponse = iUserBaseInfoService.changePwd(changePwdRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(changePwdResponse.getCode())) {
+            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, changePwdResponse.getAccessToken());
+            response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, changePwdResponse.getRefreshToken());
+            return new ResponseUtil<>().setData(null, "修改成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(changePwdResponse.getMsg());
     }
  }

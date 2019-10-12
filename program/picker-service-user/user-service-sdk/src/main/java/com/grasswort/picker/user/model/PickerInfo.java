@@ -18,4 +18,6 @@ public class PickerInfo {
 
     private String name;
 
+    private boolean privilege;
+
 }

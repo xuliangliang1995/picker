@@ -1,0 +1,63 @@
+package com.grasswort.picker.user.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.grasswort.picker.commons.constants.TOrF;
+import com.grasswort.picker.commons.ip.PickerIpUtil;
+import com.grasswort.picker.commons.result.ResponseData;
+import com.grasswort.picker.commons.result.ResponseUtil;
+import com.grasswort.picker.commons.validator.ValidatorTool;
+import com.grasswort.picker.user.IUserPrivilegeService;
+import com.grasswort.picker.user.constants.JwtTokenConstants;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dto.UserPrivilegeRequest;
+import com.grasswort.picker.user.dto.UserPrivilegeResponse;
+import com.grasswort.picker.user.model.PickerInfoHolder;
+import com.grasswort.picker.user.vo.CaptchaUpgradePrivilegeForm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author xuliangliang
+ * @Classname UserPrivilegeController
+ * @Description 提权接口
+ * @Date 2019/10/12 15:55
+ * @blame Java Team
+ */
+@Api(tags = "用户临时提权")
+@RestController
+@RequestMapping("/user/privilege")
+public class UserPrivilegeController {
+    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE)
+    IUserPrivilegeService iUserPrivilegeService;
+
+    @ApiOperation("通过验证码进行身份验证并提权")
+    @PostMapping("/captcha")
+    public ResponseData upgradePrivilegeByCaptcha(
+            @RequestBody CaptchaUpgradePrivilegeForm privilegeForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+        ValidatorTool.check(result);
+        UserPrivilegeRequest privilegeRequest = new UserPrivilegeRequest();
+        privilegeRequest.setCaptch(privilegeForm.getCaptcha());
+        privilegeRequest.setIp(PickerIpUtil.getIp(request));
+        privilegeRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
+        UserPrivilegeResponse privilegeResponse = iUserPrivilegeService.upgradePrivilege(privilegeRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(privilegeResponse.getCode())) {
+            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, privilegeResponse.getAccessToken());
+            return new ResponseUtil<>().setData(null);
+        }
+        return new ResponseUtil<>().setErrorMsg(privilegeResponse.getMsg());
+    }
+
+    @ApiOperation("客户端查看当前持有 access_token 是否具备高级权限")
+    @GetMapping
+    public ResponseData queryTokenPrivilege() {
+        JSONObject result = new JSONObject();
+        result.put("privilege", PickerInfoHolder.getPickerInfo().isPrivilege());
+        return new ResponseUtil<>().setData(result);
+    }
+}
