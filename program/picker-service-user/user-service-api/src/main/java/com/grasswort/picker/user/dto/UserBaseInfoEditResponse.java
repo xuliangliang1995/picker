@@ -12,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class UserBaseInfoEditResponse extends AbstractResponse {
+
     private String name;
 
     private String phone;

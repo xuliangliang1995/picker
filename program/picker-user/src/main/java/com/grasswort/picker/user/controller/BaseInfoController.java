@@ -40,12 +40,15 @@ public class BaseInfoController {
     @ApiOperation(value = "获取用户基本信息")
     @GetMapping
     public ResponseData<UserBaseInfoResponse> userInfo() {
-        UserBaseInfoRequest baseInfoRequest = new UserBaseInfoRequest();
-        baseInfoRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
+        UserBaseInfoRequest baseInfoRequest = UserBaseInfoRequest.Builder.anUserBaseInfoRequest()
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+
         UserBaseInfoResponse baseInfoResponse = iUserBaseInfoService.userBaseInfo(baseInfoRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(baseInfoResponse.getCode())) {
             return new ResponseUtil<UserBaseInfoResponse>().setData(baseInfoResponse);
         }
+
         return new ResponseUtil<UserBaseInfoResponse>().setErrorMsg(baseInfoResponse.getMsg());
     }
 
@@ -54,16 +57,21 @@ public class BaseInfoController {
     public ResponseData<UserBaseInfoEditResponse> editUserInfo(@RequestBody @Validated EditBaseInfoForm editBaseInfoForm,
                                      BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
-        UserBaseInfoEditRequest editRequest = new UserBaseInfoEditRequest();
-        editRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
-        editRequest.setName(editBaseInfoForm.getName());
-        editRequest.setSex(editBaseInfoForm.getSex());
-        editRequest.setPhone(editBaseInfoForm.getPhone());
-        editRequest.setEmail(editBaseInfoForm.getEmail());
+
+        UserBaseInfoEditRequest editRequest = UserBaseInfoEditRequest.Builder.anUserBaseInfoEditRequest()
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withName(editBaseInfoForm.getName())
+                .withSex(editBaseInfoForm.getSex())
+                .withPhone(editBaseInfoForm.getPhone())
+                .withEmail(editBaseInfoForm.getEmail())
+                .build();
+
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);
+
         if (SysRetCodeConstants.SUCCESS.getCode().equals(editResponse.getCode())) {
             return new ResponseUtil<UserBaseInfoEditResponse>().setData(editResponse);
         }
+
         return new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg());
     }
 
@@ -74,11 +82,15 @@ public class BaseInfoController {
             HttpServletRequest request, HttpServletResponse response
     ) {
         ValidatorTool.check(bindingResult);
-        UserChangePwdRequest changePwdRequest = new UserChangePwdRequest();
-        changePwdRequest.setPassword(changePasswordForm.getPassword());
-        changePwdRequest.setIp(PickerIpUtil.getIp(request));
-        changePwdRequest.setAccessToken(request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY));
+
+        UserChangePwdRequest changePwdRequest = UserChangePwdRequest.Builder.anUserChangePwdRequest()
+                .withAccessToken(request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY))
+                .withPassword(changePasswordForm.getPassword())
+                .withIp(PickerIpUtil.getIp(request))
+                .build();
+
         UserChangePwdResponse changePwdResponse = iUserBaseInfoService.changePwd(changePwdRequest);
+
         if (SysRetCodeConstants.SUCCESS.getCode().equals(changePwdResponse.getCode())) {
             response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, changePwdResponse.getAccessToken());
             response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, changePwdResponse.getRefreshToken());

@@ -1,8 +1,9 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
+import com.grasswort.picker.user.validator.Password;
+import com.grasswort.picker.user.validator.Username;
 import lombok.Data;
-import javax.validation.constraints.Size;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,14 +17,44 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserLoginRequest extends AbstractRequest {
     @NotNull
-    @Size(min = 8, max = 20)
+    @Username
     private String username;
     @NotNull
-    @Size(min = 8, max = 20)
+    @Password
     private String password;
 
     @Override
     public void requestCheck() {
 
+    }
+
+
+    public static final class Builder {
+        private String username;
+        private String password;
+
+        private Builder() {
+        }
+
+        public static Builder anUserLoginRequest() {
+            return new Builder();
+        }
+
+        public Builder withUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserLoginRequest build() {
+            UserLoginRequest userLoginRequest = new UserLoginRequest();
+            userLoginRequest.setUsername(username);
+            userLoginRequest.setPassword(password);
+            return userLoginRequest;
+        }
     }
 }

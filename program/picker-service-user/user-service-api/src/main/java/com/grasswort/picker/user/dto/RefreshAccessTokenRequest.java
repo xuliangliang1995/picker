@@ -20,4 +20,27 @@ public class RefreshAccessTokenRequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+
+    public static final class Builder {
+        private String refreshToken;
+
+        private Builder() {
+        }
+
+        public static Builder aRefreshAccessTokenRequest() {
+            return new Builder();
+        }
+
+        public Builder withRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+            return this;
+        }
+
+        public RefreshAccessTokenRequest build() {
+            RefreshAccessTokenRequest refreshAccessTokenRequest = new RefreshAccessTokenRequest();
+            refreshAccessTokenRequest.setRefreshToken(refreshToken);
+            return refreshAccessTokenRequest;
+        }
+    }
 }

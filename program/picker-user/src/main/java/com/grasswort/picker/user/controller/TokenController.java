@@ -43,8 +43,11 @@ public class TokenController {
     @GetMapping
     public ResponseData refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = request.getHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY);
-        RefreshAccessTokenRequest refreshRequest = new RefreshAccessTokenRequest();
-        refreshRequest.setRefreshToken(refreshToken);
+
+        RefreshAccessTokenRequest refreshRequest = RefreshAccessTokenRequest.Builder.aRefreshAccessTokenRequest()
+                .withRefreshToken(refreshToken)
+                .build();
+
         RefreshAccessTokenResponse refreshResponse = iUserTokenRefreshService.refreshAccessToken(refreshRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(refreshResponse.getCode())) {
             response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, refreshResponse.getAccessToken());

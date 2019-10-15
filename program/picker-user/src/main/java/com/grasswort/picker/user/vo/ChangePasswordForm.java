@@ -1,9 +1,9 @@
 package com.grasswort.picker.user.vo;
 
+import com.grasswort.picker.user.validator.Password;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 public class ChangePasswordForm {
     @NotNull
-    @Size(min = 8, max = 20)
+    @Password
     private String password;
 
     @Override

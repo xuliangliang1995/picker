@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,12 +40,15 @@ public class UserPrivilegeController {
     @ApiOperation("通过验证码进行身份验证并提权")
     @PostMapping("/captcha")
     public ResponseData upgradePrivilegeByCaptcha(
-            @RequestBody CaptchaUpgradePrivilegeForm privilegeForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+            @RequestBody @Validated CaptchaUpgradePrivilegeForm privilegeForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
         ValidatorTool.check(result);
-        UserPrivilegeRequest privilegeRequest = new UserPrivilegeRequest();
-        privilegeRequest.setCaptch(privilegeForm.getCaptcha());
-        privilegeRequest.setIp(PickerIpUtil.getIp(request));
-        privilegeRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
+
+        UserPrivilegeRequest privilegeRequest = UserPrivilegeRequest.Builder.anUserPrivilegeRequest()
+                .withCaptch(privilegeForm.getCaptcha())
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withIp(PickerIpUtil.getIp(request))
+                .build();
+
         UserPrivilegeResponse privilegeResponse = iUserPrivilegeService.upgradePrivilege(privilegeRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(privilegeResponse.getCode())) {
             response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, privilegeResponse.getAccessToken());

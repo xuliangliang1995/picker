@@ -8,16 +8,17 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author xuliangliang
- * @Classname SendActivateEmailRequest
- * @Description TODO
- * @Date 2019/10/8 16:11
+ * @Classname QueryActivateStatusRequest
+ * @Description 查看激活状态
+ * @Date 2019/10/15 16:37
  * @blame Java Team
  */
 @Data
-public class SendActivateEmailRequest extends AbstractRequest {
+public class QueryActivateStatusRequest extends AbstractRequest {
     @NotNull
     @Username
     private String username;
+
     @Override
     public void requestCheck() {
 
@@ -30,7 +31,7 @@ public class SendActivateEmailRequest extends AbstractRequest {
         private Builder() {
         }
 
-        public static Builder aSendActivateEmailRequest() {
+        public static Builder aQueryActivateStatusRequest() {
             return new Builder();
         }
 
@@ -39,10 +40,10 @@ public class SendActivateEmailRequest extends AbstractRequest {
             return this;
         }
 
-        public SendActivateEmailRequest build() {
-            SendActivateEmailRequest sendActivateEmailRequest = new SendActivateEmailRequest();
-            sendActivateEmailRequest.setUsername(username);
-            return sendActivateEmailRequest;
+        public QueryActivateStatusRequest build() {
+            QueryActivateStatusRequest queryActivateStatusRequest = new QueryActivateStatusRequest();
+            queryActivateStatusRequest.setUsername(username);
+            return queryActivateStatusRequest;
         }
     }
 }

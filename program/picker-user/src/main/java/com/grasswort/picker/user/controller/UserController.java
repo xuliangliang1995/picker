@@ -14,6 +14,8 @@ import com.grasswort.picker.user.dto.UserLoginResponse;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
 import com.grasswort.picker.user.dto.UserRegisterResponse;
 import com.grasswort.picker.user.vo.LoginForm;
+import com.grasswort.picker.user.vo.SignUpForm;
+import com.grasswort.picker.user.vo.SignUpVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
@@ -47,13 +49,20 @@ public class UserController {
 
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
-    public ResponseData register(@RequestBody @Validated UserRegisterRequest body, BindingResult bindingResult) {
+    public ResponseData<SignUpVO> register(@RequestBody @Validated SignUpForm form, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
-        UserRegisterResponse result = iUserRegisterService.register(body);
+        UserRegisterRequest signUpRequest = UserRegisterRequest.Builder.anUserRegisterRequest()
+                .withUsername(form.getUsername())
+                .withPassword(form.getPassword())
+                .withEmail(form.getEmail())
+                .build();
+        UserRegisterResponse result = iUserRegisterService.register(signUpRequest);
         if (result.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
-            return new ResponseUtil<>().setData(null);
+            SignUpVO signUpVO = new SignUpVO();
+            signUpVO.setEmail(result.getEmail());
+            return new ResponseUtil<SignUpVO>().setData(signUpVO);
         }
-        return new ResponseUtil<>().setErrorMsg(result.getMsg());
+        return new ResponseUtil<SignUpVO>().setErrorMsg(result.getMsg());
     }
 
     @ApiOperation(value = "登录")
@@ -61,9 +70,10 @@ public class UserController {
     public ResponseData login(@RequestBody @Validated LoginForm loginForm, BindingResult bindingResult, HttpServletResponse response) {
         ValidatorTool.check(bindingResult);
 
-        UserLoginRequest loginRequest = new UserLoginRequest();
-        loginRequest.setUsername(loginForm.getUsername());
-        loginRequest.setPassword(loginForm.getPassword());
+        UserLoginRequest loginRequest = UserLoginRequest.Builder.anUserLoginRequest()
+                .withUsername(loginForm.getUsername())
+                .withPassword(loginForm.getPassword())
+                .build();
 
         UserLoginResponse loginResponse = iUserLoginService.login(loginRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(loginResponse.getCode())) {

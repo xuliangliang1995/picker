@@ -26,4 +26,34 @@ public class CAPTCHARequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+
+    public static final class Builder {
+        private CAPTCHAReceiver receiver;
+        private Long userId;
+
+        private Builder() {
+        }
+
+        public static Builder aCAPTCHARequest() {
+            return new Builder();
+        }
+
+        public Builder withReceiver(CAPTCHAReceiver receiver) {
+            this.receiver = receiver;
+            return this;
+        }
+
+        public Builder withUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public CAPTCHARequest build() {
+            CAPTCHARequest cAPTCHARequest = new CAPTCHARequest();
+            cAPTCHARequest.setReceiver(receiver);
+            cAPTCHARequest.setUserId(userId);
+            return cAPTCHARequest;
+        }
+    }
 }

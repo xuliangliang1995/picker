@@ -22,4 +22,34 @@ public class CheckAuthRequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+
+    public static final class Builder {
+        private String token;
+        private String ip;
+
+        private Builder() {
+        }
+
+        public static Builder aCheckAuthRequest() {
+            return new Builder();
+        }
+
+        public Builder withToken(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder withIp(String ip) {
+            this.ip = ip;
+            return this;
+        }
+
+        public CheckAuthRequest build() {
+            CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
+            checkAuthRequest.setToken(token);
+            checkAuthRequest.setIp(ip);
+            return checkAuthRequest;
+        }
+    }
 }

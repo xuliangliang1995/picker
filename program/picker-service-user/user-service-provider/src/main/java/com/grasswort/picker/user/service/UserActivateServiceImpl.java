@@ -14,10 +14,7 @@ import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
 import com.grasswort.picker.user.dao.persistence.UserActivationCodeMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
-import com.grasswort.picker.user.dto.SendActivateEmailRequest;
-import com.grasswort.picker.user.dto.SendActivateEmailResponse;
-import com.grasswort.picker.user.dto.UserActivateRequest;
-import com.grasswort.picker.user.dto.UserActivateResponse;
+import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.service.mailbuilder.ActivateMailGenerator;
 import com.grasswort.picker.user.service.mailbuilder.wrapper.ActivateMailInfoWrapper;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
@@ -70,6 +67,38 @@ public class UserActivateServiceImpl implements IUserActivateService {
      * 激活码长度（固定 32）
      */
     final int ACTIVATED_CODE_LENGTH = 32;
+
+    /**
+     * 查看用户激活状态
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public QueryActivateStatusResponse activateStatus(QueryActivateStatusRequest request) {
+        QueryActivateStatusResponse activateStatusResponse = new QueryActivateStatusResponse();
+
+        String username = request.getUsername();
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("username", username);
+        User user = userMapper.selectOneByExample(example);
+
+        if (user == null) {
+            activateStatusResponse.setCode(SysRetCodeConstants.USER_NOT_EXISTS.getCode());
+            activateStatusResponse.setMsg(SysRetCodeConstants.USER_NOT_EXISTS.getMsg());
+            return activateStatusResponse;
+        }
+
+        boolean isActivated = user.isActivated();
+        activateStatusResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        activateStatusResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        activateStatusResponse.setActivated(isActivated);
+        if (! isActivated) {
+            activateStatusResponse.setEmail(user.getEmail());
+        }
+        return activateStatusResponse;
+    }
 
     /**
      * 发送账户激活邮件
