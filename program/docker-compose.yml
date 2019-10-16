@@ -41,21 +41,21 @@ services:
       DUBBO_PORT_TO_REGISTRY: 20882
       
   pickerUser1:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:lastest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
     restart: always
     container_name: pickerUser_1
     ports:
       - "10001:10001"
       
   pickerUser2:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:lastest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
     restart: always
     container_name: pickerUser_2
     ports:
       - "10002:10001"
       
   pickerUser3:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:lastest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
     restart: always
     container_name: pickerUser_3
     ports:
