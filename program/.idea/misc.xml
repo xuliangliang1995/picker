@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/picker-email-center/pom.xml" />
         <option value="$PROJECT_DIR$/picker-email-center/email-center/pom.xml" />
         <option value="$PROJECT_DIR$/picker-email-center/email-center-sdk/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-oss/pom.xml" />
       </list>
     </option>
   </component>

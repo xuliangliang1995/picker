@@ -6,6 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="oss-service-provider" />
+        <module name="oss-service-sdk" />
         <module name="user-service-api" />
         <module name="user-service-provider" />
         <module name="email-center" />
@@ -14,6 +16,7 @@
         <module name="picker-user" />
         <module name="commons-multidb" />
         <module name="commons-core" />
+        <module name="oss-service-api" />
         <module name="user-service-sdk" />
       </profile>
     </annotationProcessing>
