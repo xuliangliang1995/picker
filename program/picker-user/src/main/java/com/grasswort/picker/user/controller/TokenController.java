@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(tags = "Token 刷新")
 @Anoymous
 @RestController
-@RequestMapping("/user/token")
+@RequestMapping("/token")
 public class TokenController {
     @Reference(version = "1.0", timeout = 2000)
     IUserTokenRefreshService iUserTokenRefreshService;

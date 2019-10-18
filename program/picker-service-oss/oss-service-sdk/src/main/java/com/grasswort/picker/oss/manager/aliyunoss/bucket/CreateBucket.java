@@ -40,7 +40,7 @@ public class CreateBucket {
      */
     public Bucket createStandardPrivateBucket(String bucketName) {
         OSSClient oss = Oss.client();
-        return oss.createBucket("bucketName");
+        return oss.createBucket(bucketName);
     }
 
     /**

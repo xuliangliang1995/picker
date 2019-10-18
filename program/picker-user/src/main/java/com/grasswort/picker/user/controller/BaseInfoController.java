@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Api(tags = "Picker 基本信息")
 @RestController
-@RequestMapping("/user/info")
+@RequestMapping("/info")
 public class BaseInfoController {
 
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.FALSE)

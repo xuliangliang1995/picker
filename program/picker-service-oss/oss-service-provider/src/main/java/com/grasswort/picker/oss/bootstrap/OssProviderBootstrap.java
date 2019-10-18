@@ -24,6 +24,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 public class OssProviderBootstrap {
 
     public static void main(String[] args) {
-        SpringApplication.run(OssProviderBootstrap.class);
+        SpringApplication.run(OssProviderBootstrap.class, args);
     }
 }

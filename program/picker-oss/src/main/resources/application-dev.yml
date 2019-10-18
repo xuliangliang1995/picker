@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: picker-oss
+dubbo:
+  application:
+    name: picker-oss
+    owner: xuliangliang
+  scan:
+    base-packages: com.grasswort.picker.oss.controller
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+  consumer:
+    check: false
+
+swagger:
+  enabled: true
+  title: Picker-oss 接口文档
+  contact:
+    name: xuliangliang
+    email: 835547206@qq.com
+  base-package: com.grasswort.picker.oss.controller
+  authorization:
+    key-name: access_token
+  version: 1.0.0

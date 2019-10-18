@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "Picker 账号激活")
 @Anoymous
 @RestController
-@RequestMapping(ActivateUrlConstants.PATH)
+@RequestMapping("/activate")
 public class ActivateController {
 
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.TRUE)

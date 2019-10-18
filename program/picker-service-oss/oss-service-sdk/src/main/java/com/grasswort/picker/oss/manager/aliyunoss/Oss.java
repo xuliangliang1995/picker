@@ -70,7 +70,7 @@ public class Oss {
      * @version 1.0
      */
     private static class LazyHolder {
-        static final String END_POINT = "http://oss-cn-hangzhou.aliyuncs.com";
+        static final String END_POINT = "http://oss-cn-beijing.aliyuncs.com";
         static final String ACCESS_KEY_ID = "LTAIozvEu5kWwJR4";
         static final String ACCESS_KEY_SECRET = "2lzWjrIitqESLVykOVfNzWcyD8a0gl";
         static final OSSClient CLIENT = new OSSClient(END_POINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET);

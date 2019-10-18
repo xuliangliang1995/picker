@@ -14,9 +14,14 @@ public class OssStipulation {
      */
     public static final int OSS_KEY_NAME_LENGTH = 41;
     /**
-     *  匹配32位OSS_KEY_NAME的正则表达式
+     *  匹配 OSS_URL 的正则表达式
+     *  https://[bucket].oss-cn-hangzhou.aliyuncs.com/[20190909]/[32位字符串].[suffix]_[压缩策略]
      */
-    public static final String OSS_KEY32_NAME_REGEX = "[^\\s]{32}.[^\\s]{3,4}";
+    public static final String OSS_URL_REGEX = "https:\\/\\/[a-z-]*.oss-cn-beijing.aliyuncs.com\\/[0-9]{8}\\/[a-z0-9]{32}\\.[a-z]*";
+    /**
+     * 图片地址后缀
+     */
+    public static final String HOST_SUFFIX = ".oss-cn-beijing.aliyuncs.com";
     /**
      *  默认存储空间
      */
@@ -24,11 +29,11 @@ public class OssStipulation {
     /**
      * OSS路径模版【三个%s占位符分别表示存储空间、对象名称、图片处理策略】
      */
-    public static final String OSS_URL_TEMPLATE = "https://%s.oss-cn-hangzhou.aliyuncs.com/%s%s";
+    public static final String OSS_URL_TEMPLATE = "https://%s.oss-cn-beijing.aliyuncs.com/%s%s";
     /**
      * OSS路径模版前缀
      */
-    public static final String OSS_URL_PREFIX_TEMPLATE = "https://%s.oss-cn-hangzhou.aliyuncs.com/";
+    public static final String OSS_URL_PREFIX_TEMPLATE = "https://%s.oss-cn-beijing.aliyuncs.com/";
 
     /**
      * @author xuliangliang

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Api(tags = "用户临时提权")
 @RestController
-@RequestMapping("/user/privilege")
+@RequestMapping("/privilege")
 public class UserPrivilegeController {
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE)
     IUserPrivilegeService iUserPrivilegeService;

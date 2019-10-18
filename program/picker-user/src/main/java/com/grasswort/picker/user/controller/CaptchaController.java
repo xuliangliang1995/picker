@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "Picker 获取验证码")
 @RestController
-@RequestMapping("/user/captcha")
+@RequestMapping("/captcha")
 public class CaptchaController {
 
     @Reference(version = "1.0", timeout = 5000)

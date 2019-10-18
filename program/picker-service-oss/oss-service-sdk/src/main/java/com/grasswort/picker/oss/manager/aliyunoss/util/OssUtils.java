@@ -5,13 +5,11 @@ import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,9 +23,9 @@ import java.util.stream.Collectors;
  */
 public class OssUtils {
     /**
-     *  已经编译好的正则表达式存放处
+     *  预编译正则表达式
      */
-    private static Map<String, Pattern> precompilePatternsMap = new HashMap<>();
+    private static final Pattern OSS_PATTERN = Pattern.compile(OssStipulation.OSS_URL_REGEX);
     /**
      *
      * <p>Title: generateOssKeyName</p>
@@ -59,25 +57,18 @@ public class OssUtils {
      * <p>Title: findOssUrlFromText</p>
      * <p>Description: 从文本中寻找OSSurl</p>
      * @param text
-     * @param bucketName
-     * @param disposeStyle
      * @return
      * List<String>
      */
-    public static List<OssRefDTO> findOssUrlFromText(String text, String bucketName, String disposeStyle) {
-        String reg = replenishOssUrl(bucketName, OssStipulation.OSS_KEY32_NAME_REGEX, disposeStyle);
-        Pattern pattern = precompilePatternsMap.get(reg);
-        if (null == pattern) {
-            pattern = Pattern.compile(reg);
-            precompilePatternsMap.put(reg, pattern);
-        }
-        // 获取匹配器
-        Matcher matcher = pattern.matcher(text);
+    public static List<OssRefDTO> findOssUrlFromText(String text) {
+        Matcher matcher = OSS_PATTERN.matcher(text);
         List<String> list = new ArrayList<>();
         while (matcher.find()) {
             list.add(matcher.group());
         }
-        return list.stream().map(url -> resolverUrl(url, bucketName, disposeStyle)).collect(Collectors.toList());
+        return list.stream().map(url -> {
+            return resolverUrl(url);
+        }).collect(Collectors.toList());
     }
     /**
      *
@@ -87,9 +78,12 @@ public class OssUtils {
      * @return
      * OssRefDTO
      */
-    private static OssRefDTO resolverUrl(String url, String bucketName, String disposeStyle) {
-        String prefix = String.format(OssStipulation.OSS_URL_PREFIX_TEMPLATE, bucketName);
-        String objectName = url.replaceFirst(prefix, "").replaceFirst(disposeStyle, "");
+    public static OssRefDTO resolverUrl(String url) {
+        String text = url.replace(OssStipulation.HOST_SUFFIX.concat("/"), "@").replace("_", "@");
+        String[] strArray = text.split("@");
+        String bucketName = strArray[0].replace("https://", "");
+        String objectName = Arrays.stream(strArray).filter(s -> OssStipulation.OSS_KEY_NAME_LENGTH == s.indexOf("."))
+                .findFirst().orElse("");
         OssRefDTO ref = new OssRefDTO();
         ref.setBucketName(bucketName);
         ref.setObjectKey(objectName);
@@ -97,14 +91,4 @@ public class OssUtils {
         return ref;
     }
 
-    static {
-        // 预编译经常用的正则表达式
-        String reg1 = replenishOssUrl(OssStipulation.DEFAULT_BUCKET_NAME, OssStipulation.OSS_KEY32_NAME_REGEX, OssStipulation.DefaultBucketDisposeStyle.TARGET);
-        Pattern p1  = Pattern.compile(reg1);
-        precompilePatternsMap.put(reg1, p1);
-
-        String reg2 = replenishOssUrl(OssStipulation.DEFAULT_BUCKET_NAME, OssStipulation.OSS_KEY32_NAME_REGEX, OssStipulation.DefaultBucketDisposeStyle.COMPRESS);
-        Pattern p2  = Pattern.compile(reg2);
-        precompilePatternsMap.put(reg2, p2);
-    }
 }
