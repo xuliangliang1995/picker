@@ -60,3 +60,17 @@ services:
     container_name: pickerUser_3
     ports:
       - "10003:10001"
+
+  ossServiceProvider1:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    restart: always
+    container_name: ossServiceProvider_1
+    ports:
+      - "20883:20880"
+
+  pickerOss1:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
+    restart: always
+    container_name: pickerOss_1
+    ports:
+      - "20001:10002"
