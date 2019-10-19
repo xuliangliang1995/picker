@@ -14,6 +14,10 @@
     * [user-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-api) // 用户服务 API
     * [user-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-provider) // 用户服务 提供者
     * [user-service-sdk](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-user/user-service-sdk) // 用户服务 SDK
+  * [picker-service-oss](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss)// 文件上传服务
+    * [oss-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-api)
+    * [oss-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-provider)
+    * [oss-service-sdk](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-sdk)
   * [picker-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-user) // web 
 * [demo](https://github.com/xuliangliang1995/picker/tree/master/demo) // 简单 demo
   * [picker-zookeeper](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-zookeeper) // zookeeper 分布式锁
