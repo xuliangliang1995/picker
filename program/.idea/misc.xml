@@ -13,6 +13,7 @@
         <option value="$PROJECT_DIR$/picker-email-center/email-center-sdk/pom.xml" />
         <option value="$PROJECT_DIR$/picker-service-oss/pom.xml" />
         <option value="$PROJECT_DIR$/picker-oss/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-blog/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

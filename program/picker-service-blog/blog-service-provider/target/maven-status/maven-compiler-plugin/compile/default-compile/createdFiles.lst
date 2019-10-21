@@ -1,0 +1,14 @@
+com\grasswort\picker\blog\constant\DBGroup.class
+com\grasswort\picker\blog\dao\entity\BlogLabel.class
+com\grasswort\picker\blog\dao\persistence\BlogLabelMapper.class
+com\grasswort\picker\blog\dao\persistence\ext\BlogCategoryDao.class
+com\grasswort\picker\blog\config\DruidDataSourceConfiguration.class
+com\grasswort\picker\blog\service\BlogCategoryServiceImpl.class
+com\grasswort\picker\blog\dao\persistence\BlogContentMapper.class
+com\grasswort\picker\blog\dao\entity\BlogContent.class
+com\grasswort\picker\blog\dao\persistence\BlogCategoryMapper.class
+com\grasswort\picker\blog\dao\persistence\BlogMapper.class
+com\grasswort\picker\blog\bootstrap\BlogProviderBootstrap.class
+com\grasswort\picker\blog\service\BlogServiceEditServiceImpl.class
+com\grasswort\picker\blog\dao\entity\BlogCategory.class
+com\grasswort\picker\blog\dao\entity\Blog.class

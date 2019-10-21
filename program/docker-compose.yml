@@ -66,11 +66,12 @@ services:
     restart: always
     container_name: ossServiceProvider_1
     ports:
-      - "20883:20880"
+      - "20001:10002"
+
 
   pickerOss1:
     image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
     restart: always
     container_name: pickerOss_1
     ports:
-      - "20001:10002"
+      - "20883:20880"

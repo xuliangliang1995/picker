@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: picker-blog-service-provider
+  profiles:
+    active: dev

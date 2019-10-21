@@ -6,19 +6,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="oss-service-sdk" />
         <module name="user-service-sdk" />
         <module name="user-service-api" />
-        <module name="commons-multidb" />
-        <module name="user-service-provider" />
-        <module name="email-center" />
         <module name="commons-tools" />
-        <module name="email-center-sdk" />
         <module name="picker-user" />
         <module name="oss-service-provider" />
-        <module name="picker-oss" />
+        <module name="commons-multidb" />
+        <module name="blog-service-api" />
+        <module name="email-center-sdk" />
         <module name="oss-service-api" />
+        <module name="blog-service-provider" />
+        <module name="user-service-provider" />
+        <module name="oss-service-sdk" />
+        <module name="picker-oss" />
         <module name="commons-core" />
+        <module name="email-center" />
       </profile>
     </annotationProcessing>
   </component>

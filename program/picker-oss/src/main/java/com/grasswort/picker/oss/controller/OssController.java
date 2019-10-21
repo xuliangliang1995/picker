@@ -44,7 +44,7 @@ public class OssController {
         String suffix = fileName.substring(fileName.lastIndexOf("."));
         String objectName = OssUtils.generateOssKeyName().concat(suffix);
         try {
-            String ossUrl = OssUtils.replenishOssUrl(OssStipulation.DEFAULT_BUCKET_NAME, objectName, OssStipulation.DefaultBucketDisposeStyle.COMPRESS);
+            String ossUrl = OssUtils.replenishOssUrl(OssStipulation.DEFAULT_BUCKET_NAME, objectName, OssStipulation.DefaultBucketDisposeStyle.TARGET);
             OssRefDTO ref = OssUtils.resolverUrl(ossUrl);
             OssKeySaveResponse saveResponse = iOssRefService.saveKey(
                     OssKeySaveRequest.Builder.anOssKeySaveRequest()
