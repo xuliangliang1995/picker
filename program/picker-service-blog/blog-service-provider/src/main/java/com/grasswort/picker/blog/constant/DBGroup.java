@@ -9,7 +9,7 @@ package com.grasswort.picker.blog.constant;
  */
 public class DBGroup {
 
-    public static final String MASTER = "master";
+    public static final String MASTER = "MASTER";
 
-    public static final String SLAVE = "slave";
+    public static final String SLAVE = "SLAVE";
 }
