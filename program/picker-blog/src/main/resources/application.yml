@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: picker-blog
+  profiles:
+    active: dev
+
+
+server:
+  port: 10003
+  servlet:
+    context-path: /api/blog

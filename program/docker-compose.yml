@@ -1,77 +1,41 @@
 version: '3'
 services:
-  emailCenter1:
+  emailCenter:
     image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
     restart: always
-    container_name: emailCenter_1
-  
-  emailCenter2:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
-    restart: always
-    container_name: emailCenter_2
+    container_name: emailCenter
       
-  userServiceProvider1:
+  userServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
     restart: always
-    container_name: userServiceProvider_1
+    container_name: userServiceProvider
     ports:
       - "20880:20880"
     environment:
       DUBBO_IP_TO_REGISTRY: 114.67.84.153
       DUBBO_PORT_TO_REGISTRY: 20880
-      
-  userServiceProvider2:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
-    restart: always
-    container_name: userServiceProvider_2
-    ports:
-      - "20881:20880"
-    environment:
-      DUBBO_IP_TO_REGISTRY: 114.67.84.153
-      DUBBO_PORT_TO_REGISTRY: 20881
-      
-  userServiceProvider3:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
-    restart: always
-    container_name: userServiceProvider_3
-    ports:
-      - "20882:20880"
-    environment:
-      DUBBO_IP_TO_REGISTRY: 114.67.84.153
-      DUBBO_PORT_TO_REGISTRY: 20882
-      
-  pickerUser1:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
-    restart: always
-    container_name: pickerUser_1
-    ports:
-      - "10001:10001"
-      
-  pickerUser2:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
-    restart: always
-    container_name: pickerUser_2
-    ports:
-      - "10002:10001"
-      
-  pickerUser3:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
-    restart: always
-    container_name: pickerUser_3
-    ports:
-      - "10003:10001"
 
-  ossServiceProvider1:
+  ossServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
     restart: always
-    container_name: ossServiceProvider_1
+    container_name: ossServiceProvider
     ports:
-      - "20001:10002"
+      - "20881:20880"
+      environment:
+        DUBBO_IP_TO_REGISTRY: 114.67.84.153
+        DUBBO_PORT_TO_REGISTRY: 20881
+      
+  pickerUser:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
+    restart: always
+    container_name: pickerUser
+    ports:
+      - "10001:10001"
 
-
-  pickerOss1:
+  pickerOss:
     image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
     restart: always
-    container_name: pickerOss_1
+    container_name: pickerOss
     ports:
-      - "20883:20880"
+      - "10002:10002"
+

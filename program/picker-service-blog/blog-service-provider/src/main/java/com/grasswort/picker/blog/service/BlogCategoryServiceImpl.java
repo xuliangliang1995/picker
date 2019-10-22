@@ -7,7 +7,7 @@ import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
 import com.grasswort.picker.blog.dto.CreateBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.CreateBlogResponse;
+import com.grasswort.picker.blog.dto.CreateBlogCategoryResponse;
 import com.grasswort.picker.blog.dto.QueryBlogCategoryRequest;
 import com.grasswort.picker.blog.dto.QueryBlogCategoryResponse;
 import com.grasswort.picker.commons.annotation.DB;
@@ -40,17 +40,17 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
      */
     @Override
     @DB(DBGroup.MASTER)
-    public CreateBlogResponse createCategory(CreateBlogCategoryRequest createRequest) {
-        CreateBlogResponse createBlogResponse = new CreateBlogResponse();
+    public CreateBlogCategoryResponse createCategory(CreateBlogCategoryRequest createRequest) {
+        CreateBlogCategoryResponse createBlogCategoryResponse= new CreateBlogCategoryResponse();
 
         Long userId = createRequest.getUserId();
         String category = createRequest.getCategory();
         Long categoryId = blogCategoryDao.selectIdByPkUserIdAndCategory(userId, category);
         boolean categoryExists = categoryId != null;
         if (categoryExists) {
-            createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getCode());
-            createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getMsg());
-            return createBlogResponse;
+            createBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getCode());
+            createBlogCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getMsg());
+            return createBlogCategoryResponse;
         }
 
         BlogCategory blogCategory = new BlogCategory();
@@ -61,9 +61,9 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
         blogCategory.setGmtModified(now);
         blogCategoryMapper.insertUseGeneratedKeys(blogCategory);
 
-        createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
-        createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-        return createBlogResponse;
+        createBlogCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        createBlogCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return createBlogCategoryResponse;
     }
 
     /**

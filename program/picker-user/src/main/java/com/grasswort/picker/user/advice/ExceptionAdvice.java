@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Set;
 
 /**
  * @author xuliangliang
@@ -35,7 +33,6 @@ public class ExceptionAdvice {
     public ResponseData validatorException1(
             ConstraintViolationException exception
     ) {
-        exception.printStackTrace();
         String message = exception.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage).get();
         log.info("\n【参数校验失败】：{}", message);
         return new ResponseUtil<>().setErrorMsg(message);
@@ -51,6 +48,7 @@ public class ExceptionAdvice {
     public ResponseData validatorException2(
             InvalidParamException exception
     ) {
+        log.info("\n【参数校验失败】：{}", exception.getMessage());
         return new ResponseUtil<>().setErrorMsg(exception.getMessage());
     }
 
@@ -64,7 +62,6 @@ public class ExceptionAdvice {
     public ResponseData tokenException(
             AbstractTokenException exception
     ) {
-        exception.printStackTrace();
         String message = exception.getMessage();
         log.info("\n【token异常】:{}", message);
         return new ResponseUtil<>().setErrorMsg(message);

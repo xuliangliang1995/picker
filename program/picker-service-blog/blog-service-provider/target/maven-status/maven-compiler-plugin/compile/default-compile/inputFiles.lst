@@ -1,14 +1,16 @@
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\bootstrap\BlogProviderBootstrap.java
-M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\config\DruidDataSourceConfiguration.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\ext\BlogCategoryDao.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\BlogCategoryMapper.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\entity\Blog.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\entity\BlogContent.java
+M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\entity\BlogOssRef.java
+M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\configuration\DruidDataSourceConfiguration.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\service\BlogCategoryServiceImpl.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\entity\BlogCategory.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\constant\DBGroup.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\BlogLabelMapper.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\BlogMapper.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\service\BlogServiceEditServiceImpl.java
+M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\BlogOssRefMapper.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\persistence\BlogContentMapper.java
 M:\picker\program\picker-service-blog\blog-service-provider\src\main\java\com\grasswort\picker\blog\dao\entity\BlogLabel.java

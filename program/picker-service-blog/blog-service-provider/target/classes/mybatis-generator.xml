@@ -63,6 +63,11 @@
                    enableDeleteByExample="false" enableSelectByExample="false"
                    selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_blog_oss_ref" domainObjectName="BlogOssRef"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
         -->
 
 

@@ -14,6 +14,7 @@
         <option value="$PROJECT_DIR$/picker-service-oss/pom.xml" />
         <option value="$PROJECT_DIR$/picker-oss/pom.xml" />
         <option value="$PROJECT_DIR$/picker-service-blog/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-blog/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

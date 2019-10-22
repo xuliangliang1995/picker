@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(tags = "Picker 注册、登录")
 @Anoymous
 @RestController
+@RequestMapping("/")
 public class UserController {
 
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.TRUE)
