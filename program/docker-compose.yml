@@ -24,6 +24,16 @@ services:
       environment:
         DUBBO_IP_TO_REGISTRY: 114.67.84.153
         DUBBO_PORT_TO_REGISTRY: 20881
+
+  blogServiceProvider:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
+    restart: always
+    container_name: ossServiceProvider
+    ports:
+      - "20882:20880"
+      environment:
+        DUBBO_IP_TO_REGISTRY: 114.67.84.153
+        DUBBO_PORT_TO_REGISTRY: 20882
       
   pickerUser:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
@@ -33,9 +43,16 @@ services:
       - "10001:10001"
 
   pickerOss:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
     restart: always
     container_name: pickerOss
     ports:
       - "10002:10002"
+
+  pickerBlog:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
+    restart: always
+    container_name: pickerBlog
+    ports:
+      - "10003:10003"
 
