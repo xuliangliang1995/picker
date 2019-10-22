@@ -28,7 +28,7 @@ services:
   blogServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
     restart: always
-    container_name: ossServiceProvider
+    container_name: blogServiceProvider
     ports:
       - "20882:20880"
     environment:
