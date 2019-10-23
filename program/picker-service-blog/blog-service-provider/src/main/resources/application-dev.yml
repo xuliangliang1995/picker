@@ -12,6 +12,8 @@ dubbo:
   registry:
     address: nacos://nacos.grasswort.com:8848
     check: false
+  consumer:
+    check: false
 # 多数据源配置
 multidb:
   defaultGroup: MASTER
