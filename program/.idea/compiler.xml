@@ -10,10 +10,10 @@
         <module name="user-service-api" />
         <module name="blog-service-api" />
         <module name="picker-user" />
-        <module name="oss-service-api" />
+        <module name="oss-service-provider" />
         <module name="commons-multidb" />
         <module name="commons-tools" />
-        <module name="oss-service-provider" />
+        <module name="oss-service-api" />
         <module name="email-center-sdk" />
         <module name="blog-service-provider" />
         <module name="user-service-provider" />

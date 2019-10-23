@@ -1,58 +1,125 @@
 version: '3'
 services:
+  # 邮件中心
   emailCenter:
     image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
-    restart: always
-    container_name: emailCenter
-      
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+
+  # 用户服务提供者
   userServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
-    restart: always
-    container_name: userServiceProvider
+    depends_on:
+      - emailCenter
     ports:
       - "20880:20880"
     environment:
-      DUBBO_IP_TO_REGISTRY: 114.67.84.153
       DUBBO_PORT_TO_REGISTRY: 20880
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
 
+  # Oss 文件服务提供者
   ossServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
-    restart: always
-    container_name: ossServiceProvider
     ports:
       - "20881:20880"
     environment:
-      DUBBO_IP_TO_REGISTRY: 114.67.84.153
       DUBBO_PORT_TO_REGISTRY: 20881
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
 
+  # 博客 服务提供者
   blogServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
-    restart: always
-    container_name: blogServiceProvider
     ports:
       - "20882:20880"
     environment:
-      DUBBO_IP_TO_REGISTRY: 114.67.84.153
       DUBBO_PORT_TO_REGISTRY: 20882
-      
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+
   pickerUser:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
-    restart: always
-    container_name: pickerUser
     ports:
       - "10001:10001"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
 
   pickerOss:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
-    restart: always
-    container_name: pickerOss
     ports:
       - "10002:10002"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
 
   pickerBlog:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
-    restart: always
-    container_name: pickerBlog
     ports:
       - "10003:10003"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+
 

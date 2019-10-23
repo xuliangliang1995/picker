@@ -143,7 +143,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.grasswort.picker.user.bootstrap.PickerBlogBootStrap</mainClass>
+          <mainClass>com.grasswort.picker.blog.bootstrap.PickerBlogBootStrap</mainClass>
         </configuration>
         <executions>
           <execution>

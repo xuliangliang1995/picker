@@ -47,7 +47,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired BlogOssRefMapper blogOssRefMapper;
 
-    @Reference(version = "1,0", timeout = 5000) IOssRefService iOssRefService;
+    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
 
     /**
      * 创建博客
