@@ -18,6 +18,7 @@ nacos:
 logging:
   level:
     root: info
+
 #spring:
 #  application:
 #    name: picker-user
