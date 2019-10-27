@@ -30,6 +30,10 @@ services:
     image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
     depends_on:
       - emailCenter
+    ports:
+      - "20880:20880"
+    environment:
+      DUBBO_PORT_TO_REGISTRY: 20880
     deploy:
       replicas: 1
       restart_policy:
@@ -55,6 +59,10 @@ services:
   # Oss 文件服务提供者
   ossServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    ports:
+      - "20881:20881"
+    environment:
+      DUBBO_PORT_TO_REGISTRY: 20881
     deploy:
       replicas: 1
       restart_policy:
@@ -80,6 +88,10 @@ services:
   # 博客 服务提供者
   blogServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
+    ports:
+      - "20882:20882"
+    environment:
+      DUBBO_PORT_TO_REGISTRY: 20882
     deploy:
       replicas: 1
       restart_policy:
