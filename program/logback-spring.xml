@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
+<!-- 日志示例 -->
 <configuration scan="true" scanPeriod="10 seconds">
     <include resource="org/springframework/boot/logging/logback/base.xml" />
     <property name="LOG_PATH" value="../logs" />
@@ -74,10 +74,10 @@
     </appender>
 
     <root level="INFO">
-            <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT" />
         <!--<appender-ref ref="DEBUG" />-->
-            <appender-ref ref="INFO" />
-            <appender-ref ref="ERROR" />
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
     </root>
 
 </configuration>

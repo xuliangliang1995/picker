@@ -14,6 +14,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_email_center"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   # 用户服务提供者
   userServiceProvider:
@@ -35,6 +45,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_user_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   # Oss 文件服务提供者
   ossServiceProvider:
@@ -54,6 +74,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_oss_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   # 博客 服务提供者
   blogServiceProvider:
@@ -73,6 +103,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_blog_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   pickerUser:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
@@ -89,6 +129,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_user"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   pickerOss:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
@@ -105,6 +155,16 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_oss"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
   pickerBlog:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
@@ -121,5 +181,15 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
+    labels:
+      - "item=picker"
+      - "servicename=picker_blog"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
 
 
