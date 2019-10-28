@@ -177,6 +177,14 @@
     docker run -d -p 6379:6379 -v ~/redisdata:/data --restart=always --name redis redis:latest redis-server --requirepass "Xol4l2y2xx" --appendonly yes
     ```
 
+13. git pull 免密码
+
+    ```shell
+    vim .git/config
+    远程地址修改为
+    http://账号:密码@git地址
+    ```
+
     
 
 ## 部分配置信息：
