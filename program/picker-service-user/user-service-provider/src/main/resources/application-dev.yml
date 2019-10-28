@@ -84,7 +84,7 @@ nacos:
 #    producer:
 #      acks: 1
 #  redisson:
-#    address: r-2zesm95peq27e6zp1hpd.redis.rds.aliyuncs.com:6379
+#    address: 114.67.99.146:6379
 #    password: Xol4l2y2xx
 #    timeout: 3000
 #    database: 0

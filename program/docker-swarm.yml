@@ -54,7 +54,7 @@ services:
 
   # Oss 文件服务提供者
   ossServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
     deploy:
       replicas: 3
       restart_policy:

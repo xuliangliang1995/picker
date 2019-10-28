@@ -39,7 +39,8 @@ services:
 
   # Oss 文件服务提供者
   ossServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
+    container_name: ossServiceProvider
     ports:
       - "20881:20880"
     environment:
@@ -59,6 +60,7 @@ services:
   # 博客 服务提供者
   blogServiceProvider:
     image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
+    container_name: blogServiceProvider
     ports:
       - "20882:20880"
     environment:
@@ -77,6 +79,7 @@ services:
 
   pickerUser:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
+    container_name: pickerUser
     ports:
       - "10001:10001"
     labels:
@@ -92,6 +95,7 @@ services:
 
   pickerOss:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    container_name: pickerOss
     ports:
       - "10002:10002"
     labels:
@@ -107,6 +111,7 @@ services:
 
   pickerBlog:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
+    container_name: pickerBlog
     ports:
       - "10003:10003"
     labels:

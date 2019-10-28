@@ -171,7 +171,13 @@
 
 11. 个人博客记录的别的一些配置：https://mp.csdn.net/postedit/88598647
 
+12.  docker redis
 
+    ```shell
+    docker run -d -p 6379:6379 -v ~/redisdata:/data --restart=always --name redis redis:latest redis-server --requirepass "Xol4l2y2xx" --appendonly yes
+    ```
+
+    
 
 ## 部分配置信息：
 
