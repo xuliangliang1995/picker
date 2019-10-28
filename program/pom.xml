@@ -30,5 +30,17 @@
             <url>http://59.110.163.6:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
+    <build>
+        <plugins>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.10</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

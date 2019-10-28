@@ -153,6 +153,17 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/picker-blog</repository>
+          <dockerfile>Dockerfile</dockerfile>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 

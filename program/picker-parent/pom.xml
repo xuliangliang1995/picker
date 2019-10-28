@@ -47,6 +47,8 @@
     <freemarker.version>2.3.9</freemarker.version>
     <jackson-annotations.version>2.9.9</jackson-annotations.version>
     <aliyun.oss.version>2.8.3</aliyun.oss.version>
+    <docker.image.prefix>nuggets</docker.image.prefix>
+    <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
   </properties>
 
   <distributionManagement>
@@ -410,7 +412,27 @@
             <configurationFile>src/main/resources/mybatis-generator.xml</configurationFile>
           </configuration>
         </plugin>
+        <!-- docker -->
+        <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>dockerfile-maven-plugin</artifactId>
+            <version>${dockerfile-maven-plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
+
+
 </project>
+
+
