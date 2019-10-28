@@ -3,16 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.grasswort.picker</groupId>
-    <artifactId>picker-commons</artifactId>
-    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <artifactId>picker</artifactId>
+
     <modules>
-        <module>commons-tools</module>
-        <module>commons-core</module>
-        <module>commons-multidb</module>
+        <module>picker-parent</module>
+        <module>picker-commons</module>
+        <module>picker-email-center</module>
+        <module>picker-service-user</module>
+        <module>picker-service-blog</module>
+        <module>picker-service-oss</module>
+        <module>picker-user</module>
+        <module>picker-blog</module>
+        <module>picker-oss</module>
     </modules>
+    <packaging>pom</packaging>
 
     <distributionManagement>
         <repository>
