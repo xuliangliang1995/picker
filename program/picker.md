@@ -14,3 +14,26 @@ docker-compose -f docker-compose-1.yml up -d
 docker-compose -f docker-compose-2.yml up -d 
 docker-compose -f docker-compose-3.yml up -d 
 ```
+
+# 清空 tag 为 <NONE> 的镜像
+```shell script
+docker images|grep none|awk '{print $3 }'|xargs docker rmi
+```
+
+# 服务器重部署容器命令
+```shell script
+cd picker
+git pull origin master
+cd program
+docker-compose -f docker-compose-1.yml down
+cd 
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/email-center
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/picker-user
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/picker-blog
+docker pull registry.cn-beijing.aliyuncs.com/grasswort/picker-oss
+docker images|grep none|awk '{print $3 }'|xargs docker rmi
+docker-compose -f docker-compose-1.yml up -d
+```
