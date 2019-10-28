@@ -15,6 +15,10 @@ nacos:
     config-long-poll-timeout: 46000
     enable-remote-sync-config: false
 
+logging:
+  level:
+    root: info
+
 #spring:
 #  application:
 #    name: picker-user

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: picker-blog
+dubbo:
+  application:
+    name: picker-blog
+    owner: xuliangliang
+  scan:
+    base-packages: com.grasswort.picker.blog.controller
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+  consumer:
+    check: false
+
+swagger:
+  enabled: true
+  title: Picker-Blog 接口文档
+  contact:
+    name: xuliangliang
+    email: 835547206@qq.com
+  base-package: com.grasswort.picker.blog.controller
+  authorization:
+    key-name: access_token
+  version: 1.0.0

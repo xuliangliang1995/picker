@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: picker-oss
+  profiles:
+    active: dev
+
+
+server:
+  port: 10002
+  servlet:
+    context-path: /api/oss

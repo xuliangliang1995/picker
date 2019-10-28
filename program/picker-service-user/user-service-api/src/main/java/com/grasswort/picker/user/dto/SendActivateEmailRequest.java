@@ -1,8 +1,8 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
+import com.grasswort.picker.user.validator.Username;
 import lombok.Data;
-import javax.validation.constraints.Size;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,10 +16,33 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SendActivateEmailRequest extends AbstractRequest {
     @NotNull
-    @Size(min = 8, max = 20)
+    @Username
     private String username;
     @Override
     public void requestCheck() {
 
+    }
+
+
+    public static final class Builder {
+        private String username;
+
+        private Builder() {
+        }
+
+        public static Builder aSendActivateEmailRequest() {
+            return new Builder();
+        }
+
+        public Builder withUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public SendActivateEmailRequest build() {
+            SendActivateEmailRequest sendActivateEmailRequest = new SendActivateEmailRequest();
+            sendActivateEmailRequest.setUsername(username);
+            return sendActivateEmailRequest;
+        }
     }
 }

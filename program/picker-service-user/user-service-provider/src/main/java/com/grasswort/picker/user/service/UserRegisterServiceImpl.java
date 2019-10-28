@@ -4,6 +4,7 @@ import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.commons.mask.MaskUtil;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SexEnum;
@@ -85,6 +86,7 @@ public class UserRegisterServiceImpl implements IUserRegisterService {
 
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        response.setEmail(MaskUtil.maskEmail(request.getEmail()));
         log.info("\n注册成功：{}", request.getUsername());
         // 发送激活邮件
         userActivateServiceImpl.sendActivateEmail(user.getId());

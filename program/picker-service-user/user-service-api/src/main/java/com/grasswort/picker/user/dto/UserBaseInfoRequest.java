@@ -25,4 +25,27 @@ public class UserBaseInfoRequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+
+    public static final class Builder {
+        private Long userId;
+
+        private Builder() {
+        }
+
+        public static Builder anUserBaseInfoRequest() {
+            return new Builder();
+        }
+
+        public Builder withUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public UserBaseInfoRequest build() {
+            UserBaseInfoRequest userBaseInfoRequest = new UserBaseInfoRequest();
+            userBaseInfoRequest.setUserId(userId);
+            return userBaseInfoRequest;
+        }
+    }
 }

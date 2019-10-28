@@ -9,7 +9,7 @@ spring:
 # 邮箱设置
 email:
   smtp-host: smtpdm.aliyun.com
-  smtp-port: 25
+  smtp-port: 80
   auth: true
   user: xuliangliang@notice.grasswort.com
   password: GrassworT19950422

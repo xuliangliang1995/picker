@@ -1,10 +1,11 @@
 package com.grasswort.picker.user.vo;
 
+import com.grasswort.picker.user.validator.Username;
 import lombok.Data;
-import javax.validation.constraints.Size;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -16,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserActivateForm {
     @NotNull
-    @Size(min = 8, max = 20)
+    @Username
     private String username;
     @NotNull
     @Size(min = 32, max = 32)

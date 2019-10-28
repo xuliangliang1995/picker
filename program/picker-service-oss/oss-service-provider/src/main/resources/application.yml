@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: picker-oss-service-provider
+  profiles:
+    active: dev

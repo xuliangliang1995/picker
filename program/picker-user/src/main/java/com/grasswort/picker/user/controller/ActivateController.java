@@ -8,10 +8,10 @@ import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.ActivateUrlConstants;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
-import com.grasswort.picker.user.dto.SendActivateEmailRequest;
-import com.grasswort.picker.user.dto.SendActivateEmailResponse;
-import com.grasswort.picker.user.dto.UserActivateRequest;
-import com.grasswort.picker.user.dto.UserActivateResponse;
+import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.vo.ActivateStatusVO;
+import com.grasswort.picker.user.vo.QueryActivateStatusForm;
+import com.grasswort.picker.user.vo.SendActivateEmailForm;
 import com.grasswort.picker.user.vo.UserActivateForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,26 +30,50 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "Picker 账号激活")
 @Anoymous
 @RestController
-@RequestMapping(ActivateUrlConstants.PATH)
+@RequestMapping("/activate")
 public class ActivateController {
 
     @Reference(version = "1.0", timeout = 2000, validation = TOrF.TRUE)
     IUserActivateService iUserActivateService;
 
+    @ApiOperation(value = "获取账号激活状态")
+    @GetMapping("/status")
+    public ResponseData<ActivateStatusVO> activateStatus(@Validated QueryActivateStatusForm form, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+
+        QueryActivateStatusRequest activateStatusRequest = QueryActivateStatusRequest.Builder.aQueryActivateStatusRequest()
+                .withUsername(form.getUsername())
+                .build();
+
+        QueryActivateStatusResponse activateStatusResponse = iUserActivateService.activateStatus(activateStatusRequest);
+
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(activateStatusResponse.getCode())) {
+            ActivateStatusVO vo = new ActivateStatusVO();
+            vo.setActivated(activateStatusResponse.isActivated());
+            vo.setEmail(activateStatusResponse.getEmail());
+            return new ResponseUtil<ActivateStatusVO>().setData(vo);
+        }
+        return new ResponseUtil<ActivateStatusVO>().setErrorMsg(activateStatusResponse.getMsg());
+    }
+
     /**
      * 激活邮件
-     * @param username
-     * @return
+     * @param form
+     * @return ResponseData
      */
     @ApiOperation(value = "发送激活邮件")
     @PostMapping("/email")
-    public ResponseData activateEmail(
-            @RequestParam("username") String username) {
-        SendActivateEmailRequest emailRequest = new SendActivateEmailRequest();
-        emailRequest.setUsername(username);
+    public ResponseData activateEmail(@RequestBody @Validated SendActivateEmailForm form, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+
+        SendActivateEmailRequest emailRequest = SendActivateEmailRequest.Builder.aSendActivateEmailRequest()
+                .withUsername(form.getUsername())
+                .build();
+
         SendActivateEmailResponse result = iUserActivateService.sendActivateEmail(emailRequest);
+
         if (SysRetCodeConstants.SUCCESS.getCode().equals(result.getCode())) {
-            return new ResponseUtil().setData(result.getEmail());
+            return new ResponseUtil().setData(null, "发送成功");
         }
         return new ResponseUtil<>().setErrorMsg(result.getMsg());
     }
@@ -63,11 +87,15 @@ public class ActivateController {
     @GetMapping
     public ResponseData activate(@Validated UserActivateForm activateForm, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
-        UserActivateRequest activateRequest = new UserActivateRequest();
-        activateRequest.setUsername(activateForm.getUsername());
-        activateRequest.setActivationCode(activateForm.getCode());
-        activateRequest.setActivateId(activateForm.getActivateId());
+
+        UserActivateRequest activateRequest = UserActivateRequest.Builder.anUserActivateRequest()
+                .withUsername(activateForm.getUsername())
+                .withActivationCode(activateForm.getCode())
+                .withActivateId(activateForm.getActivateId())
+                .build();
+
         UserActivateResponse activateResponse = iUserActivateService.activate(activateRequest);
+
         if (activateResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
             return new ResponseUtil().setData(null, "Picker 账户激活成功");
         }

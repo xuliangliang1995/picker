@@ -1,0 +1,128 @@
+version: '3.7'
+services:
+  # 邮件中心
+  emailCenter:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
+    container_name: emailCenter
+    labels:
+      - "item=picker"
+      - "servicename=picker_email_center"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  # 用户服务提供者
+  userServiceProvider:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
+    container_name: userServiceProvider
+    depends_on:
+      - emailCenter
+    ports:
+      - "20880:20880"
+    environment:
+      DUBBO_IP_TO_REGISTRY: 114.67.104.148
+      DUBBO_PORT_TO_REGISTRY: 20880
+    labels:
+      - "item=picker"
+      - "servicename=picker_user_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  # Oss 文件服务提供者
+  ossServiceProvider:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
+    container_name: ossServiceProvider
+    ports:
+      - "20881:20880"
+    environment:
+      DUBBO_IP_TO_REGISTRY: 114.67.104.148
+      DUBBO_PORT_TO_REGISTRY: 20881
+    labels:
+      - "item=picker"
+      - "servicename=picker_oss_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  # 博客 服务提供者
+  blogServiceProvider:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
+    container_name: blogServiceProvider
+    ports:
+      - "20882:20880"
+    environment:
+      DUBBO_IP_TO_REGISTRY: 114.67.104.148
+      DUBBO_PORT_TO_REGISTRY: 20882
+    labels:
+      - "item=picker"
+      - "servicename=picker_blog_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  pickerUser:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
+    container_name: pickerUser
+    ports:
+      - "10001:10001"
+    labels:
+      - "item=picker"
+      - "servicename=picker_user"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  pickerOss:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    container_name: pickerOss
+    ports:
+      - "10002:10002"
+    labels:
+      - "item=picker"
+      - "servicename=picker_oss"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  pickerBlog:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
+    container_name: pickerBlog
+    ports:
+      - "10003:10003"
+    labels:
+      - "item=picker"
+      - "servicename=picker_blog"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+

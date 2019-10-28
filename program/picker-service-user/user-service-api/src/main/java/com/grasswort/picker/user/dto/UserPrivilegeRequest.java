@@ -35,4 +35,41 @@ public class UserPrivilegeRequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+
+    public static final class Builder {
+        private String ip;
+        private Long userId;
+        private String captch;
+
+        private Builder() {
+        }
+
+        public static Builder anUserPrivilegeRequest() {
+            return new Builder();
+        }
+
+        public Builder withIp(String ip) {
+            this.ip = ip;
+            return this;
+        }
+
+        public Builder withUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder withCaptch(String captch) {
+            this.captch = captch;
+            return this;
+        }
+
+        public UserPrivilegeRequest build() {
+            UserPrivilegeRequest userPrivilegeRequest = new UserPrivilegeRequest();
+            userPrivilegeRequest.setIp(ip);
+            userPrivilegeRequest.setUserId(userId);
+            userPrivilegeRequest.setCaptch(captch);
+            return userPrivilegeRequest;
+        }
+    }
 }

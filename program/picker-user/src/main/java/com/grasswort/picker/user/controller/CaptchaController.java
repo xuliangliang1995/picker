@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "Picker 获取验证码")
 @RestController
-@RequestMapping("/user/captcha")
+@RequestMapping("/captcha")
 public class CaptchaController {
 
     @Reference(version = "1.0", timeout = 5000)
@@ -33,9 +33,11 @@ public class CaptchaController {
     @ApiOperation(value = "登录状态发送验证码到邮箱")
     @GetMapping("/email")
     public ResponseData getEmailCaptcha() {
-        CAPTCHARequest captchaRequest = new CAPTCHARequest();
-        captchaRequest.setReceiver(CAPTCHAReceiver.EMAIL);
-        captchaRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
+        CAPTCHARequest captchaRequest = CAPTCHARequest.Builder.aCAPTCHARequest()
+                .withReceiver(CAPTCHAReceiver.EMAIL)
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+
         CAPTCHAResponse captchaResponse = icaptchaService.sendCAPCHA(captchaRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(captchaResponse.getCode())) {
             return new ResponseUtil<>().setData(null, "发送成功");

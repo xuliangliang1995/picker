@@ -11,7 +11,16 @@
         <option value="$PROJECT_DIR$/picker-email-center/pom.xml" />
         <option value="$PROJECT_DIR$/picker-email-center/email-center/pom.xml" />
         <option value="$PROJECT_DIR$/picker-email-center/email-center-sdk/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-oss/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-oss/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-blog/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-blog/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/picker-commons/picker-oss/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">

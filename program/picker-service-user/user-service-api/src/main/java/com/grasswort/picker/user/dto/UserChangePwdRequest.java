@@ -1,11 +1,11 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
+import com.grasswort.picker.user.validator.Password;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Data
 public class UserChangePwdRequest extends AbstractRequest {
     @NotNull
-    @Size(min = 8, max = 20)
+    @Password
     private String password;
 
     @NotEmpty
@@ -29,5 +29,42 @@ public class UserChangePwdRequest extends AbstractRequest {
     @Override
     public void requestCheck() {
 
+    }
+
+
+    public static final class Builder {
+        private String password;
+        private String ip;
+        private String accessToken;
+
+        private Builder() {
+        }
+
+        public static Builder anUserChangePwdRequest() {
+            return new Builder();
+        }
+
+        public Builder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder withIp(String ip) {
+            this.ip = ip;
+            return this;
+        }
+
+        public Builder withAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        public UserChangePwdRequest build() {
+            UserChangePwdRequest userChangePwdRequest = new UserChangePwdRequest();
+            userChangePwdRequest.setPassword(password);
+            userChangePwdRequest.setIp(ip);
+            userChangePwdRequest.setAccessToken(accessToken);
+            return userChangePwdRequest;
+        }
     }
 }
