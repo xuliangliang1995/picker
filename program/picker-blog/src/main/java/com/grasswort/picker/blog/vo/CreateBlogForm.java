@@ -18,6 +18,6 @@ public class CreateBlogForm {
     private String markdown;
     @NotEmpty
     private String html;
-    @Min(1)
+    @Min(0)
     private Long categoryId;
 }
