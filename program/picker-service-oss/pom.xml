@@ -11,7 +11,7 @@
   <artifactId>picker-service-oss</artifactId>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>oss-service-api</module>
+      <module>oss-service-api</module>
       <module>oss-service-sdk</module>
       <module>oss-service-provider</module>
   </modules>
