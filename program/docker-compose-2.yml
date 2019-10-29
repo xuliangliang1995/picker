@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # 邮件中心
   emailCenter:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
     container_name: emailCenter
     labels:
       - "item=picker"
@@ -17,7 +17,7 @@ services:
 
   # 用户服务提供者
   userServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
     container_name: userServiceProvider
     depends_on:
       - emailCenter
@@ -39,7 +39,7 @@ services:
 
   # Oss 文件服务提供者
   ossServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
     container_name: ossServiceProvider
     ports:
       - "20881:20880"
@@ -59,7 +59,7 @@ services:
 
   # 博客 服务提供者
   blogServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
     container_name: blogServiceProvider
     ports:
       - "20882:20880"
@@ -78,7 +78,7 @@ services:
         max-file: "10"
 
   pickerUser:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
     container_name: pickerUser
     ports:
       - "10001:10001"
@@ -94,7 +94,7 @@ services:
         max-file: "10"
 
   pickerOss:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
     container_name: pickerOss
     ports:
       - "10002:10002"
@@ -110,7 +110,7 @@ services:
         max-file: "10"
 
   pickerBlog:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:xuliangliang1995/1.0
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
     container_name: pickerBlog
     ports:
       - "10003:10003"
