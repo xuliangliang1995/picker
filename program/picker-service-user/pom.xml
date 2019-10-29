@@ -11,7 +11,7 @@
   <artifactId>picker-service-user</artifactId>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>user-service-api</module>
+      <module>user-service-api</module>
       <module>user-service-provider</module>
       <module>user-service-sdk</module>
   </modules>

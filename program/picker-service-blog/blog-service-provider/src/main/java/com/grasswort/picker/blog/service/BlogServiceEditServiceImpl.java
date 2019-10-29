@@ -65,14 +65,18 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         String html = blogRequest.getHtml();
         Long userId = blogRequest.getUserId();
         Long categoryId = blogRequest.getCategoryId();
-        // 检测种类是否正确
-        Long categoryOwnerId = blogCategoryDao.selectUserIdByPrimaryKey(categoryId);
-        boolean categoryNotExists =  categoryOwnerId == null || ! Objects.equals(categoryOwnerId, userId);
-        if (categoryNotExists) {
-            createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
-            createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
-            return createBlogResponse;
+
+        if (categoryId != null && categoryId > 0) {
+            // 检测种类是否正确
+            Long categoryOwnerId = blogCategoryDao.selectUserIdByPrimaryKey(categoryId);
+            boolean categoryNotExists =  categoryOwnerId == null || ! Objects.equals(categoryOwnerId, userId);
+            if (categoryNotExists) {
+                createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+                createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+                return createBlogResponse;
+            }
         }
+
         // 添加博客
         Blog blog = new Blog();
         blog.setPkUserId(userId);

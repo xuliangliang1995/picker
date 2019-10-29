@@ -35,7 +35,7 @@ public class CreateBlogRequest extends AbstractRequest {
     /**
      * 博客分类 ID
      */
-    @Min(1)
+    @Min(0)
     private Long categoryId;
 
     @Override
