@@ -90,7 +90,7 @@ public class OssRefServiceImpl implements IOssRefService {
             Date now = new Date(System.currentTimeMillis());
             ref.setGmtCreate(now);
             ref.setGmtModified(now);
-
+            DBLocalHolder.selectDBGroup(DBGroup.MASTER);
             ossKeyRefMapper.insertUseGeneratedKeys(ref);
             refResponse.setId(ref.getId());
         }
