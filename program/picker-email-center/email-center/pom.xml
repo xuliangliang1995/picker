@@ -83,7 +83,10 @@
         <configuration>
           <skip>false</skip>
           <repository>registry.cn-beijing.aliyuncs.com/grasswort/email-center</repository>
+          <tag>xuliangliang1995/1.0</tag>
           <dockerfile>Dockerfile</dockerfile>
+          <username>xuliangliang1995</username>
+          <password>xol4l2y2xx</password>
         </configuration>
       </plugin>
     </plugins>

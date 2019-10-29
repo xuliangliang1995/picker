@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # 邮件中心
   emailCenter:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:xuliangliang1995/1.0
     deploy:
       replicas: 3
       restart_policy:
@@ -27,7 +27,7 @@ services:
 
   # 用户服务提供者
   userServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider:xuliangliang1995/1.0
     depends_on:
       - emailCenter
     deploy:
@@ -54,7 +54,7 @@ services:
 
   # Oss 文件服务提供者
   ossServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/oss-service-provider:xuliangliang1995/1.0
     deploy:
       replicas: 3
       restart_policy:
@@ -79,7 +79,7 @@ services:
 
   # 博客 服务提供者
   blogServiceProvider:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider:xuliangliang1995/1.0
     deploy:
       replicas: 3
       restart_policy:
@@ -103,7 +103,7 @@ services:
         max-file: "10"
 
   pickerUser:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:xuliangliang1995/1.0
     ports:
       - "10001:10001"
     deploy:
@@ -129,7 +129,7 @@ services:
         max-file: "10"
 
   pickerOss:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-oss:xuliangliang1995/1.0
     ports:
       - "10002:10002"
     deploy:
@@ -155,7 +155,7 @@ services:
         max-file: "10"
 
   pickerBlog:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-blog:xuliangliang1995/1.0
     ports:
       - "10003:10003"
     deploy:
