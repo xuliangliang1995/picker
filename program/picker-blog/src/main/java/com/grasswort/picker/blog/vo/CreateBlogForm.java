@@ -2,9 +2,9 @@ package com.grasswort.picker.blog.vo;
 
 import lombok.Data;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -16,8 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class CreateBlogForm {
     @NotEmpty
-    @Min(1)
-    @Max(50)
+    @Size(min = 1, max = 50)
     private String title;
     @NotEmpty
     private String markdown;
