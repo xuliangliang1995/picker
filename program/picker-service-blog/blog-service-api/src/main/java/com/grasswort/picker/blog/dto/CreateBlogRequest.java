@@ -4,9 +4,9 @@ import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -26,9 +26,8 @@ public class CreateBlogRequest extends AbstractRequest {
     /**
      * 文章标题
      */
-    @Min(1)
-    @Max(50)
     @NotEmpty
+    @Size(min = 1, max = 50)
     private String title;
     /**
      * markdown 内容
