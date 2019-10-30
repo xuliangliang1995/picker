@@ -41,6 +41,7 @@ public class BlogController {
         ValidatorTool.check(bindingResult);
 
         CreateBlogRequest createBlogRequest = CreateBlogRequest.Builder.aCreateBlogRequest()
+                .withTitle(form.getTitle())
                 .withMarkdown(form.getMarkdown())
                 .withHtml(form.getHtml())
                 .withCategoryId(form.getCategoryId())

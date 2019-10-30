@@ -33,6 +33,12 @@
 
 
 
+## Jenkins 
+
+ [http://114.67.99.146:8080](http://114.67.99.146:8080/) 
+
+
+
 ## Nacos 控制台
 
 http://nacos.grasswort.com:8848/nacos/index.html

@@ -4,6 +4,7 @@ import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +23,13 @@ public class CreateBlogRequest extends AbstractRequest {
     @NotNull
     @Min(1)
     private Long userId;
+    /**
+     * 文章标题
+     */
+    @Min(1)
+    @Max(50)
+    @NotEmpty
+    private String title;
     /**
      * markdown 内容
      */
@@ -46,6 +54,7 @@ public class CreateBlogRequest extends AbstractRequest {
 
     public static final class Builder {
         private Long userId;
+        private String title;
         private String markdown;
         private String html;
         private Long categoryId;
@@ -59,6 +68,11 @@ public class CreateBlogRequest extends AbstractRequest {
 
         public Builder withUserId(Long userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder withTitle(String title) {
+            this.title = title;
             return this;
         }
 
@@ -80,6 +94,7 @@ public class CreateBlogRequest extends AbstractRequest {
         public CreateBlogRequest build() {
             CreateBlogRequest createBlogRequest = new CreateBlogRequest();
             createBlogRequest.setUserId(userId);
+            createBlogRequest.setTitle(title);
             createBlogRequest.setMarkdown(markdown);
             createBlogRequest.setHtml(html);
             createBlogRequest.setCategoryId(categoryId);

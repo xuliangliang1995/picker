@@ -15,6 +15,11 @@ public class Blog {
     private Long categoryId;
 
     /**
+     * 文章标题
+     */
+    private String title;
+
+    /**
      * 博客的版本
      */
     private Integer version;
@@ -65,6 +70,14 @@ public class Blog {
      */
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**

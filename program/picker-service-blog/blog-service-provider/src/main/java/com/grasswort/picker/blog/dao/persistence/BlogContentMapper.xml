@@ -10,6 +10,7 @@
     <result column="blog_version" jdbcType="INTEGER" property="blogVersion" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="title" jdbcType="VARCHAR" property="title"/>
     <result column="html" jdbcType="LONGVARCHAR" property="html" />
     <result column="markdown" jdbcType="LONGVARCHAR" property="markdown" />
   </resultMap>
