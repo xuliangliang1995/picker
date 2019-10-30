@@ -9,6 +9,7 @@
     <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId" />
     <result column="category_id" jdbcType="BIGINT" property="categoryId" />
     <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="title" jdbcType="VARCHAR" property="title"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>

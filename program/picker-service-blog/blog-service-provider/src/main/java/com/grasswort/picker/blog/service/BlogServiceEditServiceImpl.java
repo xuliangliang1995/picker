@@ -61,6 +61,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         CreateBlogResponse createBlogResponse = new CreateBlogResponse();
         final int FIRST_EDITION = 1;
 
+        String title = blogRequest.getTitle();
         String markdown = blogRequest.getMarkdown();
         String html = blogRequest.getHtml();
         Long userId = blogRequest.getUserId();
@@ -81,6 +82,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         Blog blog = new Blog();
         blog.setPkUserId(userId);
         blog.setVersion(FIRST_EDITION);
+        blog.setTitle(title);
         blog.setCategoryId(categoryId == null ? 0 : categoryId);
         Date now = new Date(System.currentTimeMillis());
         blog.setGmtCreate(now);
@@ -90,6 +92,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         BlogContent blogContent = new BlogContent();
         blogContent.setBlogId(blog.getId());
         blogContent.setBlogVersion(FIRST_EDITION);
+        blogContent.setTitle(title);
         blogContent.setMarkdown(markdown);
         blogContent.setHtml(html);
         blogContent.setGmtCreate(now);

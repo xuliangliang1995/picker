@@ -20,6 +20,8 @@ public class BlogContent {
     @Column(name = "gmt_modified")
     private Date gmtModified;
 
+    private String title;
+
     private String html;
 
     private String markdown;
@@ -92,6 +94,14 @@ public class BlogContent {
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**
