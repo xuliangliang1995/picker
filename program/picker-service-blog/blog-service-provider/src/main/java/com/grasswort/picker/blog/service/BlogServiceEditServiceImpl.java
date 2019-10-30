@@ -36,7 +36,7 @@ import java.util.Objects;
  * @Date 2019/10/21 9:15
  * @blame Java Team
  */
-@Service(version = "1.0")
+@Service(version = "1.0", timeout = 10000)
 public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired BlogMapper blogMapper;
