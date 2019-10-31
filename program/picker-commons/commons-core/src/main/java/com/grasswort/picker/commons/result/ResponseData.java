@@ -16,6 +16,8 @@ public class ResponseData<T> {
     private int code;
 
     private T result;
+
+    private Long total;
     /**
      * 时间戳
      */
@@ -59,5 +61,14 @@ public class ResponseData<T> {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public ResponseData setTotal(Long total) {
+        this.total = total;
+        return this;
     }
 }
