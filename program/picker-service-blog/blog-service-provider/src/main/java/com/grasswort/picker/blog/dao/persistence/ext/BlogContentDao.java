@@ -14,9 +14,9 @@ import tk.mybatis.mapper.common.Mapper;
  */
 public interface BlogContentDao extends Mapper<BlogContent> {
 
-    @Select("select markdown from pk_blog_content where blog_id = #{blogId} and version = #{version}")
+    @Select("select markdown from pk_blog_content where blog_id = #{blogId} and blog_version = #{version}")
     String markdown(@Param("blogId") Long blogId, @Param("version") Integer version);
 
-    @Select("select html from pk_blog_content where blog_id = #{blogId} and version = #{version}")
+    @Select("select html from pk_blog_content where blog_id = #{blogId} and blog_version = #{version}")
     String html(@Param("blogId") Long blogId, @Param("version") Integer version);
 }
