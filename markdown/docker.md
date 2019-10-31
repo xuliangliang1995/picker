@@ -18,6 +18,7 @@ https://www.cnblogs.com/hellxz/p/nacos-cluster-docker.html
 
 * docker ce （免费版）
 * docker ee （付费版） 
+*  rgba(29, 165, 122, 0.47) 
 
 ### 安装
 

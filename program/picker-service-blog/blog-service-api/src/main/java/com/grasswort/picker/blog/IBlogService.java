@@ -1,5 +1,8 @@
 package com.grasswort.picker.blog;
 
+import com.grasswort.picker.blog.dto.OwnBlogListRequest;
+import com.grasswort.picker.blog.dto.OwnBlogListResponse;
+
 /**
  * @author xuliangliang
  * @Classname IBlogService
@@ -8,5 +11,11 @@ package com.grasswort.picker.blog;
  * @blame Java Team
  */
 public interface IBlogService {
+    /**
+     * 查看自己的博客列表
+     * @param ownBlogListRequest
+     * @return
+     */
+    OwnBlogListResponse ownBlogList(OwnBlogListRequest ownBlogListRequest);
 
 }
