@@ -50,7 +50,7 @@ public class BlogServiceImpl implements IBlogService {
         Example example = new Example(Blog.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("pkUserId", userId);
-        if (0 <= categoryId) {
+        if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
         List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
