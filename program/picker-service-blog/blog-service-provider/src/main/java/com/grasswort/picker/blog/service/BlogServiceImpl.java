@@ -4,10 +4,16 @@ import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
+import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
+import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
+import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
 import com.grasswort.picker.blog.dto.OwnBlogListRequest;
 import com.grasswort.picker.blog.dto.OwnBlogListResponse;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
+import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
+import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import org.apache.dubbo.config.annotation.Service;
@@ -30,6 +36,8 @@ import java.util.stream.Collectors;
 public class BlogServiceImpl implements IBlogService {
 
     @Autowired BlogMapper blogMapper;
+
+    @Autowired BlogContentDao blogContentDao;
 
     /**
      * 查看自己的博客列表
@@ -60,7 +68,7 @@ public class BlogServiceImpl implements IBlogService {
             List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
             response.setBlogs(
                     blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
-                            .withBlogId(blog.getId())
+                            .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
                             .withTitle(blog.getTitle())
                             .withVersion(blog.getVersion())
                             .withGmtCreate(blog.getGmtCreate())
@@ -75,5 +83,46 @@ public class BlogServiceImpl implements IBlogService {
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return response;
+    }
+
+    /**
+     * 获取博客 markdown 内容
+     *
+     * @param markdownRequest
+     * @return
+     */
+    @Override
+    public BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest) {
+        BlogMarkdownResponse markdownResponse = new BlogMarkdownResponse();
+
+        Blog blog = null;
+        Long blogId = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
+        if (null != blogId) {
+            blog = blogMapper.selectByPrimaryKey(blogId);
+
+        }
+
+        boolean blogExists = blog != null;
+
+        if (blogExists) {
+            String markdown = blogContentDao.markdown(blog.getId(), blog.getVersion());
+
+            BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
+            blogItemWithMarkdown.setBlogId(BlogIdEncrypt.encrypt(blog.getId()));
+            blogItemWithMarkdown.setTitle(blog.getTitle());
+            blogItemWithMarkdown.setVersion(blog.getVersion());
+            blogItemWithMarkdown.setMarkdown(markdown);
+            blogItemWithMarkdown.setGmtCreate(blog.getGmtCreate());
+            blogItemWithMarkdown.setGmtModified(blog.getGmtModified());
+
+            markdownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            markdownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+            markdownResponse.setBlog(blogItemWithMarkdown);
+        } else {
+            markdownResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            markdownResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+        }
+
+        return markdownResponse;
     }
 }

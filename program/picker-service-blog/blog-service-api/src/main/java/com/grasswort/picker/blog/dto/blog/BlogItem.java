@@ -15,9 +15,9 @@ import java.util.Date;
 @Data
 public class BlogItem {
     /**
-     * 博客 id
+     * 博客 ID
      */
-    private Long blogId;
+    private String blogId;
     /**
      * 标题
      */
@@ -39,7 +39,7 @@ public class BlogItem {
 
 
     public static final class Builder {
-        private Long blogId;
+        private String blogId;
         private String title;
         private Integer version;
         private Date gmtCreate;
@@ -52,7 +52,7 @@ public class BlogItem {
             return new Builder();
         }
 
-        public Builder withBlogId(Long blogId) {
+        public Builder withBlogId(String blogId) {
             this.blogId = blogId;
             return this;
         }
