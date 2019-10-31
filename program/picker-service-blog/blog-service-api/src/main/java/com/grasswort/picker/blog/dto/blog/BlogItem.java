@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto.blog;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -28,10 +29,12 @@ public class BlogItem {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtCreate;
     /**
      * 最后一次更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
 
 

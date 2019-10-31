@@ -15,6 +15,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,19 +54,26 @@ public class BlogServiceImpl implements IBlogService {
         if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
-        List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
+        long matchedBlogCount = blogMapper.selectCountByExample(example);
+        response.setTotal(matchedBlogCount);
+        if (matchedBlogCount > 0) {
+            List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
+            response.setBlogs(
+                    blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
+                            .withBlogId(blog.getId())
+                            .withTitle(blog.getTitle())
+                            .withVersion(blog.getVersion())
+                            .withGmtCreate(blog.getGmtCreate())
+                            .withGmtModified(blog.getGmtModified())
+                            .build()
+                    ).collect(Collectors.toList())
+            );
+        } else {
+            response.setBlogs(Collections.EMPTY_LIST);
+        }
+
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-        response.setBlogs(
-                blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
-                        .withBlogId(blog.getId())
-                        .withTitle(blog.getTitle())
-                        .withVersion(blog.getVersion())
-                        .withGmtCreate(blog.getGmtCreate())
-                        .withGmtModified(blog.getGmtModified())
-                        .build()
-                ).collect(Collectors.toList())
-        );
         return response;
     }
 }
