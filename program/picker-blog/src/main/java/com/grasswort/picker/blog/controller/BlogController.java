@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "博客")
 @RestController
-@RequestMapping
+@RequestMapping("/")
 public class BlogController {
 
     @Reference(version = "1.0", cluster = ClusterFaultMechanism.FAIL_FAST)
