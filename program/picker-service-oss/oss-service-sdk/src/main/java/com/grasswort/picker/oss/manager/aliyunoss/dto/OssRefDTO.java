@@ -2,6 +2,8 @@ package com.grasswort.picker.oss.manager.aliyunoss.dto;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * @author xuliangliang
  * @Classname OssRefDTO
@@ -23,4 +25,22 @@ public class OssRefDTO {
      * url
      */
     private String url;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OssRefDTO ossRefDTO = (OssRefDTO) o;
+        return Objects.equals(bucketName, ossRefDTO.bucketName) &&
+                Objects.equals(objectKey, ossRefDTO.objectKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bucketName, objectKey);
+    }
 }

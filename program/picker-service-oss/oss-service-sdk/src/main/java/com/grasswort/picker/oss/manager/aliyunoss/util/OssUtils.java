@@ -4,12 +4,11 @@ import com.grasswort.picker.oss.manager.aliyunoss.constant.OssStipulation;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -60,15 +59,16 @@ public class OssUtils {
      * @return
      * List<String>
      */
-    public static List<OssRefDTO> findOssUrlFromText(String text) {
+    public static Set<OssRefDTO> findOssUrlFromText(String text) {
+        if (StringUtils.isBlank(text)) {
+            return Collections.EMPTY_SET;
+        }
         Matcher matcher = OSS_PATTERN.matcher(text);
         List<String> list = new ArrayList<>();
         while (matcher.find()) {
             list.add(matcher.group());
         }
-        return list.stream().map(url -> {
-            return resolverUrl(url);
-        }).collect(Collectors.toList());
+        return list.stream().map(url -> resolverUrl(url)).collect(Collectors.toSet());
     }
     /**
      *
@@ -79,6 +79,9 @@ public class OssUtils {
      * OssRefDTO
      */
     public static OssRefDTO resolverUrl(String url) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
         String text = url.replace(OssStipulation.HOST_SUFFIX.concat("/"), "@").replace("_", "@");
         String[] strArray = text.split("@");
         String bucketName = strArray[0].replace("https://", "");

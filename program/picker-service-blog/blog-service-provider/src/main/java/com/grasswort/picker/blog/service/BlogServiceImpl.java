@@ -4,7 +4,6 @@ import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
-import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
 import com.grasswort.picker.blog.dto.BlogMarkdownRequest;

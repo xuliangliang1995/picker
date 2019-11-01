@@ -8,9 +8,6 @@ public class BlogOssRef {
     @Id
     private Long id;
 
-    @Column(name = "blog_id")
-    private Long blogId;
-
     @Column(name = "oss_bucket")
     private String ossBucket;
 
@@ -47,20 +44,6 @@ public class BlogOssRef {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * @return blog_id
-     */
-    public Long getBlogId() {
-        return blogId;
-    }
-
-    /**
-     * @param blogId
-     */
-    public void setBlogId(Long blogId) {
-        this.blogId = blogId;
     }
 
     /**

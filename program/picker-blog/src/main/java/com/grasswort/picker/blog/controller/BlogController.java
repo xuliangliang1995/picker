@@ -48,6 +48,9 @@ public class BlogController {
                 .withHtml(form.getHtml())
                 .withCategoryId(form.getCategoryId())
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withCoverImg(form.getCoverImg())
+                .withSummary(form.getSummary())
+                .withLabels(form.getLabels())
                 .build();
         CreateBlogResponse createBlogResponse = iBlogEditService.createBlog(createBlogRequest);
 

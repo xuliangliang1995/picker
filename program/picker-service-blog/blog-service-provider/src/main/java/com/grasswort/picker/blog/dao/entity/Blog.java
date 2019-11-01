@@ -20,6 +20,17 @@ public class Blog {
     private String title;
 
     /**
+     * 封面配图
+     */
+    @Column(name = "cover_img")
+    private String coverImg;
+
+    /**
+     * 文章摘要
+     */
+    private String summary;
+
+    /**
      * 博客的版本
      */
     private Integer version;
@@ -72,12 +83,58 @@ public class Blog {
         this.categoryId = categoryId;
     }
 
+    /**
+     * 获取文章标题
+     *
+     * @return title - 文章标题
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * 设置文章标题
+     *
+     * @param title 文章标题
+     */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * 获取封面配图
+     *
+     * @return cover_img - 封面配图
+     */
+    public String getCoverImg() {
+        return coverImg;
+    }
+
+    /**
+     * 设置封面配图
+     *
+     * @param coverImg 封面配图
+     */
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
+    }
+
+    /**
+     * 获取文章摘要
+     *
+     * @return summary - 文章摘要
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    /**
+     * 设置文章摘要
+     *
+     * @param summary 文章摘要
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     /**
