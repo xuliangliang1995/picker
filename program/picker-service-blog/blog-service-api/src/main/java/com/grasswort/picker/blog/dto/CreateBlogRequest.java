@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 /**
  * @author xuliangliang
@@ -58,7 +59,7 @@ public class CreateBlogRequest extends AbstractRequest {
     /**
      * 标签（用英文逗号分隔）
      */
-    private String labels;
+    private Set<String> labels;
 
     @Override
     public void requestCheck() {
@@ -73,7 +74,7 @@ public class CreateBlogRequest extends AbstractRequest {
         private String html;
         private String coverImg;
         private String summary;
-        private String labels;
+        private Set<String> labels;
 
         private Builder() {
         }
@@ -117,7 +118,7 @@ public class CreateBlogRequest extends AbstractRequest {
             return this;
         }
 
-        public Builder withLabels(String labels) {
+        public Builder withLabels(Set<String> labels) {
             this.labels = labels;
             return this;
         }

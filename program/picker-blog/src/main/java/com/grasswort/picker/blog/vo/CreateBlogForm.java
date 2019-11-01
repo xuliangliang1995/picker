@@ -2,10 +2,12 @@ package com.grasswort.picker.blog.vo;
 
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 /**
  * @author xuliangliang
@@ -29,6 +31,6 @@ public class CreateBlogForm {
     private String coverImg;
     @Max(100)
     private String summary;
-
-    private String labels;
+    
+    private Set<@Size(min = 1, max = 10) String> labels;
 }
