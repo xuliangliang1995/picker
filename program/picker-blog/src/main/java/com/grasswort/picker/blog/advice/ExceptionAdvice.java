@@ -32,7 +32,7 @@ public class ExceptionAdvice {
     public ResponseData validatorException1(
             ConstraintViolationException exception
     ) {
-        String message = exception.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage).get();
+        String message = exception.getConstraintViolations().stream().findFirst().map(cv -> cv.getMessage() + ":" + cv.getInvalidValue()).get();
         log.info("\n【参数校验失败】：{}", message);
         return new ResponseUtil<>().setErrorMsg(message);
     }
