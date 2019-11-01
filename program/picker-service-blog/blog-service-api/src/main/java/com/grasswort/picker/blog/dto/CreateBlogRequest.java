@@ -49,12 +49,12 @@ public class CreateBlogRequest extends AbstractRequest {
     /**
      * 封面配图
      */
-    @Max(120)
+    @Size(max = 120)
     private String coverImg;
     /**
      * 内容摘要
      */
-    @Max(100)
+    @Size(max = 100)
     private String summary;
     /**
      * 标签（用英文逗号分隔）
