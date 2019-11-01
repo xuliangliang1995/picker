@@ -82,6 +82,13 @@ public class OssRefServiceImpl implements IOssRefService {
                 .andEqualTo("ossKey", refRequest.getObjectKey())
                 .andEqualTo("ossBucket", refRequest.getBucketName());
 
+        this.saveKey(
+                OssKeySaveRequest.Builder.anOssKeySaveRequest()
+                        .withObjectKey(refRequest.getObjectKey())
+                        .withBucketName(refRequest.getBucketName())
+                        .build()
+        );
+
         OssKey ossKey = ossKeyMapper.selectOneByExample(example);
         if (null != ossKey) {
             OssKeyRef ref = new OssKeyRef();
@@ -94,6 +101,7 @@ public class OssRefServiceImpl implements IOssRefService {
             ossKeyRefMapper.insertUseGeneratedKeys(ref);
             refResponse.setId(ref.getId());
         }
+
         refResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         refResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         return refResponse;

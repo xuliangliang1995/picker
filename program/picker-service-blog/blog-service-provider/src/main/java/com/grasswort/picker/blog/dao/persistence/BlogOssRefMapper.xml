@@ -6,7 +6,6 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="blog_id" jdbcType="BIGINT" property="blogId" />
     <result column="oss_bucket" jdbcType="VARCHAR" property="ossBucket" />
     <result column="oss_key" jdbcType="VARCHAR" property="ossKey" />
     <result column="oss_ref_id" jdbcType="BIGINT" property="ossRefId" />

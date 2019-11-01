@@ -11,21 +11,21 @@ import com.grasswort.picker.oss.dto.*;
  */
 public interface IOssRefService {
     /**
-     * 存储 key
+     * 存储 key（存储 oss 文件 对应的地址，48 小时内不提交引用的话，系统将认为该 oss 文件已经弃用。会删除 oss 文件）
      * @param saveRequest
      * @return
      */
     OssKeySaveResponse saveKey(OssKeySaveRequest saveRequest);
 
     /**
-     * 提交引用
+     * 提交引用 （创建对 oss 文件的引用）
      * @param refRequest
      * @return
      */
     OssRefResponse recordRef(OssRefRequest refRequest);
 
     /**
-     * 删除引用
+     * 删除引用 （删除对 oss 文件的引用。 当引用为 0 时，oss 文件将会被删除）
      * @param delRequest
      * @return
      */

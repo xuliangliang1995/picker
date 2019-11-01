@@ -5,9 +5,14 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
+import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
+import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
 import com.grasswort.picker.blog.dto.OwnBlogListRequest;
 import com.grasswort.picker.blog.dto.OwnBlogListResponse;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
+import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
+import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import org.apache.dubbo.config.annotation.Service;
@@ -15,6 +20,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +35,8 @@ import java.util.stream.Collectors;
 public class BlogServiceImpl implements IBlogService {
 
     @Autowired BlogMapper blogMapper;
+
+    @Autowired BlogContentDao blogContentDao;
 
     /**
      * 查看自己的博客列表
@@ -50,22 +58,70 @@ public class BlogServiceImpl implements IBlogService {
         Example example = new Example(Blog.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("pkUserId", userId);
-        if (0 <= categoryId) {
+        if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
-        List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
+        long matchedBlogCount = blogMapper.selectCountByExample(example);
+        response.setTotal(matchedBlogCount);
+        if (matchedBlogCount > 0) {
+            List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
+            response.setBlogs(
+                    blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
+                            .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
+                            .withTitle(blog.getTitle())
+                            .withVersion(blog.getVersion())
+                            .withGmtCreate(blog.getGmtCreate())
+                            .withGmtModified(blog.getGmtModified())
+                            .build()
+                    ).collect(Collectors.toList())
+            );
+        } else {
+            response.setBlogs(Collections.EMPTY_LIST);
+        }
+
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-        response.setBlogs(
-                blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
-                        .withBlogId(blog.getId())
-                        .withTitle(blog.getTitle())
-                        .withVersion(blog.getVersion())
-                        .withGmtCreate(blog.getGmtCreate())
-                        .withGmtModified(blog.getGmtModified())
-                        .build()
-                ).collect(Collectors.toList())
-        );
         return response;
+    }
+
+    /**
+     * 获取博客 markdown 内容
+     *
+     * @param markdownRequest
+     * @return
+     */
+    @Override
+    public BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest) {
+        BlogMarkdownResponse markdownResponse = new BlogMarkdownResponse();
+
+        Blog blog = null;
+        Long blogId = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
+        if (null != blogId) {
+            blog = blogMapper.selectByPrimaryKey(blogId);
+
+        }
+
+        boolean blogExists = blog != null;
+
+        if (blogExists) {
+            String markdown = blogContentDao.markdown(blog.getId(), blog.getVersion());
+
+            BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
+            blogItemWithMarkdown.setBlogId(BlogIdEncrypt.encrypt(blog.getId()));
+            blogItemWithMarkdown.setTitle(blog.getTitle());
+            blogItemWithMarkdown.setVersion(blog.getVersion());
+            blogItemWithMarkdown.setMarkdown(markdown);
+            blogItemWithMarkdown.setGmtCreate(blog.getGmtCreate());
+            blogItemWithMarkdown.setGmtModified(blog.getGmtModified());
+
+            markdownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            markdownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+            markdownResponse.setBlog(blogItemWithMarkdown);
+        } else {
+            markdownResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            markdownResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+        }
+
+        return markdownResponse;
     }
 }

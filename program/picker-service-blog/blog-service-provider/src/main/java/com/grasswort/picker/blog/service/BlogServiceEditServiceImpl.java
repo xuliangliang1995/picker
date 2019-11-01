@@ -5,8 +5,10 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
+import com.grasswort.picker.blog.dao.entity.BlogLabel;
 import com.grasswort.picker.blog.dao.entity.BlogOssRef;
 import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogOssRefMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
@@ -20,14 +22,15 @@ import com.grasswort.picker.oss.dto.OssRefResponse;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author xuliangliang
@@ -47,7 +50,13 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired BlogOssRefMapper blogOssRefMapper;
 
+    @Autowired BlogLabelMapper blogLabelMapper;
+
     @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+    /**
+     * 首次创建文章版本号
+     */
+    private final static int FIRST_EDITION = 1;
 
     /**
      * 创建博客
@@ -59,23 +68,22 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Transactional(rollbackFor = Exception.class)
     public CreateBlogResponse createBlog(CreateBlogRequest blogRequest) {
         CreateBlogResponse createBlogResponse = new CreateBlogResponse();
-        final int FIRST_EDITION = 1;
 
         String title = blogRequest.getTitle();
         String markdown = blogRequest.getMarkdown();
         String html = blogRequest.getHtml();
         Long userId = blogRequest.getUserId();
         Long categoryId = blogRequest.getCategoryId();
+        String coverImg = blogRequest.getCoverImg();
+        String summary = blogRequest.getSummary();
+        String labels = blogRequest.getLabels();
 
-        if (categoryId != null && categoryId > 0) {
-            // 检测种类是否正确
-            Long categoryOwnerId = blogCategoryDao.selectUserIdByPrimaryKey(categoryId);
-            boolean categoryNotExists =  categoryOwnerId == null || ! Objects.equals(categoryOwnerId, userId);
-            if (categoryNotExists) {
-                createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
-                createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
-                return createBlogResponse;
-            }
+        // 判断分类是否正确
+        boolean categoryNotCorrect = categoryId != null && categoryId > 0 && ! judgeCategoryIsExists(userId, categoryId);
+        if (categoryNotCorrect) {
+            createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+            createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+            return createBlogResponse;
         }
 
         // 添加博客
@@ -84,6 +92,8 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         blog.setVersion(FIRST_EDITION);
         blog.setTitle(title);
         blog.setCategoryId(categoryId == null ? 0 : categoryId);
+        blog.setCoverImg(coverImg);
+        blog.setSummary(summary);
         Date now = new Date(System.currentTimeMillis());
         blog.setGmtCreate(now);
         blog.setGmtModified(now);
@@ -100,8 +110,47 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         blogContentMapper.insertUseGeneratedKeys(blogContent);
 
         // 检测 markdown 内容，看是否引用了 oss 图片
-        List<OssRefDTO> refs = OssUtils.findOssUrlFromText(markdown);
+        Set<OssRefDTO> refs = OssUtils.findOssUrlFromText(markdown);
+        refs.add(OssUtils.resolverUrl(coverImg));
+        processRef(refs);
+
+        // 存储标签
+        processLabels(blog.getId(), labels);
+
+        createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return createBlogResponse;
+    }
+
+    /**
+     * 判断分类是否存在
+     * @param pkUserId
+     * @param categoryId
+     * @return
+     */
+    private boolean judgeCategoryIsExists(Long pkUserId, Long categoryId) {
+        Long categoryOwnerId = blogCategoryDao.selectUserIdByPrimaryKey(categoryId);
+        return categoryOwnerId != null && Objects.equals(categoryOwnerId, pkUserId);
+    }
+
+    /**
+     * 处理 oss 引用
+     * @param refs
+     */
+    private void processRef(Set<OssRefDTO> refs) {
+        Date now = new Date(System.currentTimeMillis());
         refs.forEach(ref -> {
+            if (ref == null) {
+                return;
+            }
+            // 1.先判断是否已经在 oss 服务器创建引用
+            Example example = new Example(BlogOssRef.class);
+            example.createCriteria().andEqualTo("ossKey", ref.getObjectKey()).andEqualTo("ossBucket", ref.getBucketName());
+            boolean hasRef = blogOssRefMapper.selectCountByExample(example) > 0;
+            if (hasRef) {
+                return;
+            }
+
             final String DEL_KEY = RandomStringUtils.random(OssConstants.OSS_DEL_KEY_LENGTH);
             OssRefRequest refRequest = OssRefRequest.Builder.anOssRefRequest()
                     .withBucketName(ref.getBucketName())
@@ -116,7 +165,6 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             Long refId = refSuccess ? refResponse.getId() : 0;
 
             BlogOssRef blogOssRef = new BlogOssRef();
-            blogOssRef.setBlogId(blog.getId());
             blogOssRef.setOssBucket(ref.getBucketName());
             blogOssRef.setOssKey(ref.getObjectKey());
             blogOssRef.setOssRefId(refId);
@@ -125,9 +173,26 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             blogOssRef.setGmtModified(now);
             blogOssRefMapper.insertUseGeneratedKeys(blogOssRef);
         });
+    }
 
-        createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
-        createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-        return createBlogResponse;
+    /**
+     * 处理标签
+     * @param blogId
+     * @param labels
+     */
+    private void processLabels(Long blogId, String labels) {
+        Date now = new Date(System.currentTimeMillis());
+        if (StringUtils.isNotBlank(labels)) {
+            Set<String> labelSet = Arrays.stream(labels.replaceAll("，", ",").split(","))
+                    .filter(label -> StringUtils.isNotBlank(label)).collect(Collectors.toSet());
+            labelSet.forEach(label -> {
+                        BlogLabel blogLabel = new BlogLabel();
+                        blogLabel.setBlogId(blogId);
+                        blogLabel.setLabel(label);
+                        blogLabel.setGmtCreate(now);
+                        blogLabel.setGmtModified(now);
+                        blogLabelMapper.insert(blogLabel);
+                    });
+        }
     }
 }

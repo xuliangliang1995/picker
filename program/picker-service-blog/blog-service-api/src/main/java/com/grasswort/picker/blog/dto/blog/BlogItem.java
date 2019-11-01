@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto.blog;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,9 +15,9 @@ import java.util.Date;
 @Data
 public class BlogItem {
     /**
-     * 博客 id
+     * 博客 ID
      */
-    private Long blogId;
+    private String blogId;
     /**
      * 标题
      */
@@ -28,15 +29,17 @@ public class BlogItem {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtCreate;
     /**
      * 最后一次更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
 
 
     public static final class Builder {
-        private Long blogId;
+        private String blogId;
         private String title;
         private Integer version;
         private Date gmtCreate;
@@ -49,7 +52,7 @@ public class BlogItem {
             return new Builder();
         }
 
-        public Builder withBlogId(Long blogId) {
+        public Builder withBlogId(String blogId) {
             this.blogId = blogId;
             return this;
         }
