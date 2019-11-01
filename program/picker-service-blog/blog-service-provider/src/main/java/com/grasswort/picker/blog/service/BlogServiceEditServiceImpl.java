@@ -27,6 +27,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
@@ -76,7 +77,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         Long categoryId = blogRequest.getCategoryId();
         String coverImg = blogRequest.getCoverImg();
         String summary = blogRequest.getSummary();
-        String labels = blogRequest.getLabels();
+        Set<String> labels = blogRequest.getLabels();
 
         // 判断分类是否正确
         boolean categoryNotCorrect = categoryId != null && categoryId > 0 && ! judgeCategoryIsExists(userId, categoryId);
@@ -180,19 +181,20 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
      * @param blogId
      * @param labels
      */
-    private void processLabels(Long blogId, String labels) {
+    private void processLabels(Long blogId, Set<String> labels) {
+        if (CollectionUtils.isEmpty(labels)) {
+            return;
+        }
         Date now = new Date(System.currentTimeMillis());
-        if (StringUtils.isNotBlank(labels)) {
-            Set<String> labelSet = Arrays.stream(labels.replaceAll("，", ",").split(","))
-                    .filter(label -> StringUtils.isNotBlank(label)).collect(Collectors.toSet());
-            labelSet.forEach(label -> {
+        labels.forEach(label -> {
+                    if (StringUtils.isNotBlank(label)) {
                         BlogLabel blogLabel = new BlogLabel();
                         blogLabel.setBlogId(blogId);
                         blogLabel.setLabel(label);
                         blogLabel.setGmtCreate(now);
                         blogLabel.setGmtModified(now);
                         blogLabelMapper.insert(blogLabel);
-                    });
-        }
+                    }
+                });
     }
 }
