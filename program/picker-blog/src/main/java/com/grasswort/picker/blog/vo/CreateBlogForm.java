@@ -27,7 +27,7 @@ public class CreateBlogForm {
     private String html;
     @Min(0)
     private Long categoryId;
-    @Max(100)
+    @Max(120)
     private String coverImg;
     @Max(100)
     private String summary;

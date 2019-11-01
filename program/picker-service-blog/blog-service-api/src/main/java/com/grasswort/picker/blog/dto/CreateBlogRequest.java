@@ -49,7 +49,7 @@ public class CreateBlogRequest extends AbstractRequest {
     /**
      * 封面配图
      */
-    @Max(100)
+    @Max(120)
     private String coverImg;
     /**
      * 内容摘要
