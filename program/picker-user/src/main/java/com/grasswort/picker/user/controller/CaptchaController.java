@@ -40,7 +40,7 @@ public class CaptchaController {
 
         CAPTCHAResponse captchaResponse = icaptchaService.sendCAPCHA(captchaRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(captchaResponse.getCode())) {
-            return new ResponseUtil<>().setData(null, "发送成功");
+            return new ResponseUtil<>().setData(captchaResponse.getEmail(), "发送成功");
         }
         return new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg());
     }

@@ -3,6 +3,7 @@ package com.grasswort.picker.user.service;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.commons.mask.MaskUtil;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.ICAPTCHAService;
 import com.grasswort.picker.user.config.kafka.TopicActivateEmail;
@@ -140,6 +141,7 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
         Mail mail = captchaMailGenerator.generate(mailInfoWrapper);
         kafkaTemplate.send(topicActivateEmail.getTopicName(), mail);
 
+        response.setEmail(MaskUtil.maskEmail(user.getEmail()));
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
     }
