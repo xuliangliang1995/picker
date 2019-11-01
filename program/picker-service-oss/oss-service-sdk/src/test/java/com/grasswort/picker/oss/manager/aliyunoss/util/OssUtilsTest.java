@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +32,7 @@ public class OssUtilsTest {
         String text = RandomStringUtils.random(10).concat(image1).concat("_").concat(image2)
                 .concat(RandomStringUtils.randomAlphabetic(5)).concat(image1);
 
-        List<OssRefDTO> refs = OssUtils.findOssUrlFromText(text);
-        assertEquals("匹配 OSS url 数量不对", 3, refs.size());
+        Set<OssRefDTO> refs = OssUtils.findOssUrlFromText(text);
+        assertEquals("匹配 OSS url 数量不对", 2, refs.size());
     }
 }
