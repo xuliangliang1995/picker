@@ -71,9 +71,12 @@ public class BlogServiceImpl implements IBlogService {
         if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
+
         long matchedBlogCount = blogMapper.selectCountByExample(example);
         response.setTotal(matchedBlogCount);
         if (matchedBlogCount > 0) {
+            example.setOrderByClause("id desc");
+
             List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
             response.setBlogs(
                     blogs.parallelStream().map(blog -> {

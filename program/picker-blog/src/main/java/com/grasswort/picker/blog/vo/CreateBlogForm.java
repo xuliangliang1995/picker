@@ -30,5 +30,5 @@ public class CreateBlogForm {
     @Size(max = 100)
     private String summary;
     
-    private Set<@Size(min = 1, max = 10) String> labels;
+    private Set<@Size(min = 1, max = 20) String> labels;
 }
