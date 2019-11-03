@@ -4,6 +4,7 @@ import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.commons.mask.MaskUtil;
 import com.grasswort.picker.oss.IOssRefService;
 import com.grasswort.picker.oss.constants.OssConstants;
 import com.grasswort.picker.oss.dto.OssRefRequest;
@@ -92,8 +93,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
         baseInfoResponse.setName(user.getName());
         baseInfoResponse.setSex(user.getSex());
-        baseInfoResponse.setEmail(user.getEmail());
-        baseInfoResponse.setPhone(user.getPhone());
+        baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
+        baseInfoResponse.setPhone(MaskUtil.maskMobile(user.getPhone()));
         baseInfoResponse.setAvatar(user.getAvatar());
         baseInfoResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         baseInfoResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());

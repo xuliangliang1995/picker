@@ -69,7 +69,7 @@ public class BaseInfoController {
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);
 
         if (SysRetCodeConstants.SUCCESS.getCode().equals(editResponse.getCode())) {
-            return new ResponseUtil<UserBaseInfoEditResponse>().setData(editResponse);
+            return new ResponseUtil<UserBaseInfoEditResponse>().setData(null);
         }
 
         return new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg());
