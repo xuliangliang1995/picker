@@ -152,7 +152,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
                 return;
             }
 
-            final String DEL_KEY = RandomStringUtils.random(OssConstants.OSS_DEL_KEY_LENGTH);
+            final String DEL_KEY = RandomStringUtils.randomAlphabetic(OssConstants.OSS_DEL_KEY_LENGTH);
             OssRefRequest refRequest = OssRefRequest.Builder.anOssRefRequest()
                     .withBucketName(ref.getBucketName())
                     .withObjectKey(ref.getObjectKey())
@@ -197,4 +197,5 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
                     }
                 });
     }
+
 }

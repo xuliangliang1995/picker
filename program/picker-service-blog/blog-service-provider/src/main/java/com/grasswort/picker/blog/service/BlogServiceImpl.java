@@ -4,8 +4,12 @@ import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
+import com.grasswort.picker.blog.dao.entity.BlogCategory;
+import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
 import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
 import com.grasswort.picker.blog.dto.OwnBlogListRequest;
@@ -15,6 +19,7 @@ import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +27,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +43,10 @@ public class BlogServiceImpl implements IBlogService {
     @Autowired BlogMapper blogMapper;
 
     @Autowired BlogContentDao blogContentDao;
+
+    @Autowired BlogCategoryMapper blogCategoryMapper;
+
+    @Autowired BlogLabelDao blogLabelDao;
 
     /**
      * 查看自己的博客列表
@@ -61,19 +71,41 @@ public class BlogServiceImpl implements IBlogService {
         if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
+
         long matchedBlogCount = blogMapper.selectCountByExample(example);
         response.setTotal(matchedBlogCount);
         if (matchedBlogCount > 0) {
+            example.setOrderByClause("id desc");
+
             List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
             response.setBlogs(
-                    blogs.parallelStream().map(blog -> BlogItem.Builder.aBlogItem()
-                            .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
-                            .withTitle(blog.getTitle())
-                            .withVersion(blog.getVersion())
-                            .withGmtCreate(blog.getGmtCreate())
-                            .withGmtModified(blog.getGmtModified())
-                            .build()
-                    ).collect(Collectors.toList())
+                    blogs.parallelStream().map(blog -> {
+                        // 分类
+                        String category = Optional.ofNullable(blog.getCategoryId())
+                                .map(cId -> {
+                                    if (cId > 0) {
+                                        return Optional.ofNullable(blogCategoryMapper.selectByPrimaryKey(cId))
+                                                .map(BlogCategory::getCategory)
+                                                .orElse(StringUtils.EMPTY);
+                                    }
+                                    return StringUtils.EMPTY;
+                                }).orElse(StringUtils.EMPTY);
+
+                        // 标签
+                        List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
+
+                        return BlogItem.Builder.aBlogItem()
+                                .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
+                                .withTitle(blog.getTitle())
+                                .withSummary(blog.getSummary())
+                                .withCoverImg(blog.getCoverImg())
+                                .withCategory(category)
+                                .withLabels(labels)
+                                .withVersion(blog.getVersion())
+                                .withGmtCreate(blog.getGmtCreate())
+                                .withGmtModified(blog.getGmtModified())
+                                .build();
+                    }).collect(Collectors.toList())
             );
         } else {
             response.setBlogs(Collections.EMPTY_LIST);

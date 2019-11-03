@@ -3,6 +3,7 @@ package com.grasswort.picker.user.service;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.commons.mask.MaskUtil;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.ICAPTCHAService;
 import com.grasswort.picker.user.config.kafka.TopicActivateEmail;
@@ -18,6 +19,7 @@ import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
 import com.grasswort.picker.user.service.mailbuilder.CaptchaMailGenerator;
 import com.grasswort.picker.user.service.mailbuilder.wrapper.CaptchaMailInfoWrapper;
+import com.grasswort.picker.user.util.sms.MobileCaptchaSender;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
@@ -27,6 +29,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -96,13 +99,37 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
      */
     private void sendPhoneCAPCHA(CAPTCHAResponse response, User user) {
         String phone = user.getPhone();
-        if (StringUtils.isNotBlank(phone)) {
-            // TODO 暂不处理
+        if (StringUtils.isBlank(phone)) {
+            response.setCode(SysRetCodeConstants.PHONE_IS_NULL.getCode());
+            response.setMsg(SysRetCodeConstants.PHONE_IS_NULL.getMsg());
+            return;
+        }
+
+        // 生成验证码
+        String captchaCode = RandomStringUtils.randomNumeric(CAPTCHA_CODE_LENGTH);
+        // 记录到数据库中
+        Captcha captcha = new Captcha();
+        captcha.setReceiver((byte) CAPTCHAReceiver.PHONE.getId());
+        captcha.setPhone(phone);
+        captcha.setCaptcha(captchaCode);
+        captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
+        Date now = DateTime.now().toDate();
+        captcha.setGmtCreate(now);
+        captcha.setGmtModified(now);
+        captchaMapper.insertUseGeneratedKeys(captcha);
+
+        // 发送验证码短信
+        Optional<String> requestIdOpt = MobileCaptchaSender.Builder.aMobileCaptchaSender()
+                .withPhone(phone)
+                .withCaptcha(captchaCode)
+                .build()
+                .send();
+        if (requestIdOpt.isPresent()) {
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         } else {
-            response.setCode(SysRetCodeConstants.PHONE_IS_NULL.getCode());
-            response.setMsg(SysRetCodeConstants.PHONE_IS_NULL.getMsg());
+            response.setCode(SysRetCodeConstants.SECURITY_CODE_SEND_FAIL.getCode());
+            response.setMsg(SysRetCodeConstants.SECURITY_CODE_SEND_FAIL.getMsg());
         }
     }
 
@@ -140,6 +167,7 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
         Mail mail = captchaMailGenerator.generate(mailInfoWrapper);
         kafkaTemplate.send(topicActivateEmail.getTopicName(), mail);
 
+        response.setEmail(MaskUtil.maskEmail(user.getEmail()));
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
     }

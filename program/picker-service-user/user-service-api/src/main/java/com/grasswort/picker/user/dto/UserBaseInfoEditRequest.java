@@ -22,12 +22,9 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
     @Size(min = 2, max = 10)
     private String name;
     @NotNull
-    @Mobile
-    private String phone;
-    @Email
-    private String email;
-    @NotNull
     private Byte sex;
+    @Size(max = 120)
+    private String avatar;
 
     @Override
     public void requestCheck() {
@@ -38,9 +35,8 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
     public static final class Builder {
         private Long userId;
         private String name;
-        private String phone;
-        private String email;
         private Byte sex;
+        private String avatar;
 
         private Builder() {
         }
@@ -59,18 +55,13 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
             return this;
         }
 
-        public Builder withPhone(String phone) {
-            this.phone = phone;
-            return this;
-        }
-
-        public Builder withEmail(String email) {
-            this.email = email;
-            return this;
-        }
-
         public Builder withSex(Byte sex) {
             this.sex = sex;
+            return this;
+        }
+
+        public Builder withAvatar(String avatar) {
+            this.avatar = avatar;
             return this;
         }
 
@@ -78,9 +69,8 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
             UserBaseInfoEditRequest userBaseInfoEditRequest = new UserBaseInfoEditRequest();
             userBaseInfoEditRequest.setUserId(userId);
             userBaseInfoEditRequest.setName(name);
-            userBaseInfoEditRequest.setPhone(phone);
-            userBaseInfoEditRequest.setEmail(email);
             userBaseInfoEditRequest.setSex(sex);
+            userBaseInfoEditRequest.setAvatar(avatar);
             return userBaseInfoEditRequest;
         }
     }

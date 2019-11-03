@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xuliangliang
@@ -23,6 +24,22 @@ public class BlogItem {
      */
     private String title;
     /**
+     * 摘要
+     */
+    private String summary;
+    /**
+     * 封面配图
+     */
+    private String coverImg;
+    /**
+     * 分类
+     */
+    private String category;
+    /**
+     * 标签
+     */
+    private List<String> labels;
+    /**
      * 版本
      */
     private Integer version;
@@ -37,10 +54,13 @@ public class BlogItem {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
 
-
     public static final class Builder {
         private String blogId;
         private String title;
+        private String summary;
+        private String coverImg;
+        private String category;
+        private List<String> labels;
         private Integer version;
         private Date gmtCreate;
         private Date gmtModified;
@@ -59,6 +79,26 @@ public class BlogItem {
 
         public Builder withTitle(String title) {
             this.title = title;
+            return this;
+        }
+
+        public Builder withSummary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
+        public Builder withCoverImg(String coverImg) {
+            this.coverImg = coverImg;
+            return this;
+        }
+
+        public Builder withCategory(String category) {
+            this.category = category;
+            return this;
+        }
+
+        public Builder withLabels(List<String> labels) {
+            this.labels = labels;
             return this;
         }
 
@@ -81,6 +121,10 @@ public class BlogItem {
             BlogItem blogItem = new BlogItem();
             blogItem.setBlogId(blogId);
             blogItem.setTitle(title);
+            blogItem.setSummary(summary);
+            blogItem.setCoverImg(coverImg);
+            blogItem.setCategory(category);
+            blogItem.setLabels(labels);
             blogItem.setVersion(version);
             blogItem.setGmtCreate(gmtCreate);
             blogItem.setGmtModified(gmtModified);

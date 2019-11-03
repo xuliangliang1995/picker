@@ -11,6 +11,7 @@ import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.vo.ChangePasswordForm;
+import com.grasswort.picker.user.vo.ChangePhoneForm;
 import com.grasswort.picker.user.vo.EditBaseInfoForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,8 +63,7 @@ public class BaseInfoController {
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .withName(editBaseInfoForm.getName())
                 .withSex(editBaseInfoForm.getSex())
-                .withPhone(editBaseInfoForm.getPhone())
-                .withEmail(editBaseInfoForm.getEmail())
+                .withAvatar(editBaseInfoForm.getAvatar())
                 .build();
 
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);
@@ -78,7 +78,7 @@ public class BaseInfoController {
     @ApiOperation(value = "修改用户密码（需要提高权限）")
     @PatchMapping("/password")
     public ResponseData changePassword(
-            @RequestBody ChangePasswordForm changePasswordForm, BindingResult bindingResult,
+            @RequestBody @Validated ChangePasswordForm changePasswordForm, BindingResult bindingResult,
             HttpServletRequest request, HttpServletResponse response
     ) {
         ValidatorTool.check(bindingResult);
@@ -97,5 +97,25 @@ public class BaseInfoController {
             return new ResponseUtil<>().setData(null, "修改成功");
         }
         return new ResponseUtil<>().setErrorMsg(changePwdResponse.getMsg());
+    }
+
+    @ApiOperation(value = "修改手机号（需要提高权限）")
+    @PatchMapping("/phone")
+    public ResponseData changPhone(
+            @RequestBody @Validated ChangePhoneForm form, BindingResult bindingResult,
+            HttpServletRequest request) {
+        ValidatorTool.check(bindingResult);
+
+        UserChangePhoneRequest changePhoneRequest = UserChangePhoneRequest.Builder.anUserChangePhoneRequest()
+                .withAccessToken(request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY))
+                .withPhone(form.getPhone())
+                .withCaptcha(form.getCaptcha())
+                .withIp(PickerIpUtil.getIp(request))
+                .build();
+        UserChangePhoneResponse changePhoneResponse = iUserBaseInfoService.changePhone(changePhoneRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(changePhoneResponse.getCode())) {
+            return new ResponseUtil<>().setData(null, "修改成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(changePhoneResponse.getMsg());
     }
  }

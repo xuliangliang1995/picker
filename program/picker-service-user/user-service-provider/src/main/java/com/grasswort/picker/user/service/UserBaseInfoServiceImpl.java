@@ -4,23 +4,41 @@ import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.oss.IOssRefService;
+import com.grasswort.picker.oss.constants.OssConstants;
+import com.grasswort.picker.oss.dto.OssRefRequest;
+import com.grasswort.picker.oss.dto.OssRefResponse;
+import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
+import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dao.entity.Captcha;
 import com.grasswort.picker.user.dao.entity.User;
+import com.grasswort.picker.user.dao.entity.UserOssRef;
+import com.grasswort.picker.user.dao.persistence.CaptchaMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
+import com.grasswort.picker.user.dao.persistence.UserOssRefMapper;
 import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.service.token.UserTokenGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -48,6 +66,12 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
     @Autowired RedissonClient redissonClient;
 
+    @Autowired UserOssRefMapper userOssRefMapper;
+
+    @Autowired CaptchaMapper captchaMapper;
+
+    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+
     /**
      * 获取用户基本信息
      *
@@ -70,6 +94,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         baseInfoResponse.setSex(user.getSex());
         baseInfoResponse.setEmail(user.getEmail());
         baseInfoResponse.setPhone(user.getPhone());
+        baseInfoResponse.setAvatar(user.getAvatar());
         baseInfoResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         baseInfoResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return baseInfoResponse;
@@ -97,16 +122,18 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         userSelective.setId(editRequest.getUserId());
         userSelective.setName(editRequest.getName());
         userSelective.setSex(editRequest.getSex());
-        userSelective.setEmail(editRequest.getEmail());
-        userSelective.setPhone(editRequest.getPhone());
+        userSelective.setAvatar(editRequest.getAvatar());
         userSelective.setGmtModified(DateTime.now().toDate());
         userMapper.updateByPrimaryKeySelective(userSelective);
+
+        processAvatarRef(editRequest.getAvatar());
 
         User user = userMapper.selectByPrimaryKey(editRequest.getUserId());
         editResponse.setName(user.getName());
         editResponse.setSex(user.getSex());
         editResponse.setPhone(user.getPhone());
         editResponse.setEmail(user.getEmail());
+        editResponse.setAvatar(user.getAvatar());
         editResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return editResponse;
@@ -186,5 +213,113 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         changePwdResponse.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
         log.info("\n修改密码。系统错误。{}", changePwdRequest);
         return changePwdResponse;
+    }
+
+    /**
+     * 更换手机号（绑定手机号）
+     *
+     * @param changePhoneRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public UserChangePhoneResponse changePhone(UserChangePhoneRequest changePhoneRequest) {
+        UserChangePhoneResponse changePhoneResponse = new UserChangePhoneResponse();
+        // 敏感操作，二次校验身份
+        CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
+        checkAuthRequest.setToken(changePhoneRequest.getAccessToken());
+        checkAuthRequest.setIp(changePhoneRequest.getIp());
+        CheckAuthResponse authResponse = userLoginServiceImpl.validToken(checkAuthRequest);
+
+        boolean authSuccess = SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode());
+
+        if (! authSuccess) {
+            log.info("\n修改手机号身份校验失败");
+            changePhoneResponse.setMsg(SysRetCodeConstants.TOKEN_VALID_FAILED.getMsg());
+            changePhoneResponse.setCode(SysRetCodeConstants.TOKEN_VALID_FAILED.getCode());
+            return changePhoneResponse;
+        }
+
+        boolean permissionDenied = ! authResponse.isPrivilege();
+        if (permissionDenied) {
+            log.info("\n修改手机号权限不足。用户ID：{}", authResponse.getId());
+            changePhoneResponse.setMsg(SysRetCodeConstants.PERMISSION_DENIED.getMsg());
+            changePhoneResponse.setCode(SysRetCodeConstants.PERMISSION_DENIED.getCode());
+            return changePhoneResponse;
+        }
+
+        if (authSuccess) {
+            Long userId = authResponse.getId();
+            User user = userMapper.selectByPrimaryKey(userId);
+            log.info("\n修改手机号。用户ID：{}", userId);
+            final int VERSION_OLD = user.getVersion();
+            // 1. 先判断手机号是否有效
+            String phone = changePhoneRequest.getPhone();
+            String captcha = changePhoneRequest.getCaptcha();
+            Example example = new Example(Captcha.class);
+            example.createCriteria().andEqualTo("captcha", captcha).andEqualTo("phone", phone)
+                    .andGreaterThan("expireTime", DateTime.now().toDate());
+            List<Captcha> captchas = captchaMapper.selectByExample(example);
+            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream()
+                    .filter(c -> Objects.equals(c.getPhone(), user.getPhone()))
+                    .findFirst().isPresent();
+            if (phoneIsValid) {
+                // 开始修改手机号
+                User userSelective = new User();
+                userSelective.setId(userId);
+                userSelective.setPhone(phone);
+                userSelective.setGmtModified(DateTime.now().toDate());
+                userMapper.updateByPrimaryKeySelective(userSelective);
+                log.info("\n修改手机号成功。用户ID：{}", userId);
+                changePhoneResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+                changePhoneResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+                return changePhoneResponse;
+            }
+
+        }
+        changePhoneResponse.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
+        changePhoneResponse.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
+        log.info("\n修改手机号。系统错误。{}", changePhoneRequest);
+        return changePhoneResponse;
+    }
+
+
+    /**
+     * 处理头像 oss 引用
+     * @param avatar
+     */
+    private void processAvatarRef(String avatar) {
+        OssRefDTO ref = OssUtils.resolverUrl(avatar);
+        if (ref != null) {
+            // 1、判断是否建议远程应用
+            Example example = new Example(UserOssRef.class);
+            example.createCriteria().andEqualTo("ossKey", ref.getObjectKey())
+                    .andEqualTo("ossBucket", ref.getBucketName());
+
+            int count = userOssRefMapper.selectCountByExample(example);
+            if (count == 0) {
+                final String DEL_KEY = RandomStringUtils.randomAlphabetic(OssConstants.OSS_DEL_KEY_LENGTH);
+                OssRefResponse refResponse = iOssRefService.recordRef(
+                        OssRefRequest.Builder.anOssRefRequest()
+                        .withObjectKey(ref.getObjectKey())
+                        .withBucketName(ref.getBucketName())
+                        .withDelKey(DEL_KEY)
+                        .build()
+                );
+                final long OSS_REF_ID = Optional.ofNullable(refResponse).map(r ->
+                        com.grasswort.picker.oss.constants.SysRetCodeConstants.SUCCESS.getCode().equals(r.getCode()) ? r.getId() : 0L
+                ).orElse(0L);
+
+                Date now = DateTime.now().toDate();
+                UserOssRef remoteRef = new UserOssRef();
+                remoteRef.setOssKey(ref.getObjectKey());
+                remoteRef.setOssBucket(ref.getBucketName());
+                remoteRef.setOssRefId(OSS_REF_ID);
+                remoteRef.setOssRefDelKey(DEL_KEY);
+                remoteRef.setGmtCreate(now);
+                remoteRef.setGmtModified(now);
+                userOssRefMapper.insert(remoteRef);
+            }
+        }
     }
 }

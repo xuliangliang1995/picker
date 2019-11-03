@@ -16,6 +16,7 @@ public enum SysRetCodeConstants {
     SYSTEM_TIMEOUT                      ("003004", "系统超时"),
     SYSTEM_ERROR                        ("003005", "系统错误"),
     PLEASE_RETRY                        ("003006", "操作失败，请重试"),
+    SECURITY_CODE_SEND_FAIL             ("003007","验证码发送失败"),
 
     // 注册
     USERNAME_ALREADY_EXISTS             ("003101","用户名已存在"),

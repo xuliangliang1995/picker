@@ -41,8 +41,6 @@
     <nacos.starter.version>0.2.3</nacos.starter.version>
     <msgpack.version>0.6.12</msgpack.version>
     <lombok.version>1.18.8</lombok.version>
-    <aliyun.email.core.version>3.0.0</aliyun.email.core.version>
-    <aliyun.email.dm.version>3.1.0</aliyun.email.dm.version>
     <spring.kafka.version>2.2.7.RELEASE</spring.kafka.version>
     <freemarker.version>2.3.9</freemarker.version>
     <jackson-annotations.version>2.9.9</jackson-annotations.version>
@@ -322,19 +320,6 @@
         <version>${lombok.version}</version>
       </dependency>
 
-      <!-- 阿里邮箱推送 SDK ， Nexus 私服依赖 -->
-      <dependency>
-        <groupId>com.aliyun</groupId>
-        <artifactId>aliyun-java-sdk-core</artifactId>
-        <version>${aliyun.email.core.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.aliyun</groupId>
-        <artifactId>aliyun-java-sdk-dm</artifactId>
-        <version>${aliyun.email.dm.version}</version>
-      </dependency>
-
-
       <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
@@ -358,6 +343,13 @@
         <groupId>com.aliyun.oss</groupId>
         <artifactId>aliyun-sdk-oss</artifactId>
         <version>${aliyun.oss.version}</version>
+      </dependency>
+
+      <!-- 阿里短信 -->
+      <dependency>
+        <groupId>com.aliyun</groupId>
+        <artifactId>aliyun-java-sdk-core</artifactId>
+        <version>4.4.3</version>
       </dependency>
 
 

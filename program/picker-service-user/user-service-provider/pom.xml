@@ -41,6 +41,19 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
+    <!-- oss-service-api -->
+    <dependency>
+      <groupId>com.grasswort.picker</groupId>
+      <artifactId>oss-service-api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- oss-service-sdk -->
+    <dependency>
+      <groupId>com.grasswort.picker</groupId>
+      <artifactId>oss-service-sdk</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
     <!-- dubbo -->
     <dependency>
@@ -158,6 +171,12 @@
       <version>2.3.9</version>
     </dependency>
 
+    <!-- 阿里短信 -->
+    <dependency>
+      <groupId>com.aliyun</groupId>
+      <artifactId>aliyun-java-sdk-core</artifactId>
+      <version>4.4.3</version>
+    </dependency>
 
     <!-- 单元测试 -->
     <dependency>
