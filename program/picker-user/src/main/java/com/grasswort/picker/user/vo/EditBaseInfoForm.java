@@ -1,6 +1,5 @@
 package com.grasswort.picker.user.vo;
 
-import com.grasswort.picker.user.validator.Mobile;
 import lombok.Data;
 
 import javax.validation.constraints.Max;
@@ -24,8 +23,6 @@ public class EditBaseInfoForm {
     @Min(0)
     @Max(2)
     private Byte sex;
-    @Mobile
-    private String phone;
     @Size(max = 120)
     private String avatar;
 }

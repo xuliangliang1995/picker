@@ -116,7 +116,6 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         userSelective.setId(editRequest.getUserId());
         userSelective.setName(editRequest.getName());
         userSelective.setSex(editRequest.getSex());
-        userSelective.setPhone(editRequest.getPhone());
         userSelective.setAvatar(editRequest.getAvatar());
         userSelective.setGmtModified(DateTime.now().toDate());
         userMapper.updateByPrimaryKeySelective(userSelective);

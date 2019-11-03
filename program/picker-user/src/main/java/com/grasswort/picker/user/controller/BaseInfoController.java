@@ -62,8 +62,6 @@ public class BaseInfoController {
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .withName(editBaseInfoForm.getName())
                 .withSex(editBaseInfoForm.getSex())
-                .withPhone(editBaseInfoForm.getPhone())
-                .withEmail(editBaseInfoForm.getEmail())
                 .withAvatar(editBaseInfoForm.getAvatar())
                 .build();
 
