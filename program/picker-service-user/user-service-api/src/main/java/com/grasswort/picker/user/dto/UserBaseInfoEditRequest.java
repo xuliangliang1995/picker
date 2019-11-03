@@ -24,64 +24,64 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
     @NotNull
     @Mobile
     private String phone;
-    @Email
-    private String email;
+
+    private String captcha;
+
     @NotNull
     private Byte sex;
+    @Size(max = 120)
+    private String avatar;
 
     @Override
     public void requestCheck() {
 
     }
 
+    public Long getUserId() {
+        return userId;
+    }
 
-    public static final class Builder {
-        private Long userId;
-        private String name;
-        private String phone;
-        private String email;
-        private Byte sex;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-        private Builder() {
-        }
+    public String getName() {
+        return name;
+    }
 
-        public static Builder anUserBaseInfoEditRequest() {
-            return new Builder();
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public Builder withUserId(Long userId) {
-            this.userId = userId;
-            return this;
-        }
+    public String getPhone() {
+        return phone;
+    }
 
-        public Builder withName(String name) {
-            this.name = name;
-            return this;
-        }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-        public Builder withPhone(String phone) {
-            this.phone = phone;
-            return this;
-        }
+    public String getCaptcha() {
+        return captcha;
+    }
 
-        public Builder withEmail(String email) {
-            this.email = email;
-            return this;
-        }
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
+    }
 
-        public Builder withSex(Byte sex) {
-            this.sex = sex;
-            return this;
-        }
+    public Byte getSex() {
+        return sex;
+    }
 
-        public UserBaseInfoEditRequest build() {
-            UserBaseInfoEditRequest userBaseInfoEditRequest = new UserBaseInfoEditRequest();
-            userBaseInfoEditRequest.setUserId(userId);
-            userBaseInfoEditRequest.setName(name);
-            userBaseInfoEditRequest.setPhone(phone);
-            userBaseInfoEditRequest.setEmail(email);
-            userBaseInfoEditRequest.setSex(sex);
-            return userBaseInfoEditRequest;
-        }
+    public void setSex(Byte sex) {
+        this.sex = sex;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

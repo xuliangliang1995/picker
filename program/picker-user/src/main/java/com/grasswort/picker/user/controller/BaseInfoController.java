@@ -64,6 +64,7 @@ public class BaseInfoController {
                 .withSex(editBaseInfoForm.getSex())
                 .withPhone(editBaseInfoForm.getPhone())
                 .withEmail(editBaseInfoForm.getEmail())
+                .withAvatar(editBaseInfoForm.getAvatar())
                 .build();
 
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);

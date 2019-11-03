@@ -20,4 +20,6 @@ public class UserBaseInfoResponse extends AbstractResponse {
     private String email;
 
     private Byte sex;
+
+    private String avatar;
 }

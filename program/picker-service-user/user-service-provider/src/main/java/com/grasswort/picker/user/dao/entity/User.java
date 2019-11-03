@@ -32,6 +32,10 @@ public class User {
      */
     private Byte sex;
     /**
+     * 头像
+     */
+    private String avatar;
+    /**
      * 版本
      */
     private Integer version;
@@ -214,5 +218,13 @@ public class User {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
