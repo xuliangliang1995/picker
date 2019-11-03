@@ -23,7 +23,7 @@ public class PickerIpUtil {
             ip = request.getRemoteAddr();
         }
         if (ip != null) {
-            //对于通过多个代理的情况，最后IP为客户端真实IP,多个IP按照','分割
+            //对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
             int position = ip.indexOf(",");
             if (position > 0) {
                 ip = ip.substring(0, position);

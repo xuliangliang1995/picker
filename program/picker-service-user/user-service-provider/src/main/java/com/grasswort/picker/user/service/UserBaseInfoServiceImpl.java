@@ -1,6 +1,5 @@
 package com.grasswort.picker.user.service;
 
-import com.aliyun.oss.OSS;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
@@ -14,8 +13,10 @@ import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dao.entity.Captcha;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserOssRef;
+import com.grasswort.picker.user.dao.persistence.CaptchaMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dao.persistence.UserOssRefMapper;
 import com.grasswort.picker.user.dao.persistence.ext.UserDao;
@@ -29,11 +30,14 @@ import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -63,6 +67,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
     @Autowired RedissonClient redissonClient;
 
     @Autowired UserOssRefMapper userOssRefMapper;
+
+    @Autowired CaptchaMapper captchaMapper;
 
     @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
 
@@ -207,6 +213,74 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         changePwdResponse.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
         log.info("\n修改密码。系统错误。{}", changePwdRequest);
         return changePwdResponse;
+    }
+
+    /**
+     * 更换手机号（绑定手机号）
+     *
+     * @param changePhoneRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public UserChangePhoneResponse changePhone(UserChangePhoneRequest changePhoneRequest) {
+        UserChangePhoneResponse changePhoneResponse = new UserChangePhoneResponse();
+        // 敏感操作，二次校验身份
+        CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
+        checkAuthRequest.setToken(changePhoneRequest.getAccessToken());
+        checkAuthRequest.setIp(changePhoneRequest.getIp());
+        CheckAuthResponse authResponse = userLoginServiceImpl.validToken(checkAuthRequest);
+
+        boolean authSuccess = SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode());
+
+        if (! authSuccess) {
+            log.info("\n修改手机号身份校验失败");
+            changePhoneResponse.setMsg(SysRetCodeConstants.TOKEN_VALID_FAILED.getMsg());
+            changePhoneResponse.setCode(SysRetCodeConstants.TOKEN_VALID_FAILED.getCode());
+            return changePhoneResponse;
+        }
+
+        boolean permissionDenied = ! authResponse.isPrivilege();
+        if (permissionDenied) {
+            log.info("\n修改手机号权限不足。用户ID：{}", authResponse.getId());
+            changePhoneResponse.setMsg(SysRetCodeConstants.PERMISSION_DENIED.getMsg());
+            changePhoneResponse.setCode(SysRetCodeConstants.PERMISSION_DENIED.getCode());
+            return changePhoneResponse;
+        }
+
+        if (authSuccess) {
+            Long userId = authResponse.getId();
+            User user = userMapper.selectByPrimaryKey(userId);
+            log.info("\n修改手机号。用户ID：{}", userId);
+            final int VERSION_OLD = user.getVersion();
+            // 1. 先判断手机号是否有效
+            String phone = changePhoneRequest.getPhone();
+            String captcha = changePhoneRequest.getCaptcha();
+            Example example = new Example(Captcha.class);
+            example.createCriteria().andEqualTo("captcha", captcha).andEqualTo("phone", phone)
+                    .andGreaterThan("expireTime", DateTime.now().toDate());
+            List<Captcha> captchas = captchaMapper.selectByExample(example);
+            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream()
+                    .filter(c -> Objects.equals(c.getPhone(), user.getPhone()))
+                    .findFirst().isPresent();
+            if (phoneIsValid) {
+                // 开始修改手机号
+                User userSelective = new User();
+                userSelective.setId(userId);
+                userSelective.setPhone(phone);
+                userSelective.setGmtModified(DateTime.now().toDate());
+                userMapper.updateByPrimaryKeySelective(userSelective);
+                log.info("\n修改手机号成功。用户ID：{}", userId);
+                changePhoneResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+                changePhoneResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+                return changePhoneResponse;
+            }
+
+        }
+        changePhoneResponse.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
+        changePhoneResponse.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
+        log.info("\n修改手机号。系统错误。{}", changePhoneRequest);
+        return changePhoneResponse;
     }
 
 

@@ -32,4 +32,13 @@ public interface IUserBaseInfoService {
      * @return
      */
     UserChangePwdResponse changePwd(UserChangePwdRequest changePwdRequest);
+
+    /**
+     * 更换手机号（绑定手机号）
+     * @param changePhoneRequest
+     * @return
+     */
+    UserChangePhoneResponse changePhone(UserChangePhoneRequest changePhoneRequest);
+
+
 }

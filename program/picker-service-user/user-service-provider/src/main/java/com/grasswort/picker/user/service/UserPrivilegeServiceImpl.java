@@ -51,9 +51,9 @@ public class UserPrivilegeServiceImpl implements IUserPrivilegeService {
     public UserPrivilegeResponse upgradePrivilege(UserPrivilegeRequest privilegeRequest) {
         UserPrivilegeResponse privilegeResponse = new UserPrivilegeResponse();
         try {
-            String captch = privilegeRequest.getCaptch();
+            String captcha = privilegeRequest.getCaptch();
             Example example = new Example(Captcha.class);
-            example.createCriteria().andEqualTo("captcha", captch).andGreaterThan("expireTime", DateTime.now().toDate());
+            example.createCriteria().andEqualTo("captcha", captcha).andGreaterThan("expireTime", DateTime.now().toDate());
             List<Captcha> captchs = captchaMapper.selectByExample(example);
             if (! CollectionUtils.isEmpty(captchs)) {
                 Long userId = privilegeRequest.getUserId();
