@@ -1,6 +1,5 @@
 package com.grasswort.picker.user.controller;
 
-import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/setting")
 public class SettingController {
-    @Reference(version = "1.0", timeout = 10000, cluster = ClusterFaultMechanism.FORKING)
+    @Reference(version = "1.0", timeout = 10000)
     IUserSettingService iUserSettingService;
 
     @ApiOperation(value = "获取用户配置")
