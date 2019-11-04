@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
  * @blame Java Team
  */
 public class TokenInterceptor extends HandlerInterceptorAdapter {
-    @Reference(version = "1.0", timeout = 2000)
+    @Reference(version = "1.0", timeout = 10000)
     IUserLoginService iUserLoginService;
 
     @Override

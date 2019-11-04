@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/token")
 public class TokenController {
-    @Reference(version = "1.0", timeout = 2000)
+    @Reference(version = "1.0", timeout = 10000)
     IUserTokenRefreshService iUserTokenRefreshService;
 
     /**

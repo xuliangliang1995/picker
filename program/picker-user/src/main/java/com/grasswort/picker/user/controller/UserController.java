@@ -41,10 +41,10 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/")
 public class UserController {
 
-    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.TRUE)
+    @Reference(version = "1.0", timeout = 10000, validation = TOrF.FALSE, mock = TOrF.TRUE)
     IUserRegisterService iUserRegisterService;
 
-    @Reference(version = "1.0", timeout = 3000, validation = TOrF.FALSE, mock = TOrF.TRUE)
+    @Reference(version = "1.0", timeout = 10000, validation = TOrF.FALSE, mock = TOrF.TRUE)
     IUserLoginService iUserLoginService;
 
     @ApiOperation(value = "注册")

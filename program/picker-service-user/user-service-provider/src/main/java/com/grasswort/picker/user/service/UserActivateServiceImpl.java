@@ -41,7 +41,7 @@ import java.util.Date;
 @Slf4j
 @Service(
         version = "1.0",
-        timeout = 2000,
+        timeout = 10000,
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
         cluster = ClusterFaultMechanism.FAIL_SAFE,
         validation = TOrF.FALSE

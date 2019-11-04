@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @Date 2019/10/30 22:23
  * @blame Java Team
  */
-@Service(version = "1.0", timeout = 5000, cluster = ClusterFaultMechanism.FAIL_OVER)
+@Service(version = "1.0", timeout = 10000, cluster = ClusterFaultMechanism.FAIL_OVER)
 public class BlogServiceImpl implements IBlogService {
 
     @Autowired BlogMapper blogMapper;

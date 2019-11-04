@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service(
-        timeout = 1000,
+        timeout = 10000,
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
         cluster = ClusterFaultMechanism.FAIL_OVER,
         validation = TOrF.FALSE,

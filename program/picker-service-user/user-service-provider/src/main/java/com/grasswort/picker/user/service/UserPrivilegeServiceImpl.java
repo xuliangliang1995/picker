@@ -32,7 +32,7 @@ import java.util.Objects;
         version = "1.0",
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
         cluster = ClusterFaultMechanism.FAIL_OVER,
-        timeout = 1000
+        timeout = 10000
 )
 public class UserPrivilegeServiceImpl implements IUserPrivilegeService {
 

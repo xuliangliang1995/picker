@@ -71,7 +71,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
     @Autowired CaptchaMapper captchaMapper;
 
-    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+    @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
 
     /**
      * 获取用户基本信息

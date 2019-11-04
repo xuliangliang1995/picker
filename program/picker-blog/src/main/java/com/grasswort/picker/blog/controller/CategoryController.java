@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/category")
 public class CategoryController {
 
-    @Reference(version = "1.0", timeout = 2000, cluster = ClusterFaultMechanism.FAIL_OVER)
+    @Reference(version = "1.0", timeout = 10000, cluster = ClusterFaultMechanism.FAIL_OVER)
     IBlogCategoryService iBlogCategoryService;
 
     @ApiOperation("添加类别")

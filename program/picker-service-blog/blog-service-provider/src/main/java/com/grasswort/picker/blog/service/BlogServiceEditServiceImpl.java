@@ -53,7 +53,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired BlogLabelMapper blogLabelMapper;
 
-    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+    @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
     /**
      * 首次创建文章版本号
      */

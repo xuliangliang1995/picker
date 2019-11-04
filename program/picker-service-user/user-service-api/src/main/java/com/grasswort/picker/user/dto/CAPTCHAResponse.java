@@ -17,4 +17,9 @@ public class CAPTCHAResponse extends AbstractResponse {
      */
     private String email;
 
+    /**
+     * 发送的手机号码
+     */
+    private String phone;
+
 }

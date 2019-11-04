@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/activate")
 public class ActivateController {
 
-    @Reference(version = "1.0", timeout = 2000, validation = TOrF.TRUE)
+    @Reference(version = "1.0", timeout = 10000, validation = TOrF.TRUE)
     IUserActivateService iUserActivateService;
 
     @ApiOperation(value = "获取账号激活状态")
