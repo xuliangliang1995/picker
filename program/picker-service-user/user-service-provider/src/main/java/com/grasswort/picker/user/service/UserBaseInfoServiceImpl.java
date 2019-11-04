@@ -261,9 +261,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
             example.createCriteria().andEqualTo("captcha", captcha).andEqualTo("phone", phone)
                     .andGreaterThan("expireTime", DateTime.now().toDate());
             List<Captcha> captchas = captchaMapper.selectByExample(example);
-            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream()
-                    .filter(c -> Objects.equals(c.getPhone(), user.getPhone()))
-                    .findFirst().isPresent();
+            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream().findFirst().isPresent();
             if (phoneIsValid) {
                 // 开始修改手机号
                 User userSelective = new User();
