@@ -40,6 +40,7 @@ public class CategoryController {
         CreateBlogCategoryRequest createRequest = CreateBlogCategoryRequest.Builder.aCreateBlogCategoryRequest()
                 .withCategory(form.getCategory())
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withParentId(form.getParentId())
                 .build();
         CreateBlogCategoryResponse createResponse = iBlogCategoryService.createCategory(createRequest);
 

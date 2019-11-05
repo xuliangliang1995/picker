@@ -52,6 +52,15 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
             return createBlogCategoryResponse;
         }
 
+        if (createRequest.getParentId() > 0) {
+            boolean parentExists = blogCategoryDao.existsWithPrimaryKey(createRequest.getParentId());
+            if (! parentExists) {
+                createBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_PARENT_CATEGORY_NOT_EXISTS.getCode());
+                createBlogCategoryResponse.setMsg(SysRetCodeConstants.BLOG_PARENT_CATEGORY_NOT_EXISTS.getMsg());
+                return createBlogCategoryResponse;
+            }
+        }
+
         BlogCategory blogCategory = new BlogCategory();
         blogCategory.setPkUserId(userId);
         blogCategory.setParentId(createRequest.getParentId());
