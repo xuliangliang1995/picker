@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CreateCategoryForm {
     @NotEmpty
-    @Max(10)
+    @Max(20)
     private String category;
     @NotNull
     @Min(0)
