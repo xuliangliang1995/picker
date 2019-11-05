@@ -15,6 +15,8 @@ public class CreateBlogCategoryRequest extends AbstractRequest {
 
     private Long userId;
 
+    private Long parentId;
+
     private String category;
 
     @Override
@@ -22,9 +24,9 @@ public class CreateBlogCategoryRequest extends AbstractRequest {
 
     }
 
-
     public static final class Builder {
         private Long userId;
+        private Long parentId;
         private String category;
 
         private Builder() {
@@ -39,6 +41,11 @@ public class CreateBlogCategoryRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withParentId(Long parentId) {
+            this.parentId = parentId;
+            return this;
+        }
+
         public Builder withCategory(String category) {
             this.category = category;
             return this;
@@ -47,6 +54,7 @@ public class CreateBlogCategoryRequest extends AbstractRequest {
         public CreateBlogCategoryRequest build() {
             CreateBlogCategoryRequest createBlogCategoryRequest = new CreateBlogCategoryRequest();
             createBlogCategoryRequest.setUserId(userId);
+            createBlogCategoryRequest.setParentId(parentId);
             createBlogCategoryRequest.setCategory(category);
             return createBlogCategoryRequest;
         }

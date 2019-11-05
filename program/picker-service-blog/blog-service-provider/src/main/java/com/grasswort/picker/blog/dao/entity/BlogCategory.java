@@ -11,6 +11,9 @@ public class BlogCategory {
     @Column(name = "pk_user_id")
     private Long pkUserId;
 
+    @Column(name = "parent_id")
+    private Long parentId;
+
     private String category;
 
     @Column(name = "gmt_create")
@@ -52,6 +55,14 @@ public class BlogCategory {
      */
     public void setPkUserId(Long pkUserId) {
         this.pkUserId = pkUserId;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     /**

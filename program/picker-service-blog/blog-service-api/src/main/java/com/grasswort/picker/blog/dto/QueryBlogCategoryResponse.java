@@ -23,5 +23,7 @@ public class QueryBlogCategoryResponse extends AbstractResponse {
         private Long categoryId;
 
         private String category;
+
+        private List<Category> subCategorys;
     }
 }
