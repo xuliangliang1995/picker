@@ -100,6 +100,7 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
         QueryBlogCategoryResponse.Category c = new QueryBlogCategoryResponse.Category();
         c.setCategoryId(blogCategory.getId());
         c.setCategory(blogCategory.getCategory());
+        c.setParentId(blogCategory.getParentId());
 
         Example ex = new Example(BlogCategory.class);
         ex.createCriteria().andEqualTo("parentId", blogCategory.getId());
