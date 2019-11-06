@@ -4,6 +4,7 @@ import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.vo.ChangeBlogCategoryForm;
 import com.grasswort.picker.blog.vo.CreateBlogForm;
 import com.grasswort.picker.blog.vo.OwnBlogListForm;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
@@ -95,4 +96,22 @@ public class BlogController {
         return new ResponseUtil<>().setErrorMsg(markdownResponse.getMsg());
     }
 
+    @ApiOperation(value = "修改博客分类")
+    @PatchMapping("/{blogId}/category")
+    public ResponseData changeBlogCategory(@RequestBody @Validated ChangeBlogCategoryForm form, BindingResult bindingResult, @PathVariable("blogId") String blogId) {
+        ValidatorTool.check(bindingResult);
+
+        ChangeBlogCategoryResponse changeResponse = iBlogEditService.changeBlogCategory(
+                ChangeBlogCategoryRequest.Builder.aChangeBlogCategoryRequest()
+                .withBlogId(blogId)
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withCategoryId(form.getCategoryId())
+                .build()
+        );
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(changeResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(changeResponse.getMsg());
+    }
 }
