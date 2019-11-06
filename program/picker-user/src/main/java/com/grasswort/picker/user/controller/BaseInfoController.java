@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/info")
 public class BaseInfoController {
 
-    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE, mock = TOrF.FALSE)
+    @Reference(version = "1.0", timeout = 10000, validation = TOrF.FALSE, mock = TOrF.FALSE)
     IUserBaseInfoService iUserBaseInfoService;
 
     @ApiOperation(value = "获取用户基本信息")
@@ -69,7 +69,7 @@ public class BaseInfoController {
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);
 
         if (SysRetCodeConstants.SUCCESS.getCode().equals(editResponse.getCode())) {
-            return new ResponseUtil<UserBaseInfoEditResponse>().setData(editResponse);
+            return new ResponseUtil<UserBaseInfoEditResponse>().setData(null);
         }
 
         return new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg());

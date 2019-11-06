@@ -30,7 +30,7 @@ import java.io.IOException;
 @RestController
 public class OssController {
 
-    @Reference(version = "1.0", timeout = 5000)
+    @Reference(version = "1.0", timeout = 10000)
     IOssRefService iOssRefService;
 
     /**

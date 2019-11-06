@@ -19,4 +19,5 @@ public interface BlogCategoryDao extends Mapper<BlogCategory> {
 
     @Select("select id from pk_blog_category where pk_user_id = #{pkUserId} and category = #{category}")
     Long selectIdByPkUserIdAndCategory(@Param("pkUserId") Long pkUserId, @Param("category") String category);
+
 }

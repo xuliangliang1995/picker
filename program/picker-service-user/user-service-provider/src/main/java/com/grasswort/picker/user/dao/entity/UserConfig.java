@@ -1,20 +1,24 @@
-package com.grasswort.picker.blog.dao.entity;
+package com.grasswort.picker.user.dao.entity;
 
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "pk_blog_category")
-public class BlogCategory {
+@Table(name = "pk_user_config")
+public class UserConfig {
     @Id
     private Long id;
 
     @Column(name = "pk_user_id")
     private Long pkUserId;
 
-    @Column(name = "parent_id")
-    private Long parentId;
+    @Column(name = "markdown_theme")
+    private String markdownTheme;
 
-    private String category;
+    /**
+     * 安全校验方式 0、邮箱 1、短信
+     */
+    @Column(name = "safety_check_mode")
+    private Integer safetyCheckMode;
 
     @Column(name = "gmt_create")
     private Date gmtCreate;
@@ -37,14 +41,7 @@ public class BlogCategory {
     }
 
     /**
-     * @return category
-     */
-    public String getCategory() {
-        return category;
-    }
-
-    /**
-     * @return pkUserId
+     * @return pk_user_id
      */
     public Long getPkUserId() {
         return pkUserId;
@@ -57,19 +54,36 @@ public class BlogCategory {
         this.pkUserId = pkUserId;
     }
 
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    /**
+     * @return markdown_theme
+     */
+    public String getMarkdownTheme() {
+        return markdownTheme;
     }
 
     /**
-     * @param category
+     * @param markdownTheme
      */
-    public void setCategory(String category) {
-        this.category = category;
+    public void setMarkdownTheme(String markdownTheme) {
+        this.markdownTheme = markdownTheme;
+    }
+
+    /**
+     * 获取安全校验方式 0、邮箱 1、短信
+     *
+     * @return safety_check_mode - 安全校验方式 0、邮箱 1、短信
+     */
+    public Integer getSafetyCheckMode() {
+        return safetyCheckMode;
+    }
+
+    /**
+     * 设置安全校验方式 0、邮箱 1、短信
+     *
+     * @param safetyCheckMode 安全校验方式 0、邮箱 1、短信
+     */
+    public void setSafetyCheckMode(Integer safetyCheckMode) {
+        this.safetyCheckMode = safetyCheckMode;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
+import com.grasswort.picker.commons.mask.MaskUtil;
 import com.grasswort.picker.oss.IOssRefService;
 import com.grasswort.picker.oss.constants.OssConstants;
 import com.grasswort.picker.oss.dto.OssRefRequest;
@@ -70,7 +71,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
     @Autowired CaptchaMapper captchaMapper;
 
-    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+    @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
 
     /**
      * 获取用户基本信息
@@ -92,8 +93,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
         baseInfoResponse.setName(user.getName());
         baseInfoResponse.setSex(user.getSex());
-        baseInfoResponse.setEmail(user.getEmail());
-        baseInfoResponse.setPhone(user.getPhone());
+        baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
+        baseInfoResponse.setPhone(MaskUtil.maskMobile(user.getPhone()));
         baseInfoResponse.setAvatar(user.getAvatar());
         baseInfoResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         baseInfoResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -260,9 +261,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
             example.createCriteria().andEqualTo("captcha", captcha).andEqualTo("phone", phone)
                     .andGreaterThan("expireTime", DateTime.now().toDate());
             List<Captcha> captchas = captchaMapper.selectByExample(example);
-            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream()
-                    .filter(c -> Objects.equals(c.getPhone(), user.getPhone()))
-                    .findFirst().isPresent();
+            boolean phoneIsValid = (! CollectionUtils.isEmpty(captchas)) && captchas.stream().findFirst().isPresent();
             if (phoneIsValid) {
                 // 开始修改手机号
                 User userSelective = new User();

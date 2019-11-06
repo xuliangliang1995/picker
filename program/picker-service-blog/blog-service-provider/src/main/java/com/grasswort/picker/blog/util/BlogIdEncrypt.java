@@ -2,7 +2,10 @@ package com.grasswort.picker.blog.util;
 
 import com.grasswort.picker.commons.encrypt.CipherSymmetric;
 import com.grasswort.picker.commons.encrypt.DESCipher;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -23,7 +26,9 @@ public class BlogIdEncrypt {
      * @return
      */
     public static String encrypt(long blogId) {
-        return CIPHER.encrypt(String.valueOf(blogId), KEY);
+        return Optional.ofNullable(CIPHER.encrypt(String.valueOf(blogId), KEY))
+                .map(String::toLowerCase)
+                .orElse(null);
     }
 
     /**
@@ -32,6 +37,9 @@ public class BlogIdEncrypt {
      * @return
      */
     public static Long decrypt(String cipherText) {
+        if (StringUtils.isNotBlank(cipherText)) {
+            cipherText = cipherText.toUpperCase();
+        }
         String blogId = CIPHER.decrypt(cipherText, KEY);
         if (NumberUtils.isDigits(blogId)) {
             return Long.valueOf(blogId);

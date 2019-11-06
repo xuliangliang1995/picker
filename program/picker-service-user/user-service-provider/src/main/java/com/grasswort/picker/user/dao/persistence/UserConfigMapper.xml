@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper">
-  <resultMap id="BaseResultMap" type="com.grasswort.picker.blog.dao.entity.BlogCategory">
+<mapper namespace="com.grasswort.picker.user.dao.persistence.UserConfigMapper">
+  <resultMap id="BaseResultMap" type="com.grasswort.picker.user.dao.entity.UserConfig">
     <!--
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId"/>
-    <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId" />
+    <result column="markdown_theme" jdbcType="VARCHAR" property="markdownTheme" />
+    <result column="safety_check_mode" jdbcType="TINYINT" property="safetyCheckMode" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>

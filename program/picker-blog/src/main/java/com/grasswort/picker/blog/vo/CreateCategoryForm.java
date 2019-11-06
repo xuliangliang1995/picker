@@ -2,8 +2,7 @@ package com.grasswort.picker.blog.vo;
 
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.*;
 
 /**
  * @author xuliangliang
@@ -15,7 +14,10 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class CreateCategoryForm {
     @NotEmpty
-    @Max(10)
+    @Size(min = 1, max = 20)
     private String category;
+    @NotNull
+    @Min(0)
+    private Long parentId;
 
 }

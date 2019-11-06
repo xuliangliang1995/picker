@@ -20,8 +20,12 @@ public class QueryBlogCategoryResponse extends AbstractResponse {
     @Data
     public static class Category {
 
+        private Long parentId;
+
         private Long categoryId;
 
         private String category;
+
+        private List<Category> subCategorys;
     }
 }

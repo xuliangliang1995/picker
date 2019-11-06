@@ -12,9 +12,13 @@ import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogOssRefMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
+import com.grasswort.picker.blog.dto.ChangeBlogCategoryRequest;
+import com.grasswort.picker.blog.dto.ChangeBlogCategoryResponse;
 import com.grasswort.picker.blog.dto.CreateBlogRequest;
 import com.grasswort.picker.blog.dto.CreateBlogResponse;
+import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.oss.IOssRefService;
 import com.grasswort.picker.oss.constants.OssConstants;
 import com.grasswort.picker.oss.dto.OssRefRequest;
@@ -53,7 +57,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired BlogLabelMapper blogLabelMapper;
 
-    @Reference(version = "1.0", timeout = 5000) IOssRefService iOssRefService;
+    @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
     /**
      * 首次创建文章版本号
      */
@@ -80,7 +84,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         Set<String> labels = blogRequest.getLabels();
 
         // 判断分类是否正确
-        boolean categoryNotCorrect = categoryId != null && categoryId > 0 && ! judgeCategoryIsExists(userId, categoryId);
+        boolean categoryNotCorrect =  ! judgeCategoryIsExists(userId, categoryId);
         if (categoryNotCorrect) {
             createBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
             createBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
@@ -124,12 +128,58 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     }
 
     /**
+     * 修改博客分类
+     * @param changeBlogCategoryRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public ChangeBlogCategoryResponse changeBlogCategory(ChangeBlogCategoryRequest changeBlogCategoryRequest) {
+        ChangeBlogCategoryResponse changeBlogCategoryResponse = new ChangeBlogCategoryResponse();
+
+        Long categoryId = changeBlogCategoryRequest.getCategoryId();
+        // 判断分类是否正确
+        boolean categoryNotCorrect =  ! judgeCategoryIsExists(changeBlogCategoryRequest.getUserId(), categoryId);
+        if (categoryNotCorrect) {
+            changeBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+            changeBlogCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+            return changeBlogCategoryResponse;
+        }
+        // 判断博客是否存在，；以及是否有权限修改博客分类
+        Long blogId = BlogIdEncrypt.decrypt(changeBlogCategoryRequest.getBlogId());
+        Blog blog = Optional.ofNullable(blogId)
+                .map(blogMapper::selectByPrimaryKey)
+                .filter(b -> Objects.equals(b.getPkUserId(), changeBlogCategoryRequest.getUserId()))
+                .orElse(null);
+        if (blog == null) {
+            changeBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            changeBlogCategoryResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return changeBlogCategoryResponse;
+        }
+        // 开始修改
+        DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+
+        Blog blogSelective = new Blog();
+        blogSelective.setId(blogId);
+        blogSelective.setCategoryId(categoryId);
+        blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
+        blogMapper.updateByPrimaryKeySelective(blogSelective);
+
+        changeBlogCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        changeBlogCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return changeBlogCategoryResponse;
+    }
+
+    /**
      * 判断分类是否存在
      * @param pkUserId
      * @param categoryId
      * @return
      */
     private boolean judgeCategoryIsExists(Long pkUserId, Long categoryId) {
+        if (categoryId != null && categoryId.longValue() == 0L) {
+            return true;
+        }
         Long categoryOwnerId = blogCategoryDao.selectUserIdByPrimaryKey(categoryId);
         return categoryOwnerId != null && Objects.equals(categoryOwnerId, pkUserId);
     }

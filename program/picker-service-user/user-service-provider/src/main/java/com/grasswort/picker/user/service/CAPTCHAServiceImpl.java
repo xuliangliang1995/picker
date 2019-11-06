@@ -17,6 +17,8 @@ import com.grasswort.picker.user.dao.persistence.CaptchaMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
+import com.grasswort.picker.user.dto.PhoneCaptchaRequest;
+import com.grasswort.picker.user.dto.PhoneCaptchaResponse;
 import com.grasswort.picker.user.service.mailbuilder.CaptchaMailGenerator;
 import com.grasswort.picker.user.service.mailbuilder.wrapper.CaptchaMailInfoWrapper;
 import com.grasswort.picker.user.util.sms.MobileCaptchaSender;
@@ -40,7 +42,7 @@ import java.util.Optional;
  */
 @Service(
         version = "1.0",
-        timeout = 2000,
+        timeout = 10000,
         loadbalance = ClusterLoadBalance.LEAST_ACTIVE,
         cluster = ClusterFaultMechanism.FAIL_FAST
 )
@@ -94,6 +96,49 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
     }
 
     /**
+     * 给某个手机号发送验证码
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public PhoneCaptchaResponse sendCaptchaToPhone(PhoneCaptchaRequest request) {
+        PhoneCaptchaResponse phoneCaptchaResponse = new PhoneCaptchaResponse();
+        String phone = request.getPhone();
+
+        // 生成验证码
+        String captchaCode = RandomStringUtils.randomNumeric(CAPTCHA_CODE_LENGTH);
+
+        // 发送验证码短信
+        Optional<String> requestIdOpt = MobileCaptchaSender.Builder.aMobileCaptchaSender()
+                .withPhone(phone)
+                .withCaptcha(captchaCode)
+                .build()
+                .send();
+        if (requestIdOpt.isPresent()) {
+            // 记录到数据库中
+            Captcha captcha = new Captcha();
+            captcha.setReceiver((byte) CAPTCHAReceiver.PHONE.getId());
+            captcha.setPhone(phone);
+            captcha.setCaptcha(captchaCode);
+            captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
+            Date now = DateTime.now().toDate();
+            captcha.setGmtCreate(now);
+            captcha.setGmtModified(now);
+            captchaMapper.insertUseGeneratedKeys(captcha);
+
+            phoneCaptchaResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            phoneCaptchaResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        } else {
+            phoneCaptchaResponse.setCode(SysRetCodeConstants.SECURITY_CODE_SEND_FAIL.getCode());
+            phoneCaptchaResponse.setMsg(SysRetCodeConstants.SECURITY_CODE_SEND_FAIL.getMsg());
+        }
+
+        return phoneCaptchaResponse;
+    }
+
+    /**
      * 发送手机验证码
      * @param user
      */
@@ -107,16 +152,6 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
 
         // 生成验证码
         String captchaCode = RandomStringUtils.randomNumeric(CAPTCHA_CODE_LENGTH);
-        // 记录到数据库中
-        Captcha captcha = new Captcha();
-        captcha.setReceiver((byte) CAPTCHAReceiver.PHONE.getId());
-        captcha.setPhone(phone);
-        captcha.setCaptcha(captchaCode);
-        captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
-        Date now = DateTime.now().toDate();
-        captcha.setGmtCreate(now);
-        captcha.setGmtModified(now);
-        captchaMapper.insertUseGeneratedKeys(captcha);
 
         // 发送验证码短信
         Optional<String> requestIdOpt = MobileCaptchaSender.Builder.aMobileCaptchaSender()
@@ -125,6 +160,18 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
                 .build()
                 .send();
         if (requestIdOpt.isPresent()) {
+            // 记录到数据库中
+            Captcha captcha = new Captcha();
+            captcha.setReceiver((byte) CAPTCHAReceiver.PHONE.getId());
+            captcha.setPhone(phone);
+            captcha.setCaptcha(captchaCode);
+            captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
+            Date now = DateTime.now().toDate();
+            captcha.setGmtCreate(now);
+            captcha.setGmtModified(now);
+            captchaMapper.insertUseGeneratedKeys(captcha);
+
+            response.setPhone(MaskUtil.maskMobile(phone));
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         } else {

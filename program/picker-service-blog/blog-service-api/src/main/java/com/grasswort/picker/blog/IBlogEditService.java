@@ -1,5 +1,7 @@
 package com.grasswort.picker.blog;
 
+import com.grasswort.picker.blog.dto.ChangeBlogCategoryRequest;
+import com.grasswort.picker.blog.dto.ChangeBlogCategoryResponse;
 import com.grasswort.picker.blog.dto.CreateBlogRequest;
 import com.grasswort.picker.blog.dto.CreateBlogResponse;
 
@@ -18,4 +20,11 @@ public interface IBlogEditService {
      * @return
      */
     CreateBlogResponse createBlog(CreateBlogRequest blogRequest);
+
+    /**
+     * 修改博客分类
+     * @param changeBlogCategoryRequest
+     * @return
+     */
+    ChangeBlogCategoryResponse changeBlogCategory(ChangeBlogCategoryRequest changeBlogCategoryRequest);
 }

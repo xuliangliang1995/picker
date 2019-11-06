@@ -67,9 +67,12 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>
+        <table tableName="pk_user_config" domainObjectName="UserConfig"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
         -->
-
-
 
     </context>
 </generatorConfiguration>

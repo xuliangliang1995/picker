@@ -34,7 +34,6 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
     @Autowired BlogCategoryDao blogCategoryDao;
     /**
      * 创建博客分类
-     *
      * @param createRequest
      * @return
      */
@@ -53,8 +52,18 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
             return createBlogCategoryResponse;
         }
 
+        if (createRequest.getParentId() > 0) {
+            boolean parentExists = blogCategoryDao.existsWithPrimaryKey(createRequest.getParentId());
+            if (! parentExists) {
+                createBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_PARENT_CATEGORY_NOT_EXISTS.getCode());
+                createBlogCategoryResponse.setMsg(SysRetCodeConstants.BLOG_PARENT_CATEGORY_NOT_EXISTS.getMsg());
+                return createBlogCategoryResponse;
+            }
+        }
+
         BlogCategory blogCategory = new BlogCategory();
         blogCategory.setPkUserId(userId);
+        blogCategory.setParentId(createRequest.getParentId());
         blogCategory.setCategory(category);
         Date now = new Date(System.currentTimeMillis());
         blogCategory.setGmtCreate(now);
@@ -79,18 +88,32 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
 
         Long userId = queryBlogCategoryRequest.getUserId();
         Example example = new Example(BlogCategory.class);
-        example.createCriteria().andEqualTo("pkUserId", userId);
+        example.createCriteria().andEqualTo("pkUserId", userId).andEqualTo("parentId", 0);
 
         List<BlogCategory> categorys = blogCategoryMapper.selectByExample(example);
-        categoryResponse.setCategorys(categorys.stream().map(category -> {
-            QueryBlogCategoryResponse.Category c = new QueryBlogCategoryResponse.Category();
-            c.setCategoryId(category.getId());
-            c.setCategory(category.getCategory());
-            return c;
-        }).collect(Collectors.toList()));
+        categoryResponse.setCategorys(
+                categorys.stream().map(category -> convertCategory(category)).collect(Collectors.toList())
+        );
 
         categoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         categoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return categoryResponse;
+    }
+
+    /**
+     * category converter
+     * @param blogCategory
+     * @return
+     */
+    private QueryBlogCategoryResponse.Category convertCategory(BlogCategory blogCategory) {
+        QueryBlogCategoryResponse.Category c = new QueryBlogCategoryResponse.Category();
+        c.setCategoryId(blogCategory.getId());
+        c.setCategory(blogCategory.getCategory());
+        c.setParentId(blogCategory.getParentId());
+
+        Example ex = new Example(BlogCategory.class);
+        ex.createCriteria().andEqualTo("parentId", blogCategory.getId());
+        c.setSubCategorys(blogCategoryMapper.selectByExample(ex).stream().map(c1 -> convertCategory(c1)).collect(Collectors.toList()));
+        return c;
     }
 }

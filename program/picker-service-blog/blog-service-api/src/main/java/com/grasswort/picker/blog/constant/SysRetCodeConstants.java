@@ -16,7 +16,8 @@ public enum SysRetCodeConstants {
     PLEASE_RETRY                        ("003006", "操作失败，请重试"),
 
     BLOG_CATEGORY_NOT_EXISTS            ("001001", "博客类别不存在"),
-    BLOG_CATEGORY_EXISTS            ("001002", "博客类别已存在"),
+    BLOG_CATEGORY_EXISTS                ("001002", "博客类别已存在"),
+    BLOG_PARENT_CATEGORY_NOT_EXISTS     ("001003", "所属父类不存在"),
 
     BLOG_NOT_EXISTS                 ("002001", "博客不存在");
 

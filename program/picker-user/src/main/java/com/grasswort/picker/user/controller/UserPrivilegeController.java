@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/privilege")
 public class UserPrivilegeController {
-    @Reference(version = "1.0", timeout = 2000, validation = TOrF.FALSE)
+    @Reference(version = "1.0", timeout = 10000, validation = TOrF.FALSE)
     IUserPrivilegeService iUserPrivilegeService;
 
     @ApiOperation("通过验证码进行身份验证并提权")
