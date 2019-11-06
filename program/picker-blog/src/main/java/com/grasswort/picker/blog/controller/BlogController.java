@@ -114,4 +114,20 @@ public class BlogController {
 
         return new ResponseUtil<>().setErrorMsg(changeResponse.getMsg());
     }
+
+    @ApiOperation(value = "删除博客")
+    @DeleteMapping("/{blogId}")
+    public ResponseData deleteBlog(@PathVariable("blogId") String blogId) {
+        DeleteBlogRequest deleteBlogRequest = DeleteBlogRequest.Builder.aDeleteBlogRequest()
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withBlogId(blogId)
+                .build();
+        
+        DeleteBlogResponse deleteBlogResponse = iBlogEditService.deleteBlog(deleteBlogRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(deleteBlogResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(deleteBlogResponse.getMsg());
+    }
 }

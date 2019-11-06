@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.ChangeBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.ChangeBlogCategoryResponse;
-import com.grasswort.picker.blog.dto.CreateBlogRequest;
-import com.grasswort.picker.blog.dto.CreateBlogResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -27,4 +24,11 @@ public interface IBlogEditService {
      * @return
      */
     ChangeBlogCategoryResponse changeBlogCategory(ChangeBlogCategoryRequest changeBlogCategoryRequest);
+
+    /**
+     * 删除博客
+     * @param deleteBlogRequest
+     * @return
+     */
+    DeleteBlogResponse deleteBlog(DeleteBlogRequest deleteBlogRequest);
 }

@@ -12,10 +12,7 @@ import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogOssRefMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
-import com.grasswort.picker.blog.dto.ChangeBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.ChangeBlogCategoryResponse;
-import com.grasswort.picker.blog.dto.CreateBlogRequest;
-import com.grasswort.picker.blog.dto.CreateBlogResponse;
+import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.config.DBLocalHolder;
@@ -168,6 +165,38 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         changeBlogCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         changeBlogCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return changeBlogCategoryResponse;
+    }
+
+    /**
+     * 删除博客
+     *
+     * @param deleteBlogRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public DeleteBlogResponse deleteBlog(DeleteBlogRequest deleteBlogRequest) {
+        DeleteBlogResponse deleteBlogResponse = new DeleteBlogResponse();
+
+        Long blogId = BlogIdEncrypt.decrypt(deleteBlogRequest.getBlogId());
+        Long userId = deleteBlogRequest.getUserId();
+
+        Blog blog = Optional.ofNullable(blogId)
+                .map(blogMapper::selectByPrimaryKey)
+                .filter(b -> Objects.equals(userId, b.getPkUserId()))
+                .orElse(null);
+
+        if (blog == null) {
+            deleteBlogResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            deleteBlogResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return deleteBlogResponse;
+        }
+
+        blogMapper.deleteByPrimaryKey(blog.getId());
+
+        deleteBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        deleteBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return deleteBlogResponse;
     }
 
     /**
