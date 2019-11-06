@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogService;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
@@ -27,6 +28,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,6 +73,7 @@ public class BlogServiceImpl implements IBlogService {
         if (categoryId != null && categoryId >= 0) {
             criteria.andEqualTo("categoryId", categoryId);
         }
+        criteria.andEqualTo("status", BlogStatusEnum.NORMAL.status());
 
         long matchedBlogCount = blogMapper.selectCountByExample(example);
         response.setTotal(matchedBlogCount);
@@ -130,10 +133,9 @@ public class BlogServiceImpl implements IBlogService {
         Long blogId = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
         if (null != blogId) {
             blog = blogMapper.selectByPrimaryKey(blogId);
-
         }
 
-        boolean blogExists = blog != null;
+        boolean blogExists = blog != null && Objects.equals(blog.getStatus(), BlogStatusEnum.NORMAL.status());
 
         if (blogExists) {
             String markdown = blogContentDao.markdown(blog.getId(), blog.getVersion());

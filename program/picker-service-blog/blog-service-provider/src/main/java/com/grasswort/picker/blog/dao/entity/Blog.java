@@ -29,7 +29,10 @@ public class Blog {
      * 文章摘要
      */
     private String summary;
-
+    /**
+     * 博客状态 0、正常 1、回收中 2、删除
+     */
+    private Integer status;
     /**
      * 博客的版本
      */
@@ -135,6 +138,15 @@ public class Blog {
      */
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     /**

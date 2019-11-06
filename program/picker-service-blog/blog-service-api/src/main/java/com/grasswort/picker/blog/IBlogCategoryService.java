@@ -25,7 +25,7 @@ public interface IBlogCategoryService {
     QueryBlogCategoryResponse categorys(QueryBlogCategoryRequest queryBlogCategoryRequest);
 
     /**
-     * 修改博客
+     * 修改博客分类
      * @param editCategoryRequest
      * @return
      */

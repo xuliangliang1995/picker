@@ -31,4 +31,11 @@ public interface IBlogEditService {
      * @return
      */
     DeleteBlogResponse deleteBlog(DeleteBlogRequest deleteBlogRequest);
+
+    /**
+     * 回收博客
+     * @param recycleBlogRequest
+     * @return
+     */
+    RecycleBlogResponse recycleBlog(RecycleBlogRequest recycleBlogRequest);
 }

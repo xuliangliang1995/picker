@@ -116,7 +116,7 @@ public class BlogController {
     }
 
     @ApiOperation(value = "删除博客")
-    @DeleteMapping("/{blogId}")
+    @DeleteMapping(("/{blogId}"))
     public ResponseData deleteBlog(@PathVariable("blogId") String blogId) {
         DeleteBlogRequest deleteBlogRequest = DeleteBlogRequest.Builder.aDeleteBlogRequest()
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
@@ -130,4 +130,21 @@ public class BlogController {
 
         return new ResponseUtil<>().setErrorMsg(deleteBlogResponse.getMsg());
     }
+
+    @ApiOperation(value = "回收博客")
+    @PatchMapping(("/{blogId}/recycle"))
+    public ResponseData recycleBlog(@PathVariable("blogId") String blogId) {
+        RecycleBlogRequest recycleBlogRequest = RecycleBlogRequest.Builder.aRecycleBlogRequest()
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withBlogId(blogId)
+                .build();
+
+        RecycleBlogResponse recycleBlogResponse = iBlogEditService.recycleBlog(recycleBlogRequest);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(recycleBlogResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(recycleBlogResponse.getMsg());
+    }
+
 }

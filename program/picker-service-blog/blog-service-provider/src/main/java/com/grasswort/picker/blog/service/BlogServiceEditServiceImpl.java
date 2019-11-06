@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogEditService;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
@@ -90,6 +91,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
         // 添加博客
         Blog blog = new Blog();
+        blog.setStatus(BlogStatusEnum.NORMAL.status());
         blog.setPkUserId(userId);
         blog.setVersion(FIRST_EDITION);
         blog.setTitle(title);
@@ -146,6 +148,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         Long blogId = BlogIdEncrypt.decrypt(changeBlogCategoryRequest.getBlogId());
         Blog blog = Optional.ofNullable(blogId)
                 .map(blogMapper::selectByPrimaryKey)
+                .filter(b -> Objects.equals(b.getStatus(), BlogStatusEnum.NORMAL.status()))
                 .filter(b -> Objects.equals(b.getPkUserId(), changeBlogCategoryRequest.getUserId()))
                 .orElse(null);
         if (blog == null) {
@@ -168,7 +171,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     }
 
     /**
-     * 删除博客
+     * 删除博客(假删除，一定时间内可回收，超时真删除)
      *
      * @param deleteBlogRequest
      * @return
@@ -192,11 +195,57 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             return deleteBlogResponse;
         }
 
-        blogMapper.deleteByPrimaryKey(blog.getId());
+        boolean isRecoverable = Objects.equals(BlogStatusEnum.RECOVERABLE.status(), blog.getStatus());
+        if (! isRecoverable) {
+            Blog blogSelective = new Blog();
+            blogSelective.setId(blogId);
+            blogSelective.setStatus(BlogStatusEnum.RECOVERABLE.status());
+            blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
+            blogMapper.updateByPrimaryKeySelective(blogSelective);
+        }
 
         deleteBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return deleteBlogResponse;
+    }
+
+    /**
+     * 回收博客
+     *
+     * @param recycleBlogRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public RecycleBlogResponse recycleBlog(RecycleBlogRequest recycleBlogRequest) {
+        RecycleBlogResponse recycleBlogResponse = new RecycleBlogResponse();
+
+        Long blogId = BlogIdEncrypt.decrypt(recycleBlogRequest.getBlogId());
+        Long userId = recycleBlogRequest.getUserId();
+
+        Blog blog = Optional.ofNullable(blogId)
+                .map(blogMapper::selectByPrimaryKey)
+                .filter(b -> Objects.equals(userId, b.getPkUserId()))
+                .orElse(null);
+
+        if (blog == null) {
+            recycleBlogResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            recycleBlogResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return recycleBlogResponse;
+        }
+
+        boolean isNormal = Objects.equals(BlogStatusEnum.NORMAL.status(), blog.getStatus());
+        if (! isNormal) {
+            Blog blogSelective = new Blog();
+            blogSelective.setId(blogId);
+            blogSelective.setStatus(BlogStatusEnum.RECOVERABLE.status());
+            blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
+            blogMapper.updateByPrimaryKeySelective(blogSelective);
+        }
+
+        recycleBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        recycleBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return recycleBlogResponse;
     }
 
     /**
