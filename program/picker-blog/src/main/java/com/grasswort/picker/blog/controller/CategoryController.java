@@ -76,6 +76,7 @@ public class CategoryController {
                         .withCategoryId(categoryId)
                         .withParentId(form.getParentId())
                         .withCategory(form.getCategory())
+                        .withUserId(PickerInfoHolder.getPickerInfo().getId())
                         .build()
         );
 
