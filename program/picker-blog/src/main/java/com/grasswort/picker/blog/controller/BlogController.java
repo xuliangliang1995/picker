@@ -122,7 +122,7 @@ public class BlogController {
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .withBlogId(blogId)
                 .build();
-        
+
         DeleteBlogResponse deleteBlogResponse = iBlogEditService.deleteBlog(deleteBlogRequest);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(deleteBlogResponse.getCode())) {
             return new ResponseUtil<>().setData(null);
