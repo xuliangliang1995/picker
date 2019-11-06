@@ -6,17 +6,18 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
-import com.grasswort.picker.blog.dto.CreateBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.CreateBlogCategoryResponse;
-import com.grasswort.picker.blog.dto.QueryBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.QueryBlogCategoryResponse;
+import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.commons.config.DBLocalHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -43,8 +44,9 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
         CreateBlogCategoryResponse createBlogCategoryResponse= new CreateBlogCategoryResponse();
 
         Long userId = createRequest.getUserId();
+        Long parentId = createRequest.getParentId();
         String category = createRequest.getCategory();
-        Long categoryId = blogCategoryDao.selectIdByPkUserIdAndCategory(userId, category);
+        Long categoryId = blogCategoryDao.selectIdByPkUserIdAndCategory(userId, parentId, category);
         boolean categoryExists = categoryId != null;
         if (categoryExists) {
             createBlogCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getCode());
@@ -90,14 +92,73 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
         Example example = new Example(BlogCategory.class);
         example.createCriteria().andEqualTo("pkUserId", userId).andEqualTo("parentId", 0);
 
-        List<BlogCategory> categorys = blogCategoryMapper.selectByExample(example);
+        List<BlogCategory> categories = blogCategoryMapper.selectByExample(example);
         categoryResponse.setCategorys(
-                categorys.stream().map(category -> convertCategory(category)).collect(Collectors.toList())
+                categories.stream().map(category -> convertCategory(category)).collect(Collectors.toList())
         );
 
         categoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         categoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return categoryResponse;
+    }
+
+    /**
+     * 修改博客
+     * @param editCategoryRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public EditCategoryResponse editCategory(EditCategoryRequest editCategoryRequest) {
+        EditCategoryResponse editCategoryResponse = new EditCategoryResponse();
+
+        Long categoryId = editCategoryRequest.getCategoryId();
+        Long userId = editCategoryRequest.getUserId();
+        Long parentId = editCategoryRequest.getParentId();
+        String  category = editCategoryRequest.getCategory();
+
+        BlogCategory blogCategory = Optional.ofNullable(blogCategoryMapper.selectByPrimaryKey(categoryId))
+                .filter(c -> c.getPkUserId().equals(userId))
+                .orElse(null);
+
+        boolean categoryNotExists = blogCategory == null;
+        if (categoryNotExists) {
+            editCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+            editCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+            return editCategoryResponse;
+        }
+
+        if (parentId == null) {
+            parentId = blogCategory.getParentId();
+        }
+        if (StringUtils.isBlank(category)) {
+            category = blogCategory.getCategory();
+        }
+        if (Objects.equals(parentId, blogCategory.getParentId()) && Objects.equals(category, blogCategory.getCategory())) {
+            editCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+            editCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+            return editCategoryResponse;
+        }
+
+        boolean targetCategoryExists = blogCategoryDao.selectIdByPkUserIdAndCategory(userId, parentId, category) != null;
+        if (targetCategoryExists) {
+            editCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getCode());
+            editCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_EXISTS.getMsg());
+            return editCategoryResponse;
+        }
+
+        BlogCategory categorySelective = new BlogCategory();
+        categorySelective.setId(blogCategory.getId());
+        categorySelective.setParentId(parentId);
+        categorySelective.setCategory(category);
+        categorySelective.setGmtModified(new Date(System.currentTimeMillis()));
+
+        DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+        blogCategoryMapper.updateByPrimaryKeySelective(categorySelective);
+
+        editCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        editCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return editCategoryResponse;
     }
 
     /**

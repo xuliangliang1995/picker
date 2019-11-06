@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.CreateBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.CreateBlogCategoryResponse;
-import com.grasswort.picker.blog.dto.QueryBlogCategoryRequest;
-import com.grasswort.picker.blog.dto.QueryBlogCategoryResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -26,4 +23,11 @@ public interface IBlogCategoryService {
      * @return
      */
     QueryBlogCategoryResponse categorys(QueryBlogCategoryRequest queryBlogCategoryRequest);
+
+    /**
+     * 修改博客
+     * @param editCategoryRequest
+     * @return
+     */
+    EditCategoryResponse editCategory(EditCategoryRequest editCategoryRequest);
 }

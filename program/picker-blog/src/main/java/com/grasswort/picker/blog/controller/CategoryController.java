@@ -5,6 +5,7 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.vo.CategoryTreeNodeVO;
 import com.grasswort.picker.blog.vo.CreateCategoryForm;
+import com.grasswort.picker.blog.vo.PatchCategoryForm;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
@@ -63,5 +64,29 @@ public class CategoryController {
             return new ResponseUtil<CategoryTreeNodeVO>().setData(vo);
         }
         return new ResponseUtil<CategoryTreeNodeVO>().setErrorMsg(queryResponse.getMsg());
+    }
+
+    @ApiOperation(value = "修改分类")
+    @PatchMapping("/{categoryId}")
+    public ResponseData patchCategory(@RequestBody @Validated PatchCategoryForm form, BindingResult bindingResult, @PathVariable("categoryId") Long categoryId) {
+        ValidatorTool.check(bindingResult);
+
+        EditCategoryResponse editCategoryResponse = iBlogCategoryService.editCategory(
+                EditCategoryRequest.Builder.anEditCategoryRequest()
+                        .withCategoryId(categoryId)
+                        .withParentId(form.getParentId())
+                        .withCategory(form.getCategory())
+                        .build()
+        );
+
+        if (null == editCategoryResponse) {
+            return new ResponseUtil<CategoryTreeNodeVO>().setErrorMsg("系统异常");
+        }
+
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(editCategoryResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(editCategoryResponse.getMsg());
     }
 }
