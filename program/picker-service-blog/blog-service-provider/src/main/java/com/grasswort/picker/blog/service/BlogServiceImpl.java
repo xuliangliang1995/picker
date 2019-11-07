@@ -6,9 +6,10 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
+import com.grasswort.picker.blog.dao.entity.BlogContent;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
-import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
 import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
@@ -43,11 +44,11 @@ public class BlogServiceImpl implements IBlogService {
 
     @Autowired BlogMapper blogMapper;
 
-    @Autowired BlogContentDao blogContentDao;
-
     @Autowired BlogCategoryMapper blogCategoryMapper;
 
     @Autowired BlogLabelDao blogLabelDao;
+
+    @Autowired BlogContentMapper blogContentMapper;
 
     /**
      * 查看自己的博客列表
@@ -136,7 +137,11 @@ public class BlogServiceImpl implements IBlogService {
 
         if (blogExists) {
             final int VERSION = blogKey.getVersion() > 0 ? blogKey.getVersion() : blog.getVersion();
-            String markdown = blogContentDao.markdown(blog.getId(), VERSION);
+            Example example = new Example(BlogContent.class);
+            example.createCriteria().andEqualTo("blogId", blog.getId())
+                    .andEqualTo("version", VERSION);
+
+            BlogContent content = blogContentMapper.selectOneByExample(example);
 
             BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
 
@@ -147,12 +152,12 @@ public class BlogServiceImpl implements IBlogService {
             blogItemWithMarkdown.setCoverImg(blog.getCoverImg());
             blogItemWithMarkdown.setVersion(VERSION);
 
-            blogItemWithMarkdown.setMarkdown(markdown);
+            blogItemWithMarkdown.setMarkdown(content.getMarkdown());
 
             blogItemWithMarkdown.setLabels(blogLabelDao.listBlogLabels(blog.getId()));
 
-            blogItemWithMarkdown.setGmtCreate(blog.getGmtCreate());
-            blogItemWithMarkdown.setGmtModified(blog.getGmtModified());
+            blogItemWithMarkdown.setGmtCreate(content.getGmtCreate());
+            blogItemWithMarkdown.setGmtModified(content.getGmtModified());
 
             markdownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
             markdownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
