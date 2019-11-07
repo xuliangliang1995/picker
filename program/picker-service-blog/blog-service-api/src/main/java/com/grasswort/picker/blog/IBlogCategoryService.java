@@ -30,4 +30,11 @@ public interface IBlogCategoryService {
      * @return
      */
     EditCategoryResponse editCategory(EditCategoryRequest editCategoryRequest);
+
+    /**
+     * 删除博客分类
+     * @param deleteCategoryRequest
+     * @return
+     */
+    DeleteCategoryResponse deleteCategory(DeleteCategoryRequest deleteCategoryRequest);
 }

@@ -18,6 +18,7 @@ public enum SysRetCodeConstants {
     BLOG_CATEGORY_NOT_EXISTS            ("001001", "博客类别不存在"),
     BLOG_CATEGORY_EXISTS                ("001002", "博客类别已存在"),
     BLOG_PARENT_CATEGORY_NOT_EXISTS     ("001003", "所属父类不存在"),
+    BLOG_CATEGORY_NOT_EMPTY             ("001004", "非空文件夹不允许删除"),
 
     BLOG_NOT_EXISTS                 ("002001", "博客不存在");
 

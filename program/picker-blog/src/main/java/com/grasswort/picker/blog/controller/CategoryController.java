@@ -90,4 +90,21 @@ public class CategoryController {
 
         return new ResponseUtil<>().setErrorMsg(editCategoryResponse.getMsg());
     }
+
+    @ApiOperation(value = "删除分类")
+    @DeleteMapping("/{categoryId}")
+    public ResponseData deleteCategory(@PathVariable("categoryId") Long categoryId) {
+        DeleteCategoryRequest deleteCategoryRequest = DeleteCategoryRequest.Builder.aDeleteCategoryRequest()
+                .withCategoryId(categoryId)
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+
+        DeleteCategoryResponse deleteCategoryResponse = iBlogCategoryService.deleteCategory(deleteCategoryRequest);
+
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(deleteCategoryResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(deleteCategoryResponse.getMsg());
+    }
 }

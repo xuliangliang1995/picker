@@ -1,11 +1,13 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogCategoryService;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.config.DBLocalHolder;
@@ -33,6 +35,8 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
     @Autowired BlogCategoryMapper blogCategoryMapper;
 
     @Autowired BlogCategoryDao blogCategoryDao;
+
+    @Autowired BlogDao blogDao;
     /**
      * 创建博客分类
      * @param createRequest
@@ -159,6 +163,48 @@ public class BlogCategoryServiceImpl implements IBlogCategoryService {
         editCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return editCategoryResponse;
+    }
+
+    /**
+     * 删除博客分类
+     *
+     * @param deleteCategoryRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public DeleteCategoryResponse deleteCategory(DeleteCategoryRequest deleteCategoryRequest) {
+        DeleteCategoryResponse deleteCategoryResponse = new DeleteCategoryResponse();
+
+        Long userId = deleteCategoryRequest.getUserId();
+        Long categoryId = deleteCategoryRequest.getCategoryId();
+
+        boolean notExists = ! Objects.equals(userId, blogCategoryDao.selectUserIdByPrimaryKey(categoryId));
+        if (notExists) {
+            deleteCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+            deleteCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+            return deleteCategoryResponse;
+        }
+
+        boolean hasChildren = blogCategoryDao.selectCountByParentId(categoryId) > 0;
+        if (hasChildren) {
+            deleteCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EMPTY.getCode());
+            deleteCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EMPTY.getMsg());
+            return deleteCategoryResponse;
+        }
+
+        boolean hasBlog = blogDao.selectCountByCategoryIdAndStatus(categoryId, BlogStatusEnum.NORMAL.status()) > 0;
+        if (hasBlog) {
+            deleteCategoryResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EMPTY.getCode());
+            deleteCategoryResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EMPTY.getMsg());
+            return deleteCategoryResponse;
+        }
+
+        blogCategoryMapper.deleteByPrimaryKey(categoryId);
+
+        deleteCategoryResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        deleteCategoryResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return deleteCategoryResponse;
     }
 
     /**
