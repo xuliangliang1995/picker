@@ -238,7 +238,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         if (! isNormal) {
             Blog blogSelective = new Blog();
             blogSelective.setId(blogId);
-            blogSelective.setStatus(BlogStatusEnum.RECOVERABLE.status());
+            blogSelective.setStatus(BlogStatusEnum.NORMAL.status());
             blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
             blogMapper.updateByPrimaryKeySelective(blogSelective);
         }
