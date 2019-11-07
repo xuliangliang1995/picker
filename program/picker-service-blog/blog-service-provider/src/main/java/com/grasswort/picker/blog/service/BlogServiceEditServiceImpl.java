@@ -145,8 +145,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             return changeBlogCategoryResponse;
         }
         // 判断博客是否存在，；以及是否有权限修改博客分类
-        Long blogId = BlogIdEncrypt.decrypt(changeBlogCategoryRequest.getBlogId());
-        Blog blog = Optional.ofNullable(blogId)
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(changeBlogCategoryRequest.getBlogId());
+        Blog blog = Optional.ofNullable(blogKey)
+                .map(BlogIdEncrypt.BlogKey::getBlogId)
                 .map(blogMapper::selectByPrimaryKey)
                 .filter(b -> Objects.equals(b.getStatus(), BlogStatusEnum.NORMAL.status()))
                 .filter(b -> Objects.equals(b.getPkUserId(), changeBlogCategoryRequest.getUserId()))
@@ -160,7 +161,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         DBLocalHolder.selectDBGroup(DBGroup.MASTER);
 
         Blog blogSelective = new Blog();
-        blogSelective.setId(blogId);
+        blogSelective.setId(blogKey.getBlogId());
         blogSelective.setCategoryId(categoryId);
         blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
         blogMapper.updateByPrimaryKeySelective(blogSelective);
@@ -181,10 +182,11 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     public DeleteBlogResponse deleteBlog(DeleteBlogRequest deleteBlogRequest) {
         DeleteBlogResponse deleteBlogResponse = new DeleteBlogResponse();
 
-        Long blogId = BlogIdEncrypt.decrypt(deleteBlogRequest.getBlogId());
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(deleteBlogRequest.getBlogId());
         Long userId = deleteBlogRequest.getUserId();
 
-        Blog blog = Optional.ofNullable(blogId)
+        Blog blog = Optional.ofNullable(blogKey)
+                .map(BlogIdEncrypt.BlogKey::getBlogId)
                 .map(blogMapper::selectByPrimaryKey)
                 .filter(b -> Objects.equals(userId, b.getPkUserId()))
                 .orElse(null);
@@ -198,7 +200,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         boolean isRecoverable = Objects.equals(BlogStatusEnum.RECOVERABLE.status(), blog.getStatus());
         if (! isRecoverable) {
             Blog blogSelective = new Blog();
-            blogSelective.setId(blogId);
+            blogSelective.setId(blogKey.getBlogId());
             blogSelective.setStatus(BlogStatusEnum.RECOVERABLE.status());
             blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
             blogMapper.updateByPrimaryKeySelective(blogSelective);
@@ -220,10 +222,11 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     public RecycleBlogResponse recycleBlog(RecycleBlogRequest recycleBlogRequest) {
         RecycleBlogResponse recycleBlogResponse = new RecycleBlogResponse();
 
-        Long blogId = BlogIdEncrypt.decrypt(recycleBlogRequest.getBlogId());
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(recycleBlogRequest.getBlogId());
         Long userId = recycleBlogRequest.getUserId();
 
-        Blog blog = Optional.ofNullable(blogId)
+        Blog blog = Optional.ofNullable(blogKey)
+                .map(BlogIdEncrypt.BlogKey::getBlogId)
                 .map(blogMapper::selectByPrimaryKey)
                 .filter(b -> Objects.equals(userId, b.getPkUserId()))
                 .orElse(null);
@@ -237,7 +240,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         boolean isNormal = Objects.equals(BlogStatusEnum.NORMAL.status(), blog.getStatus());
         if (! isNormal) {
             Blog blogSelective = new Blog();
-            blogSelective.setId(blogId);
+            blogSelective.setId(blogKey.getBlogId());
             blogSelective.setStatus(BlogStatusEnum.NORMAL.status());
             blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
             blogMapper.updateByPrimaryKeySelective(blogSelective);

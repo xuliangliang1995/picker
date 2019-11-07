@@ -16,7 +16,8 @@ public class BlogIdEncryptTest {
     public void test1() {
         Long blogId = 1L;
         String text = BlogIdEncrypt.encrypt(blogId);
-        Assert.assertEquals("博客 ID 加解密有误", blogId, BlogIdEncrypt.decrypt(text));
+        Long decryptBlogId = BlogIdEncrypt.decrypt(text).getBlogId();
+        Assert.assertEquals("博客 ID 加解密有误", blogId, decryptBlogId);
     }
 
 
@@ -24,7 +25,8 @@ public class BlogIdEncryptTest {
     public void test2() {
         Long blogId = Long.MAX_VALUE;
         String text = BlogIdEncrypt.encrypt(blogId);
-        Assert.assertEquals("博客 ID 加解密有误", blogId, BlogIdEncrypt.decrypt(text));
+        Long decryptBlogId = BlogIdEncrypt.decrypt(text).getBlogId();
+        Assert.assertEquals("博客 ID 加解密有误", blogId, decryptBlogId);
     }
 
 }

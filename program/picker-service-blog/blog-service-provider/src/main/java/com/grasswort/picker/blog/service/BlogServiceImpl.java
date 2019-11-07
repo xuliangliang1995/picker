@@ -129,21 +129,21 @@ public class BlogServiceImpl implements IBlogService {
     public BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest) {
         BlogMarkdownResponse markdownResponse = new BlogMarkdownResponse();
 
-        Blog blog = null;
-        Long blogId = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
-        if (null != blogId) {
-            blog = blogMapper.selectByPrimaryKey(blogId);
-        }
+
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
+        Blog blog = Optional.ofNullable(blogKey).map(BlogIdEncrypt.BlogKey::getBlogId)
+                .map(blogMapper::selectByPrimaryKey).orElse(null);
 
         boolean blogExists = blog != null && Objects.equals(blog.getStatus(), BlogStatusEnum.NORMAL.status());
 
         if (blogExists) {
-            String markdown = blogContentDao.markdown(blog.getId(), blog.getVersion());
+            final int VERSION = blogKey.getVersion() > 0 ? blogKey.getVersion() : blog.getVersion();
+            String markdown = blogContentDao.markdown(blog.getId(), VERSION);
 
             BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
             blogItemWithMarkdown.setBlogId(BlogIdEncrypt.encrypt(blog.getId()));
             blogItemWithMarkdown.setTitle(blog.getTitle());
-            blogItemWithMarkdown.setVersion(blog.getVersion());
+            blogItemWithMarkdown.setVersion(VERSION);
             blogItemWithMarkdown.setMarkdown(markdown);
             blogItemWithMarkdown.setGmtCreate(blog.getGmtCreate());
             blogItemWithMarkdown.setGmtModified(blog.getGmtModified());
