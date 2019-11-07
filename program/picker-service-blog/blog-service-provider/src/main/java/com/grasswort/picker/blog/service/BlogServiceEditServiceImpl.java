@@ -127,6 +127,82 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     }
 
     /**
+     * 编辑博客
+     *
+     * @param editBlogRequest
+     * @return
+     */
+    @DB(DBGroup.MASTER)
+    @Override
+    public EditBlogResponse editBlog(EditBlogRequest editBlogRequest) {
+        EditBlogResponse editBlogResponse = new EditBlogResponse();
+
+        String title = editBlogRequest.getTitle();
+        String markdown = editBlogRequest.getMarkdown();
+        String html = editBlogRequest.getHtml();
+        Long userId = editBlogRequest.getUserId();
+        Long categoryId = editBlogRequest.getCategoryId();
+        String coverImg = editBlogRequest.getCoverImg();
+        String summary = editBlogRequest.getSummary();
+        Set<String> labels = editBlogRequest.getLabels();
+
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(editBlogRequest.getBlogId());
+        Blog blog = Optional.ofNullable(blogKey).map(BlogIdEncrypt.BlogKey::getBlogId)
+                .map(blogMapper::selectByPrimaryKey)
+                .filter(b -> Objects.equals(b.getPkUserId(), userId))
+                .orElse(null);
+
+        if (blog == null) {
+            editBlogResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            editBlogResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return editBlogResponse;
+        }
+
+        boolean categoryNotCorrect =  ! judgeCategoryIsExists(userId, categoryId);
+        if (categoryNotCorrect) {
+            editBlogResponse.setCode(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getCode());
+            editBlogResponse.setMsg(SysRetCodeConstants.BLOG_CATEGORY_NOT_EXISTS.getMsg());
+            return editBlogResponse;
+        }
+
+        blog.setTitle(title);
+        blog.setCategoryId(categoryId == null ? 0 : categoryId);
+        blog.setCoverImg(coverImg);
+        blog.setSummary(summary);
+        Date now = new Date(System.currentTimeMillis());
+        blog.setGmtModified(now);
+        blogMapper.updateByPrimaryKey(blog);
+
+        final int VERSION = blogKey.getVersion() > 0 ? blogKey.getVersion() : blog.getVersion();
+
+        Example example = new Example(BlogContent.class);
+        example.createCriteria().andEqualTo("blogId", blog.getId())
+                .andEqualTo("blogVersion", VERSION);
+
+        BlogContent content = blogContentMapper.selectOneByExample(example);
+
+        BlogContent blogContentSelective = new BlogContent();
+        blogContentSelective.setId(content.getId());
+        blogContentSelective.setMarkdown(markdown);
+        blogContentSelective.setHtml(html);
+        blogContentSelective.setGmtModified(now);
+
+        blogContentMapper.updateByPrimaryKeySelective(blogContentSelective);
+
+        // 检测 markdown 内容，看是否引用了 oss 图片
+        Set<OssRefDTO> refs = OssUtils.findOssUrlFromText(markdown);
+        refs.add(OssUtils.resolverUrl(coverImg));
+        processRef(refs);
+
+        // 存储标签
+        processLabels(blog.getId(), labels);
+
+        editBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        editBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return editBlogResponse;
+    }
+
+    /**
      * 修改博客分类
      * @param changeBlogCategoryRequest
      * @return

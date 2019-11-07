@@ -17,7 +17,12 @@ public interface IBlogEditService {
      * @return
      */
     CreateBlogResponse createBlog(CreateBlogRequest blogRequest);
-
+    /**
+     * 编辑博客
+     * @param editBlogRequest
+     * @return
+     */
+    EditBlogResponse editBlog(EditBlogRequest editBlogRequest);
     /**
      * 修改博客分类
      * @param changeBlogCategoryRequest

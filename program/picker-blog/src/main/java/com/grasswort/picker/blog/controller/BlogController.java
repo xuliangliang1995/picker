@@ -6,6 +6,7 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.vo.ChangeBlogCategoryForm;
 import com.grasswort.picker.blog.vo.CreateBlogForm;
+import com.grasswort.picker.blog.vo.EditBlogForm;
 import com.grasswort.picker.blog.vo.OwnBlogListForm;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.result.ResponseData;
@@ -94,6 +95,31 @@ public class BlogController {
         }
 
         return new ResponseUtil<>().setErrorMsg(markdownResponse.getMsg());
+    }
+
+    @ApiOperation(value = "修改博客")
+    @PutMapping("/{blogId}")
+    public ResponseData editBlog(@RequestBody @Validated EditBlogForm form, BindingResult bindingResult, @PathVariable("blogId") String blogId) {
+        ValidatorTool.check(bindingResult);
+
+        EditBlogResponse editBlogResponse = iBlogEditService.editBlog(
+                EditBlogRequest.Builder.anEditBlogRequest()
+                        .withBlogId(blogId)
+                        .withTitle(form.getTitle())
+                        .withMarkdown(form.getMarkdown())
+                        .withHtml(form.getHtml())
+                        .withCategoryId(form.getCategoryId())
+                        .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                        .withCoverImg(form.getCoverImg())
+                        .withSummary(form.getSummary())
+                        .withLabels(form.getLabels())
+                        .build()
+        );
+
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(editBlogResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+        return new ResponseUtil<>().setErrorMsg(editBlogResponse.getMsg());
     }
 
     @ApiOperation(value = "修改博客分类")
