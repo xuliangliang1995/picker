@@ -139,7 +139,7 @@ public class BlogServiceImpl implements IBlogService {
             final int VERSION = blogKey.getVersion() > 0 ? blogKey.getVersion() : blog.getVersion();
             Example example = new Example(BlogContent.class);
             example.createCriteria().andEqualTo("blogId", blog.getId())
-                    .andEqualTo("version", VERSION);
+                    .andEqualTo("blogVersion", VERSION);
 
             BlogContent content = blogContentMapper.selectOneByExample(example);
 
