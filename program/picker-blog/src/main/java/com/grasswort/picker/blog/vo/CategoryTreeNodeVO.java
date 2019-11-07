@@ -35,6 +35,8 @@ public class CategoryTreeNodeVO {
     public static class CategoryTreeNode {
         private Long key;
 
+        private Long value;
+
         private String title;
 
         private Long parentId;
@@ -50,6 +52,7 @@ public class CategoryTreeNodeVO {
     private static CategoryTreeNode categoryConvertTreeNode(QueryBlogCategoryResponse.Category category) {
         CategoryTreeNode treeNode = new CategoryTreeNode();
         treeNode.setKey(category.getCategoryId());
+        treeNode.setValue(treeNode.getKey());
         treeNode.setTitle(category.getCategory());
         treeNode.setParentId(category.getParentId());
         treeNode.setChildren(category.getSubCategorys().stream().map(CategoryTreeNodeVO::categoryConvertTreeNode).collect(Collectors.toList()));
