@@ -7,7 +7,6 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogContentDao;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
@@ -129,7 +128,6 @@ public class BlogServiceImpl implements IBlogService {
     public BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest) {
         BlogMarkdownResponse markdownResponse = new BlogMarkdownResponse();
 
-
         BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(markdownRequest.getBlogId());
         Blog blog = Optional.ofNullable(blogKey).map(BlogIdEncrypt.BlogKey::getBlogId)
                 .map(blogMapper::selectByPrimaryKey).orElse(null);
@@ -141,10 +139,18 @@ public class BlogServiceImpl implements IBlogService {
             String markdown = blogContentDao.markdown(blog.getId(), VERSION);
 
             BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
-            blogItemWithMarkdown.setBlogId(BlogIdEncrypt.encrypt(blog.getId()));
+
+            blogItemWithMarkdown.setBlogId(markdownRequest.getBlogId());
             blogItemWithMarkdown.setTitle(blog.getTitle());
+            blogItemWithMarkdown.setSummary(blog.getSummary());
+            blogItemWithMarkdown.setCategoryId(blog.getCategoryId());
+            blogItemWithMarkdown.setCoverImg(blog.getCoverImg());
             blogItemWithMarkdown.setVersion(VERSION);
+
             blogItemWithMarkdown.setMarkdown(markdown);
+
+            blogItemWithMarkdown.setLabels(blogLabelDao.listBlogLabels(blog.getId()));
+
             blogItemWithMarkdown.setGmtCreate(blog.getGmtCreate());
             blogItemWithMarkdown.setGmtModified(blog.getGmtModified());
 

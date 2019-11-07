@@ -32,6 +32,10 @@ public class BlogItem {
      */
     private String coverImg;
     /**
+     * 分类 id
+     */
+    private Long categoryId;
+    /**
      * 分类
      */
     private String category;
@@ -59,6 +63,7 @@ public class BlogItem {
         private String title;
         private String summary;
         private String coverImg;
+        private Long categoryId;
         private String category;
         private List<String> labels;
         private Integer version;
@@ -89,6 +94,11 @@ public class BlogItem {
 
         public Builder withCoverImg(String coverImg) {
             this.coverImg = coverImg;
+            return this;
+        }
+
+        public Builder withCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
             return this;
         }
 
@@ -123,6 +133,7 @@ public class BlogItem {
             blogItem.setTitle(title);
             blogItem.setSummary(summary);
             blogItem.setCoverImg(coverImg);
+            blogItem.setCategoryId(categoryId);
             blogItem.setCategory(category);
             blogItem.setLabels(labels);
             blogItem.setVersion(version);
