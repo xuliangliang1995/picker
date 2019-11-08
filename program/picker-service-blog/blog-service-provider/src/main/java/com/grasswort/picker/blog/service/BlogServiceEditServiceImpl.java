@@ -13,6 +13,7 @@ import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogOssRefMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
@@ -54,6 +55,8 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Autowired BlogOssRefMapper blogOssRefMapper;
 
     @Autowired BlogLabelMapper blogLabelMapper;
+
+    @Autowired BlogLabelDao blogLabelDao;
 
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
     /**
@@ -389,6 +392,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
      * @param labels
      */
     private void processLabels(Long blogId, Set<String> labels) {
+        // 先删除所有标签
+        blogLabelDao.deleteLabelByBlogId(blogId);
+        // 再保存
         if (CollectionUtils.isEmpty(labels)) {
             return;
         }
