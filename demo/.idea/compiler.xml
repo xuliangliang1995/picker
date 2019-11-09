@@ -9,6 +9,7 @@
         <module name="picker-email" />
         <module name="picker-zookeeper" />
         <module name="picker-kafka" />
+        <module name="picker-quartz" />
       </profile>
     </annotationProcessing>
   </component>
