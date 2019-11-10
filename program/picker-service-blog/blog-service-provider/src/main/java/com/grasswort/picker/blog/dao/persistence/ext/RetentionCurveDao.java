@@ -14,6 +14,6 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface RetentionCurveDao extends TkMapper<RetentionCurve> {
 
-    @Select("select interval_day from pk_retention_curve where order = #{order}")
+    @Select("select interval_day from pk_retention_curve where `order` = #{order}")
     Integer selectIntervalDayByOrder(@Param("order") Integer order);
 }

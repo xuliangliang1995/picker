@@ -2,6 +2,7 @@ package com.grasswort.picker.blog.controller;
 
 import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.IBlogService;
+import com.grasswort.picker.blog.IRetentionCurveService;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.vo.ChangeBlogCategoryForm;
@@ -38,6 +39,9 @@ public class BlogController {
 
     @Reference(version = "1.0", cluster = ClusterFaultMechanism.FAIL_OVER)
     IBlogService iBlogService;
+
+    @Reference(version = "1.0", cluster = ClusterFaultMechanism.FAIL_OVER)
+    IRetentionCurveService iRetentionCurveService;
 
     @ApiOperation("创建博客")
     @PostMapping
@@ -173,6 +177,14 @@ public class BlogController {
         return new ResponseUtil<>().setErrorMsg(recycleBlogResponse.getMsg());
     }
 
-
+    /*@ApiOperation(value = "博客记忆曲线进度调整")
+    @PatchMapping("/{blogId}/curve")
+    public ResponseData adjustBlogRetentionCurve() {
+        BlogCurveRequest.Builder.aBlogCurveRequest()
+                .withBlogId()
+                .withOrder()
+                .withStatus()
+        iRetentionCurveService.blogCurvePatch()
+    }*/
 
 }
