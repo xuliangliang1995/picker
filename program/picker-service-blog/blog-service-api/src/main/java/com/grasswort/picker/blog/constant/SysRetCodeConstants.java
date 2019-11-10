@@ -20,7 +20,9 @@ public enum SysRetCodeConstants {
     BLOG_PARENT_CATEGORY_NOT_EXISTS     ("001003", "所属父类不存在"),
     BLOG_CATEGORY_NOT_EMPTY             ("001004", "非空文件夹不允许删除"),
 
-    BLOG_NOT_EXISTS                 ("002001", "博客不存在");
+    BLOG_NOT_EXISTS                 ("002001", "博客不存在"),
+
+    CURVE_NOT_EXISTS                 ("003001", "记忆曲线节点不存在");
 
     private String code;
     private String msg;

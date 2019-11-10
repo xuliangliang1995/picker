@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogEditService;
+import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
@@ -33,8 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author xuliangliang
@@ -57,6 +60,8 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Autowired BlogLabelMapper blogLabelMapper;
 
     @Autowired BlogLabelDao blogLabelDao;
+
+    @Autowired RetentionCurveServiceImpl retentionCurveServiceImpl;
 
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
     /**
@@ -123,6 +128,16 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
         // 存储标签
         processLabels(blog.getId(), labels);
+
+        // 开启记忆曲线
+        retentionCurveServiceImpl.blogCurvePatch(
+                BlogCurveRequest.Builder.aBlogCurveRequest()
+                .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
+                .withUserId(userId)
+                .withOrder(1)
+                .withStatus(BlogCurveStatusEnum.NORMAL)
+                .build()
+        );
 
         createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
