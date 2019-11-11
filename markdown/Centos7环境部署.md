@@ -79,7 +79,7 @@
    create user 'xuliang'@'%' identified by 'xol4l2y2xx';
    # 这里给个 select 权限即可，这里是为了测试 read_only 是否生效，read_only 对具有 super 权限的用户不生效
    grant select,delete,update,create,drop on *.* to 'xuliang'@'%';
-   change master to master_host='172.17.130.5',master_port=3306,master_user='slave',master_password='Xol4l2y2xx@',master_log_file='binlog.000001',master_log_pos=154;
+   change master to master_host='114.67.99.146',master_port=3306,master_user='slave',master_password='Xol4l2y2xx@',master_log_file='binlog.000001',master_log_pos=154;
    start slave;
    show slave status\G;
    ```
@@ -153,6 +153,8 @@
    touch myid
    vim myid
    	1 // 对应 server.1 的 1
+   	
+   sudo sh zkServer.sh start
    ```
 
 

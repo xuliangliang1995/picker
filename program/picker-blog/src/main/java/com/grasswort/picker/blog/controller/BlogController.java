@@ -3,12 +3,10 @@ package com.grasswort.picker.blog.controller;
 import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.IRetentionCurveService;
+import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
-import com.grasswort.picker.blog.vo.ChangeBlogCategoryForm;
-import com.grasswort.picker.blog.vo.CreateBlogForm;
-import com.grasswort.picker.blog.vo.EditBlogForm;
-import com.grasswort.picker.blog.vo.OwnBlogListForm;
+import com.grasswort.picker.blog.vo.*;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
@@ -21,6 +19,9 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author xuliangliang
@@ -177,14 +178,33 @@ public class BlogController {
         return new ResponseUtil<>().setErrorMsg(recycleBlogResponse.getMsg());
     }
 
-    /*@ApiOperation(value = "博客记忆曲线进度调整")
+    @ApiOperation(value = "博客记忆曲线进度调整")
     @PatchMapping("/{blogId}/curve")
-    public ResponseData adjustBlogRetentionCurve() {
-        BlogCurveRequest.Builder.aBlogCurveRequest()
-                .withBlogId()
-                .withOrder()
-                .withStatus()
-        iRetentionCurveService.blogCurvePatch()
-    }*/
+    public ResponseData adjustBlogRetentionCurve(
+            @RequestBody @Validated BlogCurvePatchForm form, BindingResult bindingResult, @PathVariable("blogId") String blogId) {
+        ValidatorTool.check(bindingResult);
+
+        BlogCurveStatusEnum statusEnum = null;
+        if (form.getStatus() != null) {
+            statusEnum = Arrays.stream(BlogCurveStatusEnum.values())
+                    .filter(c -> Objects.equals(c.status(), form.getStatus()))
+                    .findFirst().get();
+        }
+
+        BlogCurveResponse blogCurveResponse = iRetentionCurveService.blogCurvePatch(
+                BlogCurveRequest.Builder.aBlogCurveRequest()
+                .withBlogId(blogId)
+                .withOrder(form.getOrder())
+                .withStatus(statusEnum)
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build()
+        );
+
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(blogCurveResponse.getCode())) {
+            return new ResponseUtil<>().setData(null);
+        }
+
+        return new ResponseUtil<>().setErrorMsg(blogCurveResponse.getMsg());
+    }
 
 }

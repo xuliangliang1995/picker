@@ -23,7 +23,7 @@ multidb:
       - group: MASTER # 自己定义
         weight: 1      # 权重 1 ~ 10 之间
         dataSource:    # 数据源，可选择自己的数据源
-          url: jdbc:mysql://39.106.71.41:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+          url: jdbc:mysql://114.67.99.146:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
           username: xuliang
           password: xol4l2y2xx
           driver-class-name: com.mysql.cj.jdbc.Driver
