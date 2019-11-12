@@ -18,11 +18,11 @@
   <distributionManagement>
     <repository>
       <id>releases</id>
-      <url>http://114.67.105.79:8081/repository/maven-releases/</url>
+      <url>http://nexus.grasswort.com/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
-      <url>http://114.67.105.79:8081/repository/maven-snapshots/</url>
+      <url>http://nexus.grasswort.com/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 

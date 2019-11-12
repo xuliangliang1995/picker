@@ -18,11 +18,11 @@
   <distributionManagement>
     <repository>
       <id>releases</id>
-      <url>http://114.67.105.79:8081/repository/maven-releases/</url>
+      <url>http://nexus.grasswort.com/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
-      <url>http://114.67.105.79:8081/repository/maven-snapshots/</url>
+      <url>http://nexus.grasswort.com/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -153,7 +153,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>114.67.105.79:80/picker/picker-oss</repository>
+          <repository>harbor.grasswort.com/picker/picker-oss</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

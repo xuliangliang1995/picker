@@ -20,11 +20,11 @@
   <distributionManagement>
     <repository>
       <id>releases</id>
-      <url>http://114.67.105.79:8081/repository/maven-releases/</url>
+      <url>http://nexus.grasswort.com/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
-      <url>http://114.67.105.79:8081/repository/maven-snapshots/</url>
+      <url>http://nexus.grasswort.com/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -227,7 +227,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>114.67.105.79:80/picker/user-service-provider</repository>
+          <repository>harbor.grasswort.com/picker/user-service-provider</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

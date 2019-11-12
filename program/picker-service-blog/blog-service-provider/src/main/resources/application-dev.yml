@@ -87,7 +87,7 @@ multidb:
     - group: SLAVE
       weight: 1
       dataSource:
-        url: jdbc:mysql://114.67.105.79:3306/picker_blog?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+        url: jdbc:mysql://192.168.0.3:3306/picker_blog?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
         username: xuliang
         password: xol4l2y2xx
         driver-class-name: com.mysql.cj.jdbc.Driver
