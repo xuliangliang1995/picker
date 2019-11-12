@@ -65,6 +65,7 @@ $ sudo rm -rf /var/lib/docker
 
 # 配置 docker 服务
 sudo usermod -aG docker xuliang
+sudo usermod -a -G docker jenkins
 ```
 
 ### 安装 docker-compose
