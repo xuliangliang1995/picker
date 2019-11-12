@@ -58,7 +58,7 @@ nacos:
 #    - group: SLAVE
 #      weight: 1
 #      dataSource:
-#        url: jdbc:mysql://47.93.228.48:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+#        url: jdbc:mysql://114.67.84.153:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
 #        username: xuliang
 #        password: xol4l2y2xx
 #        driver-class-name: com.mysql.cj.jdbc.Driver

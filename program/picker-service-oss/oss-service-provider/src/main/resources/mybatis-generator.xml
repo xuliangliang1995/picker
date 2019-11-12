@@ -15,7 +15,7 @@
 
         <!--数据库连接 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://47.93.228.48:3306/picker_oss?useUnicode=true&amp;characterEncoding=utf8&amp;useOldAliasMetadataBehavior=true&amp;zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true&amp;serverTimezone=UTC"
+                        connectionURL="jdbc:mysql://114.67.99.146:3306/picker_oss?useUnicode=true&amp;characterEncoding=utf8&amp;useOldAliasMetadataBehavior=true&amp;zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true&amp;serverTimezone=UTC"
                         userId="xuliang"
                         password="xol4l2y2xx">
             <property name="useInformationSchema" value="true"/>
