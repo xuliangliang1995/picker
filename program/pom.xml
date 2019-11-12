@@ -9,14 +9,14 @@
 
     <modules>
         <module>picker-parent</module>
-        <!--<module>picker-commons</module>
+        <module>picker-commons</module>
         <module>picker-email-center</module>
         <module>picker-service-user</module>
         <module>picker-service-blog</module>
         <module>picker-service-oss</module>
         <module>picker-user</module>
         <module>picker-blog</module>
-        <module>picker-oss</module>-->
+        <module>picker-oss</module>
     </modules>
     <packaging>pom</packaging>
 
