@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # 邮件中心
   emailCenter:
-    image: harbor.grasswort.com/picker/email-center:latest
+    image: 114.67.105.79:80/picker/email-center:latest
     container_name: emailCenter
     labels:
       - "item=picker"
@@ -17,7 +17,7 @@ services:
 
   # 用户服务提供者
   userServiceProvider:
-    image: harbor.grasswort.com/picker/user-service-provider:latest
+    image: 114.67.105.79:80/picker/user-service-provider:latest
     container_name: userServiceProvider
     depends_on:
       - emailCenter
@@ -39,7 +39,7 @@ services:
 
   # Oss 文件服务提供者
   ossServiceProvider:
-    image: harbor.grasswort.com/picker/oss-service-provider:latest
+    image: 114.67.105.79:80/picker/oss-service-provider:latest
     container_name: ossServiceProvider
     ports:
       - "20881:20880"
@@ -59,7 +59,7 @@ services:
 
   # 博客 服务提供者
   blogServiceProvider:
-    image: harbor.grasswort.com/picker/blog-service-provider:latest
+    image: 114.67.105.79:80/picker/blog-service-provider:latest
     container_name: blogServiceProvider
     ports:
       - "20882:20880"
@@ -78,7 +78,7 @@ services:
         max-file: "10"
 
   pickerUser:
-    image: harbor.grasswort.com/picker/picker-user:latest
+    image: 114.67.105.79:80/picker/picker-user:latest
     container_name: pickerUser
     ports:
       - "10001:10001"
@@ -94,7 +94,7 @@ services:
         max-file: "10"
 
   pickerOss:
-    image: harbor.grasswort.com/picker/picker-oss:latest
+    image: 114.67.105.79:80/picker/picker-oss:latest
     container_name: pickerOss
     ports:
       - "10002:10002"
@@ -110,7 +110,7 @@ services:
         max-file: "10"
 
   pickerBlog:
-    image: harbor.grasswort.com/picker/picker-blog:latest
+    image: 114.67.105.79:80/picker/picker-blog:latest
     container_name: pickerBlog
     ports:
       - "10003:10003"
