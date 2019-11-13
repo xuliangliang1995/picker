@@ -5,6 +5,8 @@ import com.grasswort.picker.commons.tkmapper.TkMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author xuliangliang
  * @Classname BlogTriggerDao
@@ -16,4 +18,7 @@ public interface BlogTriggerDao extends TkMapper<BlogTrigger> {
 
     @Select("select * from pk_blog_trigger where blog_id = #{blogId}")
     BlogTrigger selectOneByBlogId(@Param("blogId") Long blogId);
+
+    @Select("select * from pk_blog_trigger where datediff(trigger_time, now()) <= 0 and status = 0")
+    List<BlogTrigger> listBlogTriggerToday();
 }
