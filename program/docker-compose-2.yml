@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # 邮件中心
   emailCenter:
-    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:latest
+    image: registry.cn-beijing.aliyuncs.com/grasswort/email-center:1.0.0
     container_name: emailCenter
     labels:
       - "item=picker"

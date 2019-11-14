@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.grasswort.picker</groupId>
   <artifactId>email-center</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>email-center</name>
 
@@ -84,6 +84,7 @@
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
           <repository>harbor.grasswort.com/picker/email-center</repository>
+          <tag>1.0.0</tag>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

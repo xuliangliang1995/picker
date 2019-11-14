@@ -24,6 +24,7 @@ public class WxMpController {
     @Reference(version = "1.0", timeout = 10000)
     IWechatMpService iWechatMpService;
 
+    // https://picker.grasswort.com/api/wechat?signature=43712f5b09acfa22af75ee6604ba1db986beb2c7&timestamp=1573728142&nonce=1350192340&echostr=1184270597062864894
     @GetMapping(produces = "text/plain;charset=utf-8")
     public String auGet(@RequestParam(name = "signature", required = false) String signature,
                         @RequestParam(name = "timestamp", required = false) String timestamp,
@@ -36,7 +37,7 @@ public class WxMpController {
                 .withEchostr(echostr)
                 .build();
         WxMpAuthResponse authResponse = iWechatMpService.authGet(authRequest);
-        if (SysRetCodeConstants.SUCCESS.equals(authResponse.getCode())) {
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode())) {
             return authResponse.getResult();
         }
         return "非法请求";
