@@ -10,7 +10,8 @@ package com.grasswort.picker.wechat.constants;
 public enum SysRetCodeConstants {
     // 通用
     SUCCESS                             ("000000", "成功"),
-    INVALID_REQUEST                     ("001001", "非法请求");
+    INVALID_REQUEST                     ("001001", "非法请求"),
+    WX_ERROR                            ("002001", "微信公众号异常");
 
     private String code;
     private String msg;
