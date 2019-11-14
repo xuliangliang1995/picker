@@ -102,13 +102,13 @@ public class WechatMpService implements IWechatMpService {
             // aes加密的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody,
                     wxMpService.getWxMpConfigStorage(), timestamp, nonce, msgSignature);
-            log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+            log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
             if (outMessage != null) {
                 out = outMessage.toEncryptedXml(wxMpService.getWxMpConfigStorage());
             }
         }
-        log.debug("\n组装回复信息：{}", out);
+        log.info("\n组装回复信息：{}", out);
 
         response.setResult(StringUtils.isNotBlank(out) ? out : StringUtils.EMPTY);
         response.setMsg(SysRetCodeConstants.INVALID_REQUEST.getMsg());

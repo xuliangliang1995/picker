@@ -6,6 +6,7 @@ import com.grasswort.picker.wechat.dto.WxMpAuthRequest;
 import com.grasswort.picker.wechat.dto.WxMpAuthResponse;
 import com.grasswort.picker.wechat.dto.WxMpCallbackRequest;
 import com.grasswort.picker.wechat.dto.WxMpCallbackResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2019/11/14 15:57
  * @blame Java Team
  */
+@Slf4j
 @RestController
 @RequestMapping("/")
 public class WxMpController {
@@ -50,16 +52,17 @@ public class WxMpController {
             @RequestParam(name = "encrypt_type", required = false) String encType,
             @RequestParam(name = "msg_signature", required = false) String msgSignature,
             @RequestParam("timestamp") String timestamp, @RequestParam("nonce") String nonce) {
-        WxMpCallbackResponse callbackResponse = iWechatMpService.processCallback(
-                WxMpCallbackRequest.Builder.aWxMpCallbackRequest()
-                        .withRequestBody(requestBody)
-                        .withSignature(signature)
-                        .withEncType(encType)
-                        .withMsgSignature(msgSignature)
-                        .withTimestamp(timestamp)
-                        .withNonce(nonce)
-                        .build()
-        );
+        WxMpCallbackRequest callbackRequest = WxMpCallbackRequest.Builder.aWxMpCallbackRequest()
+                .withRequestBody(requestBody)
+                .withSignature(signature)
+                .withEncType(encType)
+                .withMsgSignature(msgSignature)
+                .withTimestamp(timestamp)
+                .withNonce(nonce)
+                .build();
+        log.info(callbackRequest.toString());
+        WxMpCallbackResponse callbackResponse = iWechatMpService.processCallback(callbackRequest);
+        log.info(callbackResponse.toString());
         if (SysRetCodeConstants.SUCCESS.getCode().equals(callbackResponse.getCode())) {
             return callbackResponse.getResult();
         }

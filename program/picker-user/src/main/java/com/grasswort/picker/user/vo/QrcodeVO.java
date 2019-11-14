@@ -19,4 +19,8 @@ public class QrcodeVO {
     private String ticket;
 
     private String url;
+
+    public String getQrcode() {
+        return "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=".concat(ticket);
+    }
 }
