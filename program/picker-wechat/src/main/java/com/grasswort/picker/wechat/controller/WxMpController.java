@@ -36,7 +36,7 @@ public class WxMpController {
                 .withEchostr(echostr)
                 .build();
         WxMpAuthResponse authResponse = iWechatMpService.authGet(authRequest);
-        if (SysRetCodeConstants.SUCCESS.equals(authResponse)) {
+        if (SysRetCodeConstants.SUCCESS.equals(authResponse.getCode())) {
             return authResponse.getResult();
         }
         return "非法请求";
