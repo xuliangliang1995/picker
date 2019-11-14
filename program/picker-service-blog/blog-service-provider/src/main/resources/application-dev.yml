@@ -106,6 +106,28 @@ multidb:
         filters: stat,config
         connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
         useGlobalDataSourceStat: true
+# quartz 数据源
+quartz:
+  datasource:
+    url: jdbc:mysql://114.67.99.146:3306/picker_quartz?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+    username: xuliang
+    password: xol4l2y2xx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 2
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: false
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,config
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    useGlobalDataSourceStat: true
 # quartz 配置
 spring:
   quartz:
@@ -137,25 +159,4 @@ spring:
             threadCount: 10
             threadPriority: 5
             threadsInheritContextClassLoaderOfInitializingThread: true
-# quartz 数据源
-quartz:
-  datasource:
-    url: jdbc:mysql://114.67.99.146:3306/picker_quartz?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
-    username: xuliang
-    password: xol4l2y2xx
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
-    initialSize: 2
-    minIdle: 1
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: false
-    maxPoolPreparedStatementPerConnectionSize: 20
-    filters: stat,config
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-    useGlobalDataSourceStat: true
+

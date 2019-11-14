@@ -5,9 +5,11 @@ import com.grasswort.picker.blog.service.task.BlogAutoPushJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
@@ -25,6 +27,8 @@ public class QuartzDataSourceConfiguration {
      * @return
      */
     @Bean("quartzDataSource")
+    @Primary
+    @QuartzDataSource
     @ConfigurationProperties(prefix = "quartz.datasource")
     public DataSource quartzDataSource() {
         return new DruidDataSource();
