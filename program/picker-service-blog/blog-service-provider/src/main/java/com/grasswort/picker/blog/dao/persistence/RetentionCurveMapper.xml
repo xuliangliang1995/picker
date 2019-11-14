@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="order" jdbcType="TINYINT" property="order" />
+    <result column="curve_order" jdbcType="TINYINT" property="curveOrder" />
     <result column="interval_day" jdbcType="TINYINT" property="intervalDay" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />

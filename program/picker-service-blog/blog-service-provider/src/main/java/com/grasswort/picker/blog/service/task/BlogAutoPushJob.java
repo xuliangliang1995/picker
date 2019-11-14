@@ -47,7 +47,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
         log.info("\n博客推送定时任务执行开始");
         final Map<Integer, Integer> ORDER_INTERVAL_DAY_MAP = retentionCurveMapper.selectAll()
                 .stream()
-                .collect(Collectors.toMap(RetentionCurve::getOrder, RetentionCurve::getIntervalDay));
+                .collect(Collectors.toMap(RetentionCurve::getCurveOrder, RetentionCurve::getIntervalDay));
         final int MAX_ORDER = ORDER_INTERVAL_DAY_MAP.keySet().stream().max(Comparator.naturalOrder()).get();
         List<BlogTrigger> blogTriggers = blogTriggerDao.listBlogTriggerToday();
         blogTriggers.parallelStream().forEach(trigger -> {

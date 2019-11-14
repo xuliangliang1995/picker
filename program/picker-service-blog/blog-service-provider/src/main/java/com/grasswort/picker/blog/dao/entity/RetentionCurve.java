@@ -8,7 +8,8 @@ public class RetentionCurve {
     @Id
     private Long id;
 
-    private Integer order;
+    @Column(name = "curve_order")
+    private Integer curveOrder;
 
     @Column(name = "interval_day")
     private Integer intervalDay;
@@ -33,18 +34,12 @@ public class RetentionCurve {
         this.id = id;
     }
 
-    /**
-     * @return order
-     */
-    public Integer getOrder() {
-        return order;
+    public Integer getCurveOrder() {
+        return curveOrder;
     }
 
-    /**
-     * @param order
-     */
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setCurveOrder(Integer curveOrder) {
+        this.curveOrder = curveOrder;
     }
 
     /**

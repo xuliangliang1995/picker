@@ -58,7 +58,7 @@ public class RetentionCurveServiceImpl implements IRetentionCurveService {
         List<RetentionCurveItem> curves = retentionCurveMapper.selectAll()
                 .stream().map(curve -> RetentionCurveItem.Builder.aRetentionCurveItem()
                         .withCurveId(curve.getId())
-                        .withOrder(curve.getOrder())
+                        .withOrder(curve.getCurveOrder())
                         .withIntervalDay(curve.getIntervalDay())
                         .build())
                 .collect(Collectors.toList());
