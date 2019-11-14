@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>wechat-service-provider</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <name>wechat-service-provider</name>
   <packaging>jar</packaging>
