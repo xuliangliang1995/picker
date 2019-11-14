@@ -3,3 +3,25 @@ spring:
     name: picker-user-service-provider
   profiles:
     active: dev
+#wx:
+#  mp:
+#    # 公众号配置(必填)
+#    app-id: wxd40335e17bb8f4c3
+#    secret: e383adea22e4d17ce57dc8397e1b2d38
+#    token: picker_xuliangliang
+#    aes-key: ftg9onjXjycJOLC7s9kQRcULoAsRVTCmC0aZliYBT24
+#    # 存储配置redis(可选)
+#    config-storage:
+#      type: redis
+#      redis:
+#        host: 114.67.99.146
+#        port: 6379
+#        timeout: 3000
+#        password: Xol4l2y2xx
+#        database: 1
+#        max-active: 20
+#        max-idle: 10
+#        max-wait: 3000
+#        min-idle: 4
+
+

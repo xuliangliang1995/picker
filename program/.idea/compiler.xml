@@ -6,6 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="wechat-service-api" />
+        <module name="picker-wechat" />
         <module name="picker-blog" />
         <module name="user-service-sdk" />
         <module name="user-service-api" />
@@ -13,6 +15,7 @@
         <module name="picker-user" />
         <module name="oss-service-provider" />
         <module name="commons-multidb" />
+        <module name="wechat-service-provider" />
         <module name="email-center-sdk" />
         <module name="commons-core" />
         <module name="blog-service-provider" />

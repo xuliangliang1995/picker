@@ -1,0 +1,14 @@
+# dubbo
+dubbo:
+  application:
+    name: picker-wechat-service-provider
+    owner: xuliangliang
+  scan:
+    base-packages: com.grasswort.picker.wechat.service
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+    check: false

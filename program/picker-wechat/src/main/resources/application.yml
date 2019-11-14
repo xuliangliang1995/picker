@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: picker-wechat
+  profiles:
+    active: dev
+
+
+server:
+  port: 10004
+  servlet:
+    context-path: /api/wechat
+
+

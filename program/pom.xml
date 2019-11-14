@@ -14,9 +14,11 @@
         <module>picker-service-user</module>
         <module>picker-service-blog</module>
         <module>picker-service-oss</module>
+        <module>picker-service-wechat</module>
         <module>picker-user</module>
         <module>picker-blog</module>
         <module>picker-oss</module>
+        <module>picker-wechat</module>
     </modules>
     <packaging>pom</packaging>
 

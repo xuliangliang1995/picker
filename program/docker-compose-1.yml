@@ -77,6 +77,26 @@ services:
         max-size: "100m"
         max-file: "10"
 
+  # 微信 服务提供者
+  wechatServiceProvider:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/wechat-service-provider:latest
+    container_name: wechatServiceProvider
+    ports:
+      - "20883:20880"
+    environment:
+      DUBBO_IP_TO_REGISTRY: 114.67.84.153
+      DUBBO_PORT_TO_REGISTRY: 20883
+    labels:
+      - "item=picker"
+      - "servicename=picker_wechat_service_provider"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
   pickerUser:
     image: registry.cn-beijing.aliyuncs.com/grasswort/picker-user:latest
     container_name: pickerUser
@@ -117,6 +137,22 @@ services:
     labels:
       - "item=picker"
       - "servicename=picker_blog"
+    logging:
+      driver: "json-file"
+      options:
+        labels: "servicename,item"
+        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        max-size: "100m"
+        max-file: "10"
+
+  pickerWechat:
+    image: registry.cn-beijing.aliyuncs.com/grasswort/picker-wechat:latest
+    container_name: pickerWechat
+    ports:
+      - "10004:10004"
+    labels:
+      - "item=picker"
+      - "servicename=picker_wechat"
     logging:
       driver: "json-file"
       options:

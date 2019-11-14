@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: picker-wechat
+dubbo:
+  application:
+    name: picker-wechat
+    owner: xuliangliang
+  scan:
+    base-packages: com.grasswort.picker.wechat.controller
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+  consumer:
+    check: false
+
+swagger:
+  enabled: true
+  title: Picker-Wechat 接口文档
+  contact:
+    name: xuliangliang
+    email: 835547206@qq.com
+  base-package: com.grasswort.picker.wechat.controller
+  version: 1.0.0
