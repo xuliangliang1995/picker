@@ -6,8 +6,6 @@ import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.annotation.Anoymous;
-import com.grasswort.picker.user.constants.ActivateUrlConstants;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.vo.ActivateStatusVO;
 import com.grasswort.picker.user.vo.QueryActivateStatusForm;
@@ -19,6 +17,8 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -47,13 +47,17 @@ public class ActivateController {
 
         QueryActivateStatusResponse activateStatusResponse = iUserActivateService.activateStatus(activateStatusRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(activateStatusResponse.getCode())) {
-            ActivateStatusVO vo = new ActivateStatusVO();
-            vo.setActivated(activateStatusResponse.isActivated());
-            vo.setEmail(activateStatusResponse.getEmail());
-            return new ResponseUtil<ActivateStatusVO>().setData(vo);
-        }
-        return new ResponseUtil<ActivateStatusVO>().setErrorMsg(activateStatusResponse.getMsg());
+        return Optional.ofNullable(activateStatusResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        ActivateStatusVO vo = new ActivateStatusVO();
+                        vo.setActivated(activateStatusResponse.isActivated());
+                        vo.setEmail(activateStatusResponse.getEmail());
+                        return new ResponseUtil<ActivateStatusVO>().setData(vo);
+                    }
+                    return new ResponseUtil<ActivateStatusVO>().setErrorMsg(activateStatusResponse.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     /**
@@ -70,12 +74,14 @@ public class ActivateController {
                 .withUsername(form.getUsername())
                 .build();
 
-        SendActivateEmailResponse result = iUserActivateService.sendActivateEmail(emailRequest);
+        SendActivateEmailResponse sendActivateEmailResponse = iUserActivateService.sendActivateEmail(emailRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(result.getCode())) {
-            return new ResponseUtil().setData(null, "发送成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(result.getMsg());
+        return Optional.ofNullable(sendActivateEmailResponse)
+                .map(r -> r.isSuccess()
+                            ? new ResponseUtil().setData(null)
+                            : new ResponseUtil<>().setErrorMsg(sendActivateEmailResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     /**
@@ -96,10 +102,12 @@ public class ActivateController {
 
         UserActivateResponse activateResponse = iUserActivateService.activate(activateRequest);
 
-        if (activateResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
-            return new ResponseUtil().setData(null, "Picker 账户激活成功");
-        }
-        return new ResponseUtil().setErrorMsg(activateResponse.getMsg());
+        return Optional.ofNullable(activateResponse)
+                .map(r -> r.isSuccess()
+                            ? new ResponseUtil().setData(null)
+                            : new ResponseUtil().setErrorMsg(activateResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
 

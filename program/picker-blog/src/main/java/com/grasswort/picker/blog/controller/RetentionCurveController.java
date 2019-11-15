@@ -1,7 +1,6 @@
 package com.grasswort.picker.blog.controller;
 
 import com.grasswort.picker.blog.IRetentionCurveService;
-import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.CurveListResponse;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
@@ -11,6 +10,8 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -32,10 +33,11 @@ public class RetentionCurveController {
     public ResponseData retentionCurve() {
         CurveListResponse curveListResponse = iRetentionCurveService.retentionCurve();
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(curveListResponse.getCode())) {
-            return new ResponseUtil<>().setData(curveListResponse.getCurves());
-        }
-
-        return new ResponseUtil<>().setErrorMsg(curveListResponse.getMsg());
+        return Optional.ofNullable(curveListResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(curveListResponse.getCurves())
+                        : new ResponseUtil<>().setErrorMsg(curveListResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 }

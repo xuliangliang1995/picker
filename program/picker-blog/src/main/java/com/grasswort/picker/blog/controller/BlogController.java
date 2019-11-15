@@ -165,11 +165,13 @@ public class BlogController {
                 .build();
 
         DeleteBlogResponse deleteBlogResponse = iBlogEditService.deleteBlog(deleteBlogRequest);
-        if (deleteBlogResponse != null && deleteBlogResponse.isSuccess()) {
-            return new ResponseUtil<>().setData(null);
-        }
 
-        return new ResponseUtil<>().setErrorMsg(deleteBlogResponse.getMsg());
+        return Optional.ofNullable(deleteBlogResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(deleteBlogResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "回收博客")
@@ -181,11 +183,13 @@ public class BlogController {
                 .build();
 
         RecycleBlogResponse recycleBlogResponse = iBlogEditService.recycleBlog(recycleBlogRequest);
-        if (recycleBlogResponse != null && recycleBlogResponse.isSuccess()) {
-            return new ResponseUtil<>().setData(null);
-        }
 
-        return new ResponseUtil<>().setErrorMsg(recycleBlogResponse.getMsg());
+        return Optional.ofNullable(recycleBlogResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(recycleBlogResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "博客记忆曲线进度调整")
@@ -210,11 +214,12 @@ public class BlogController {
                 .build()
         );
 
-        if (blogCurveResponse != null && blogCurveResponse.isSuccess()) {
-            return new ResponseUtil<>().setData(null);
-        }
-
-        return new ResponseUtil<>().setErrorMsg(blogCurveResponse.getMsg());
+        return Optional.ofNullable(blogCurveResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(blogCurveResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
 }

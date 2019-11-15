@@ -45,9 +45,10 @@ import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -170,7 +171,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         checkAuthRequest.setIp(changePwdRequest.getIp());
         CheckAuthResponse authResponse = userLoginServiceImpl.validToken(checkAuthRequest);
 
-        boolean authSuccess = SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode());
+        boolean authSuccess = Optional.ofNullable(authResponse).map(CheckAuthResponse::isSuccess).orElse(false);
 
         if (! authSuccess) {
             log.info("\n修改密码身份校验失败");
@@ -244,7 +245,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         checkAuthRequest.setIp(changePhoneRequest.getIp());
         CheckAuthResponse authResponse = userLoginServiceImpl.validToken(checkAuthRequest);
 
-        boolean authSuccess = SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode());
+        boolean authSuccess = Optional.ofNullable(authResponse).map(CheckAuthResponse::isSuccess).orElse(false);
 
         if (! authSuccess) {
             log.info("\n修改手机号身份校验失败");
@@ -323,7 +324,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
             WxMpUserInfoRequest userInfoRequest = new WxMpUserInfoRequest();
             userInfoRequest.setOpenId(openId);
             WxMpUserInfoResponse userInfoResponse = iWxMpUserInfoService.wxMpUserInfo(userInfoRequest);
-            if (com.grasswort.picker.wechat.constants.SysRetCodeConstants.SUCCESS.getCode().equals(userInfoResponse.getCode())) {
+            if (Optional.ofNullable(userInfoResponse).map(WxMpUserInfoResponse::isSuccess).orElse(false)) {
                 userSelective.setMpHeadImgUrl(userInfoResponse.getHeadImgUrl());
                 userSelective.setMpNickName(userInfoResponse.getNickName());
             }
@@ -373,10 +374,10 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
                         .withDelKey(DEL_KEY)
                         .build()
                 );
-                final long OSS_REF_ID = Optional.ofNullable(refResponse).map(r ->
-                        com.grasswort.picker.oss.constants.SysRetCodeConstants.SUCCESS.getCode().equals(r.getCode()) ? r.getId() : 0L
-                ).orElse(0L);
 
+                final long OSS_REF_ID = Optional.ofNullable(refResponse)
+                        .map(r -> r.isSuccess() ? r.getId() : 0L)
+                        .orElse(0L);
                 Date now = DateTime.now().toDate();
                 UserOssRef remoteRef = new UserOssRef();
                 remoteRef.setOssKey(ref.getObjectKey());

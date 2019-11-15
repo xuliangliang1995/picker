@@ -8,7 +8,6 @@ import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.UserLoginRequest;
 import com.grasswort.picker.user.dto.UserLoginResponse;
 import com.grasswort.picker.user.dto.UserRegisterRequest;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -57,12 +57,17 @@ public class UserController {
                 .withEmail(form.getEmail())
                 .build();
         UserRegisterResponse result = iUserRegisterService.register(signUpRequest);
-        if (result.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
-            SignUpVO signUpVO = new SignUpVO();
-            signUpVO.setEmail(result.getEmail());
-            return new ResponseUtil<SignUpVO>().setData(signUpVO);
-        }
-        return new ResponseUtil<SignUpVO>().setErrorMsg(result.getMsg());
+
+        return Optional.ofNullable(result)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        SignUpVO signUpVO = new SignUpVO();
+                        signUpVO.setEmail(result.getEmail());
+                        return new ResponseUtil<SignUpVO>().setData(signUpVO);
+                    }
+                    return new ResponseUtil<SignUpVO>().setErrorMsg(result.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "登录")
@@ -76,12 +81,16 @@ public class UserController {
                 .build();
 
         UserLoginResponse loginResponse = iUserLoginService.login(loginRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(loginResponse.getCode())) {
-            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, loginResponse.getAccessToken());
-            response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, loginResponse.getRefreshToken());
-            return new ResponseUtil<>().setData(null, "登录成功");
-        } else {
-            return new ResponseUtil<>().setErrorMsg(loginResponse.getMsg());
-        }
+
+        return Optional.ofNullable(loginResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, loginResponse.getAccessToken());
+                        response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, loginResponse.getRefreshToken());
+                        return new ResponseUtil<>().setData(null, "登录成功");
+                    }
+                    return new ResponseUtil<>().setErrorMsg(loginResponse.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 }

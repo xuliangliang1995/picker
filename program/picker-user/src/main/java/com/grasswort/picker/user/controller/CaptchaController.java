@@ -6,7 +6,6 @@ import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.ICAPTCHAService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.CAPTCHAReceiver;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.CAPTCHARequest;
 import com.grasswort.picker.user.dto.CAPTCHAResponse;
 import com.grasswort.picker.user.dto.PhoneCaptchaRequest;
@@ -19,6 +18,8 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -44,10 +45,13 @@ public class CaptchaController {
                 .build();
 
         CAPTCHAResponse captchaResponse = icaptchaService.sendCAPCHA(captchaRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(captchaResponse.getCode())) {
-            return new ResponseUtil<>().setData(captchaResponse.getEmail(), "发送成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg());
+
+        return Optional.ofNullable(captchaResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(captchaResponse.getEmail())
+                        : new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "登录状态发送验证码到手机")
@@ -59,10 +63,13 @@ public class CaptchaController {
                 .build();
 
         CAPTCHAResponse captchaResponse = icaptchaService.sendCAPCHA(captchaRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(captchaResponse.getCode())) {
-            return new ResponseUtil<>().setData(captchaResponse.getPhone(), "发送成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg());
+
+        return Optional.ofNullable(captchaResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(captchaResponse.getPhone())
+                        : new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @Anoymous
@@ -74,9 +81,11 @@ public class CaptchaController {
         PhoneCaptchaRequest captchaRequest = new PhoneCaptchaRequest(form.getPhone());
         PhoneCaptchaResponse captchaResponse = icaptchaService.sendCaptchaToPhone(captchaRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(captchaResponse.getCode())) {
-            return new ResponseUtil<>().setData(null, "发送成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg());
+        return Optional.ofNullable(captchaResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 }

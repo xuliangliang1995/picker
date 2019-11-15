@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -50,11 +51,16 @@ public class UserPrivilegeController {
                 .build();
 
         UserPrivilegeResponse privilegeResponse = iUserPrivilegeService.upgradePrivilege(privilegeRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(privilegeResponse.getCode())) {
-            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, privilegeResponse.getAccessToken());
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(privilegeResponse.getMsg());
+
+        return Optional.ofNullable(privilegeResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, privilegeResponse.getAccessToken());
+                        return new ResponseUtil<>().setData(null);
+                    }
+                    return new ResponseUtil<>().setErrorMsg(privilegeResponse.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation("客户端查看当前持有 access_token 是否具备高级权限")

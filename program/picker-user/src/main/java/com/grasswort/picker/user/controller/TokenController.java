@@ -5,7 +5,6 @@ import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.user.IUserTokenRefreshService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.RefreshAccessTokenRequest;
 import com.grasswort.picker.user.dto.RefreshAccessTokenResponse;
 import io.swagger.annotations.Api;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -49,11 +49,17 @@ public class TokenController {
                 .build();
 
         RefreshAccessTokenResponse refreshResponse = iUserTokenRefreshService.refreshAccessToken(refreshRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(refreshResponse.getCode())) {
-            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, refreshResponse.getAccessToken());
-            response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, refreshResponse.getRefreshToken());
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(refreshResponse.getMsg());
+
+        return Optional.ofNullable(refreshResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, refreshResponse.getAccessToken());
+                        response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, refreshResponse.getRefreshToken());
+                        return new ResponseUtil<>().setData(null);
+                    }
+                    return new ResponseUtil<>().setErrorMsg(refreshResponse.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
+
     }
 }

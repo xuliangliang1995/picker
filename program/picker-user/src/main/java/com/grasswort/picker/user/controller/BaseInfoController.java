@@ -7,7 +7,6 @@ import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.vo.ChangePasswordForm;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -46,11 +46,13 @@ public class BaseInfoController {
                 .build();
 
         UserBaseInfoResponse baseInfoResponse = iUserBaseInfoService.userBaseInfo(baseInfoRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(baseInfoResponse.getCode())) {
-            return new ResponseUtil<UserBaseInfoResponse>().setData(baseInfoResponse);
-        }
 
-        return new ResponseUtil<UserBaseInfoResponse>().setErrorMsg(baseInfoResponse.getMsg());
+        return Optional.ofNullable(baseInfoResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<UserBaseInfoResponse>().setData(baseInfoResponse)
+                        : new ResponseUtil<UserBaseInfoResponse>().setErrorMsg(baseInfoResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "编辑用户基本信息")
@@ -68,11 +70,12 @@ public class BaseInfoController {
 
         UserBaseInfoEditResponse editResponse = iUserBaseInfoService.editUserBaseInfo(editRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(editResponse.getCode())) {
-            return new ResponseUtil<UserBaseInfoEditResponse>().setData(null);
-        }
-
-        return new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg());
+        return Optional.ofNullable(editResponse)
+                .map(r -> r.isSuccess()
+                            ? new ResponseUtil<UserBaseInfoEditResponse>().setData(null)
+                            : new ResponseUtil<UserBaseInfoEditResponse>().setErrorMsg(editResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改用户密码（需要提高权限）")
@@ -91,12 +94,16 @@ public class BaseInfoController {
 
         UserChangePwdResponse changePwdResponse = iUserBaseInfoService.changePwd(changePwdRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(changePwdResponse.getCode())) {
-            response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, changePwdResponse.getAccessToken());
-            response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, changePwdResponse.getRefreshToken());
-            return new ResponseUtil<>().setData(null, "修改成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(changePwdResponse.getMsg());
+        return Optional.ofNullable(changePwdResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        response.setHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY, changePwdResponse.getAccessToken());
+                        response.setHeader(JwtTokenConstants.JWT_REFRESH_TOKEN_KEY, changePwdResponse.getRefreshToken());
+                        return new ResponseUtil<>().setData(null, "修改成功");
+                    }
+                    return new ResponseUtil<>().setErrorMsg(changePwdResponse.getMsg());
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改手机号（需要提高权限）")
@@ -112,10 +119,14 @@ public class BaseInfoController {
                 .withCaptcha(form.getCaptcha())
                 .withIp(PickerIpUtil.getIp(request))
                 .build();
+
         UserChangePhoneResponse changePhoneResponse = iUserBaseInfoService.changePhone(changePhoneRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(changePhoneResponse.getCode())) {
-            return new ResponseUtil<>().setData(null, "修改成功");
-        }
-        return new ResponseUtil<>().setErrorMsg(changePhoneResponse.getMsg());
+
+        return Optional.ofNullable(changePhoneResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null, "修改成功")
+                        : new ResponseUtil<>().setErrorMsg(changePhoneResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
  }

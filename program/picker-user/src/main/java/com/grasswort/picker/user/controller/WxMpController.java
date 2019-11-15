@@ -10,7 +10,6 @@ import com.grasswort.picker.user.dto.ChangeMpOpenIdResponse;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.vo.QrcodeVO;
 import com.grasswort.picker.wechat.IQrcodeService;
-import com.grasswort.picker.wechat.constants.SysRetCodeConstants;
 import com.grasswort.picker.wechat.dto.WxQrcodeRequest;
 import com.grasswort.picker.wechat.dto.WxQrcodeResponse;
 import com.grasswort.picker.wechat.util.QrcodeCiperEncrypt;
@@ -23,6 +22,8 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -51,12 +52,15 @@ public class WxMpController {
                 .withExpireSeconds(300)
                 .withCallback("/api/user/wxmp/bind")
                 .build();
+
         WxQrcodeResponse wxQrcodeResponse = iQrcodeService.generateQrcode(wxQrcodeRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(wxQrcodeResponse.getCode())) {
-            QrcodeVO vo = new QrcodeVO(wxQrcodeResponse.getTicket(), wxQrcodeResponse.getUrl());
-            return new ResponseUtil<QrcodeVO>().setData(vo);
-        }
-        return new ResponseUtil<QrcodeVO>().setErrorMsg(wxQrcodeResponse.getMsg());
+
+        return Optional.ofNullable(wxQrcodeResponse)
+                .map(r -> r.isSuccess()
+                            ? new ResponseUtil<QrcodeVO>().setData(new QrcodeVO(wxQrcodeResponse.getTicket(), wxQrcodeResponse.getUrl()))
+                            : new ResponseUtil<QrcodeVO>().setErrorMsg(wxQrcodeResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
 
@@ -72,8 +76,10 @@ public class WxMpController {
                     .withUserId(Long.valueOf(qrcodeInfo.getText()))
                     .withOpenId(openId)
                     .build();
+
             ChangeMpOpenIdResponse changeMpOpenIdResponse = iUserBaseInfoService.changeOrBindMpOpenId(changeMpOpenIdRequest);
-            if (SysRetCodeConstants.SUCCESS.getCode().equals(changeMpOpenIdResponse.getCode())) {
+
+            if (Optional.ofNullable(changeMpOpenIdResponse).filter(ChangeMpOpenIdResponse::isSuccess).isPresent()) {
                 return new ResponseUtil<>().setData(null);
             }
         }

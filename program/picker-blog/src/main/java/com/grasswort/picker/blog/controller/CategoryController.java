@@ -18,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 /**
  * @author xuliangliang
  * @Classname CategoryController
@@ -45,10 +47,13 @@ public class CategoryController {
                 .build();
         CreateBlogCategoryResponse createResponse = iBlogCategoryService.createCategory(createRequest);
 
-        if (createResponse != null && SysRetCodeConstants.SUCCESS.getCode().equals(createResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(createResponse.getMsg());
+        return Optional.ofNullable(createResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(createResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+
     }
 
     @ApiOperation(value = "类别树")
@@ -58,12 +63,18 @@ public class CategoryController {
         queryRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
 
         QueryBlogCategoryResponse queryResponse = iBlogCategoryService.categorys(queryRequest);
-        if (queryResponse != null && SysRetCodeConstants.SUCCESS.getCode().equals(queryResponse.getCode())) {
-            CategoryTreeNodeVO vo = new CategoryTreeNodeVO();
-            vo.setNodes(queryResponse.getCategorys());
-            return new ResponseUtil<CategoryTreeNodeVO>().setData(vo);
-        }
-        return new ResponseUtil<CategoryTreeNodeVO>().setErrorMsg(queryResponse.getMsg());
+
+        return Optional.ofNullable(queryResponse)
+                .map(r -> {
+                    if (r.isSuccess()) {
+                        CategoryTreeNodeVO vo = new CategoryTreeNodeVO();
+                        vo.setNodes(queryResponse.getCategorys());
+                        return new ResponseUtil<>().setData(null);
+                    } else {
+                        return new ResponseUtil<>().setErrorMsg(queryResponse.getMsg());
+                    }
+                })
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改分类")
@@ -80,15 +91,12 @@ public class CategoryController {
                         .build()
         );
 
-        if (null == editCategoryResponse) {
-            return new ResponseUtil<CategoryTreeNodeVO>().setErrorMsg("系统异常");
-        }
-
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(editCategoryResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-
-        return new ResponseUtil<>().setErrorMsg(editCategoryResponse.getMsg());
+        return Optional.ofNullable(editCategoryResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(editCategoryResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "删除分类")
@@ -101,10 +109,11 @@ public class CategoryController {
 
         DeleteCategoryResponse deleteCategoryResponse = iBlogCategoryService.deleteCategory(deleteCategoryRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(deleteCategoryResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-
-        return new ResponseUtil<>().setErrorMsg(deleteCategoryResponse.getMsg());
+        return Optional.ofNullable(deleteCategoryResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(deleteCategoryResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 }

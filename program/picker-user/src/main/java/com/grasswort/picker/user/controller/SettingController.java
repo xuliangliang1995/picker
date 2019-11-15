@@ -4,7 +4,6 @@ import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserSettingService;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dto.GetSettingRequest;
 import com.grasswort.picker.user.dto.GetSettingResponse;
 import com.grasswort.picker.user.dto.SaveSettingRequest;
@@ -17,6 +16,8 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -39,10 +40,12 @@ public class SettingController {
 
         GetSettingResponse getSettingResponse = iUserSettingService.getSetting(getSettingRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(getSettingResponse.getCode())) {
-            return new ResponseUtil<>().setData(getSettingResponse);
-        }
-        return new ResponseUtil<>().setErrorMsg(getSettingResponse.getMsg());
+        return Optional.ofNullable(getSettingResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(getSettingResponse)
+                        : new ResponseUtil<>().setErrorMsg(getSettingResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改用户配置")
@@ -58,9 +61,11 @@ public class SettingController {
 
         SaveSettingResponse settingResponse = iUserSettingService.saveSetting(saveRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(settingResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(settingResponse.getMsg());
+        return Optional.ofNullable(settingResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(settingResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 }
