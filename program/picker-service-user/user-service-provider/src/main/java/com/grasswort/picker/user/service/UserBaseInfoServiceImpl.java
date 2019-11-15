@@ -319,10 +319,10 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("first.DATA", "您好，您的账号已成功绑定此微信。");
-        jsonObject.put("keyword1.DATA", MaskUtil.maskEmail(user.getEmail()));
-        jsonObject.put("keyword2.DATA", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", ""));
-        jsonObject.put("remark.DATA", "感谢您的使用。");
+        jsonObject.put("first", "您好，您的账号已成功绑定此微信。");
+        jsonObject.put("keyword1", MaskUtil.maskEmail(user.getEmail()));
+        jsonObject.put("keyword2", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", ""));
+        jsonObject.put("remark", "感谢您的使用。");
 
         iTemplateMsgService.sendTemplateMsg(
                 WxMpTemplateMsgRequest.Builder.aWxMpTemplateMsgRequest()
