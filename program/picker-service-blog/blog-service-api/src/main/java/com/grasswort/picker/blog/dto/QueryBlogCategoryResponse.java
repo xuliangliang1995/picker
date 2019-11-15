@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto;
 
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.commons.result.AbstractResponse;
 import lombok.Data;
 
@@ -27,5 +28,10 @@ public class QueryBlogCategoryResponse extends AbstractResponse {
         private String category;
 
         private List<Category> subCategorys;
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
     }
 }

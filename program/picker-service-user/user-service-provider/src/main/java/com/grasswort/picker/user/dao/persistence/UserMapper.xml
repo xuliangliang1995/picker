@@ -13,6 +13,8 @@
     <result column="phone" jdbcType="CHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="mp_open_id" jdbcType="CHAR" property="mpOpenId"/>
+    <result column="mp_head_img_url" jdbcType="VARCHAR" property="mpHeadImgUrl"/>
+    <result column="mp_nick_name" jdbcType="VARCHAR" property="mpNickName"/>
     <result column="sex" jdbcType="TINYINT" property="sex" />
     <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <result column="version" jdbcType="INTEGER" property="version"/>

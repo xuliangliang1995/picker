@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 
 /**
  * @author xuliangliang
@@ -10,4 +11,9 @@ import com.grasswort.picker.commons.result.AbstractResponse;
  * @blame Java Team
  */
 public class UserChangePhoneResponse extends AbstractResponse {
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

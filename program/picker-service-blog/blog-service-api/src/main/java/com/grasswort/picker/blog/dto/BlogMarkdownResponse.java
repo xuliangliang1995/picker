@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto;
 
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
 import com.grasswort.picker.commons.result.AbstractResponse;
 import lombok.Data;
@@ -15,5 +16,10 @@ import lombok.Data;
 public class BlogMarkdownResponse extends AbstractResponse {
 
     private BlogItemWithMarkdown blog;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 
 }

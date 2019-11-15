@@ -1,6 +1,7 @@
 package com.grasswort.picker.oss.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.oss.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -12,4 +13,9 @@ import lombok.Data;
  */
 @Data
 public class OssKeySaveResponse extends AbstractResponse {
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

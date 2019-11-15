@@ -4,7 +4,6 @@ import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.IRetentionCurveService;
 import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
-import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.vo.*;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author xuliangliang
@@ -61,10 +61,12 @@ public class BlogController {
                 .build();
         CreateBlogResponse createBlogResponse = iBlogEditService.createBlog(createBlogRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(createBlogResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(createBlogResponse.getMsg());
+        return Optional.ofNullable(createBlogResponse)
+                .map(r -> r.isSuccess()
+                            ? new ResponseUtil<>().setData(null)
+                            : new ResponseUtil<>().setErrorMsg(createBlogResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation("博客列表")
@@ -81,10 +83,12 @@ public class BlogController {
 
         OwnBlogListResponse ownBlogListResponse = iBlogService.ownBlogList(ownBlogListRequest);
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(ownBlogListResponse.getCode())) {
-            return new ResponseUtil<>().setData(ownBlogListResponse.getBlogs()).setTotal(ownBlogListResponse.getTotal());
-        }
-        return new ResponseUtil<>().setErrorMsg(ownBlogListResponse.getMsg());
+        return Optional.ofNullable(ownBlogListResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(ownBlogListResponse.getBlogs()).setTotal(ownBlogListResponse.getTotal())
+                        : new ResponseUtil<>().setErrorMsg(ownBlogListResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @Anoymous
@@ -95,11 +99,13 @@ public class BlogController {
         markdownRequest.setBlogId(blogId);
 
         BlogMarkdownResponse markdownResponse = iBlogService.markdown(markdownRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(markdownResponse.getCode())) {
-            return new ResponseUtil<>().setData(markdownResponse.getBlog());
-        }
 
-        return new ResponseUtil<>().setErrorMsg(markdownResponse.getMsg());
+        return Optional.ofNullable(markdownResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(markdownResponse.getBlog())
+                        : new ResponseUtil<>().setErrorMsg(markdownResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改博客")
@@ -107,24 +113,26 @@ public class BlogController {
     public ResponseData editBlog(@RequestBody @Validated EditBlogForm form, BindingResult bindingResult, @PathVariable("blogId") String blogId) {
         ValidatorTool.check(bindingResult);
 
-        EditBlogResponse editBlogResponse = iBlogEditService.editBlog(
-                EditBlogRequest.Builder.anEditBlogRequest()
-                        .withBlogId(blogId)
-                        .withTitle(form.getTitle())
-                        .withMarkdown(form.getMarkdown())
-                        .withHtml(form.getHtml())
-                        .withCategoryId(form.getCategoryId())
-                        .withUserId(PickerInfoHolder.getPickerInfo().getId())
-                        .withCoverImg(form.getCoverImg())
-                        .withSummary(form.getSummary())
-                        .withLabels(form.getLabels())
-                        .build()
-        );
+        EditBlogRequest editBlogRequest = EditBlogRequest.Builder.anEditBlogRequest()
+                .withBlogId(blogId)
+                .withTitle(form.getTitle())
+                .withMarkdown(form.getMarkdown())
+                .withHtml(form.getHtml())
+                .withCategoryId(form.getCategoryId())
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withCoverImg(form.getCoverImg())
+                .withSummary(form.getSummary())
+                .withLabels(form.getLabels())
+                .build();
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(editBlogResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
-        return new ResponseUtil<>().setErrorMsg(editBlogResponse.getMsg());
+        EditBlogResponse editBlogResponse = iBlogEditService.editBlog(editBlogRequest);
+
+        return Optional.ofNullable(editBlogResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(editBlogResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "修改博客分类")
@@ -139,11 +147,13 @@ public class BlogController {
                 .withCategoryId(form.getCategoryId())
                 .build()
         );
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(changeResponse.getCode())) {
-            return new ResponseUtil<>().setData(null);
-        }
 
-        return new ResponseUtil<>().setErrorMsg(changeResponse.getMsg());
+        return Optional.ofNullable(changeResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(changeResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
     }
 
     @ApiOperation(value = "删除博客")
@@ -155,7 +165,7 @@ public class BlogController {
                 .build();
 
         DeleteBlogResponse deleteBlogResponse = iBlogEditService.deleteBlog(deleteBlogRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(deleteBlogResponse.getCode())) {
+        if (deleteBlogResponse != null && deleteBlogResponse.isSuccess()) {
             return new ResponseUtil<>().setData(null);
         }
 
@@ -171,7 +181,7 @@ public class BlogController {
                 .build();
 
         RecycleBlogResponse recycleBlogResponse = iBlogEditService.recycleBlog(recycleBlogRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(recycleBlogResponse.getCode())) {
+        if (recycleBlogResponse != null && recycleBlogResponse.isSuccess()) {
             return new ResponseUtil<>().setData(null);
         }
 
@@ -200,7 +210,7 @@ public class BlogController {
                 .build()
         );
 
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(blogCurveResponse.getCode())) {
+        if (blogCurveResponse != null && blogCurveResponse.isSuccess()) {
             return new ResponseUtil<>().setData(null);
         }
 

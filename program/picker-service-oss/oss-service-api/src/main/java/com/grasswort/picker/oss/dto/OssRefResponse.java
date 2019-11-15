@@ -1,6 +1,7 @@
 package com.grasswort.picker.oss.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.oss.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -16,4 +17,9 @@ public class OssRefResponse extends AbstractResponse {
      * 引用的id
      */
     private Long id;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

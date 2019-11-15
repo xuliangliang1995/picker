@@ -28,7 +28,10 @@ import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.service.token.UserTokenGenerator;
 import com.grasswort.picker.wechat.ITemplateMsgService;
+import com.grasswort.picker.wechat.IWxMpUserInfoService;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
+import com.grasswort.picker.wechat.dto.WxMpUserInfoRequest;
+import com.grasswort.picker.wechat.dto.WxMpUserInfoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -75,6 +78,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
     @Autowired UserOssRefMapper userOssRefMapper;
 
     @Autowired CaptchaMapper captchaMapper;
+
+    @Reference(version = "1.0", timeout = 10000) IWxMpUserInfoService iWxMpUserInfoService;
 
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
 
@@ -314,6 +319,14 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
             userSelective.setId(userId);
             userSelective.setMpOpenId(openId);
             userSelective.setGmtModified(DateTime.now().toDate());
+
+            WxMpUserInfoRequest userInfoRequest = new WxMpUserInfoRequest();
+            userInfoRequest.setOpenId(openId);
+            WxMpUserInfoResponse userInfoResponse = iWxMpUserInfoService.wxMpUserInfo(userInfoRequest);
+            if (com.grasswort.picker.wechat.constants.SysRetCodeConstants.SUCCESS.getCode().equals(userInfoResponse.getCode())) {
+                userSelective.setMpHeadImgUrl(userInfoResponse.getHeadImgUrl());
+                userSelective.setMpNickName(userInfoResponse.getNickName());
+            }
 
             userMapper.updateByPrimaryKeySelective(userSelective);
         }

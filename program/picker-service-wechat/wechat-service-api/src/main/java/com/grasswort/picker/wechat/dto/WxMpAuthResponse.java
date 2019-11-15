@@ -1,6 +1,7 @@
 package com.grasswort.picker.wechat.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.wechat.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -14,4 +15,9 @@ import lombok.Data;
 public class WxMpAuthResponse extends AbstractResponse {
 
     private String result;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

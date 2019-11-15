@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -18,4 +19,9 @@ public class UserLoginResponse extends AbstractResponse {
     private Integer sex;
     private String accessToken;
     private String refreshToken;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

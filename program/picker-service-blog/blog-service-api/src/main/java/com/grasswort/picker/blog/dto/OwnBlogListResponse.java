@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto;
 
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
 import com.grasswort.picker.commons.result.AbstractResponse;
 import lombok.Data;
@@ -19,4 +20,9 @@ public class OwnBlogListResponse extends AbstractResponse {
     private List<BlogItem> blogs;
 
     private Long total;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

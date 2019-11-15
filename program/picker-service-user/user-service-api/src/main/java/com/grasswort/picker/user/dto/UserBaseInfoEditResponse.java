@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -22,4 +23,9 @@ public class UserBaseInfoEditResponse extends AbstractResponse {
     private Byte sex;
 
     private String avatar;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -22,4 +23,8 @@ public class CAPTCHAResponse extends AbstractResponse {
      */
     private String phone;
 
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

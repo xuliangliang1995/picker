@@ -6,18 +6,29 @@ import lombok.Data;
 
 /**
  * @author xuliangliang
- * @Classname WxMpCallbackResponse
- * @Description 微信回调响应
- * @Date 2019/11/14 15:35
+ * @Classname WxMpUserInfoResponse
+ * @Description 用户信息
+ * @Date 2019/11/15 19:54
  * @blame Java Team
  */
 @Data
-public class WxMpCallbackResponse extends AbstractResponse {
-
-    private String result;
+public class WxMpUserInfoResponse extends AbstractResponse {
+    /**
+     * 头像
+     */
+    private String headImgUrl;
+    /**
+     * 昵称
+     */
+    private String nickName;
+    /**
+     * 是否关注（卷耳 Picker）
+     */
+    private Boolean subscribe;
 
     @Override
     public boolean isSuccess() {
         return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
     }
+
 }

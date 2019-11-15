@@ -8,6 +8,10 @@ package com.grasswort.picker.commons.result;
  * @blame Java Team
  */
 public class ResponseData<T> {
+    /**
+     * 系统异常
+     */
+    public static final ResponseData SYSTEM_ERROR = new ResponseUtil<>().setErrorMsg("系统错误");
 
     private boolean success;
 

@@ -1,6 +1,7 @@
 package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
+import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import lombok.Data;
 
 /**
@@ -16,5 +17,10 @@ public class GetSettingResponse extends AbstractResponse {
     private String markdownTheme;
 
     private Integer safetyCheckMode;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 
 }

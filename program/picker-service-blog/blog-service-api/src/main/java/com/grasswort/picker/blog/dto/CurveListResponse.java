@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto;
 
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.curve.RetentionCurveItem;
 import com.grasswort.picker.commons.result.AbstractResponse;
 import lombok.Data;
@@ -17,5 +18,10 @@ import java.util.List;
 public class CurveListResponse extends AbstractResponse {
 
     private List<RetentionCurveItem> curves;
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 
 }

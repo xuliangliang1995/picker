@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.dto;
 
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.commons.result.AbstractResponse;
 
 /**
@@ -10,4 +11,9 @@ import com.grasswort.picker.commons.result.AbstractResponse;
  * @blame Java Team
  */
 public class DeleteBlogResponse extends AbstractResponse {
+
+    @Override
+    public boolean isSuccess() {
+        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
+    }
 }

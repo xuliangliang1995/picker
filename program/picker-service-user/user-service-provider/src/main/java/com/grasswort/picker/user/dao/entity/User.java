@@ -31,6 +31,16 @@ public class User {
      */
     @Column(name = "mp_open_id")
     private String mpOpenId;
+    /**
+     * 微信头像
+     */
+    @Column(name = "mp_head_img_url")
+    private String mpHeadImgUrl;
+    /**
+     * 微信昵称
+     */
+    @Column(name = "mp_nick_name")
+    private String mpNickName;
 
     /**
      * 性别 0、未知 1、男 2、女
@@ -239,5 +249,21 @@ public class User {
 
     public void setMpOpenId(String mpOpenId) {
         this.mpOpenId = mpOpenId;
+    }
+
+    public String getMpHeadImgUrl() {
+        return mpHeadImgUrl;
+    }
+
+    public void setMpHeadImgUrl(String mpHeadImgUrl) {
+        this.mpHeadImgUrl = mpHeadImgUrl;
+    }
+
+    public String getMpNickName() {
+        return mpNickName;
+    }
+
+    public void setMpNickName(String mpNickName) {
+        this.mpNickName = mpNickName;
     }
 }
