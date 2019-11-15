@@ -321,7 +321,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("first", "您好，您的账号已成功绑定此微信。");
         jsonObject.put("keyword1", MaskUtil.maskEmail(user.getEmail()));
-        jsonObject.put("keyword2", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", ""));
+        jsonObject.put("keyword2", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", " "));
         jsonObject.put("remark", "感谢您的使用。");
 
         iTemplateMsgService.sendTemplateMsg(
