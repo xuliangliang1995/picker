@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.service.task;
 
+import com.alibaba.fastjson.JSON;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.entity.RetentionCurve;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +52,9 @@ public class BlogAutoPushJob extends QuartzJobBean {
                 .collect(Collectors.toMap(RetentionCurve::getCurveOrder, RetentionCurve::getIntervalDay));
         final int MAX_ORDER = ORDER_INTERVAL_DAY_MAP.keySet().stream().max(Comparator.naturalOrder()).get();
         List<BlogTrigger> blogTriggers = blogTriggerDao.listBlogTriggerToday();
+        log.info("triggers:{}", Optional.ofNullable(blogTriggers).map(List::size).orElse(0));
         for (BlogTrigger trigger: blogTriggers) {
+            log.info("trigger:{}", JSON.toJSONString(trigger));
             pushToEmail();
             int newOrder = Math.min(trigger.getRetentionCurveOrder() + 1, MAX_ORDER);
 
