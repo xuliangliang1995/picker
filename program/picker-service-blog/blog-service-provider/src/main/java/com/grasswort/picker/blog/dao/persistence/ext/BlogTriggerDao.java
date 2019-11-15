@@ -1,7 +1,7 @@
 package com.grasswort.picker.blog.dao.persistence.ext;
 
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
-import com.grasswort.picker.commons.tkmapper.TkMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogTriggerMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * @Date 2019/11/10 12:52
  * @blame Java Team
  */
-public interface BlogTriggerDao extends TkMapper<BlogTrigger> {
+public interface BlogTriggerDao extends BlogTriggerMapper {
 
     @Select("select * from pk_blog_trigger where blog_id = #{blogId}")
     BlogTrigger selectOneByBlogId(@Param("blogId") Long blogId);
