@@ -1,7 +1,8 @@
-package com.grasswort.picker.wechat;
+package com.grasswort.picker.wechat.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.grasswort.picker.wechat.ITemplateMsgService;
 import com.grasswort.picker.wechat.constants.SysRetCodeConstants;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgResponse;

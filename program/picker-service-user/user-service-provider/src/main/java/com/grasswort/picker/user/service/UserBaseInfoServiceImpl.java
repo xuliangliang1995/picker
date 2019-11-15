@@ -324,11 +324,13 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         jsonObject.put("keyword2.DATA", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", ""));
         jsonObject.put("remark.DATA", "感谢您的使用。");
 
-        WxMpTemplateMsgRequest.Builder.aWxMpTemplateMsgRequest()
-                .withTemplateId("KHMQ17xWd1cDIDBZ2G4p1AhCu-ee6zxo2drDwJSEiQs")
-                .withJson(JSON.toJSONString(jsonObject))
-                .withToOpenId(openId)
-                .build();
+        iTemplateMsgService.sendTemplateMsg(
+                WxMpTemplateMsgRequest.Builder.aWxMpTemplateMsgRequest()
+                        .withTemplateId("KHMQ17xWd1cDIDBZ2G4p1AhCu-ee6zxo2drDwJSEiQs")
+                        .withJson(JSON.toJSONString(jsonObject))
+                        .withToOpenId(openId)
+                        .build()
+        );
 
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
