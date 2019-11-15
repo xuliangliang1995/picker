@@ -1,5 +1,6 @@
 package com.grasswort.picker.wechat.service.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -7,12 +8,16 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Slf4j
 @Component
 public class SubscribeHandler extends AbstractHandler {
+	@Autowired
+	private ScanHandler scanHandler;
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService,
@@ -51,7 +56,13 @@ public class SubscribeHandler extends AbstractHandler {
 	* 处理特殊请求，比如如果是扫码进来的，可以做相应处理
 	*/
 	protected WxMpXmlOutMessage handleSpecial(WxMpXmlMessage wxMessage) throws Exception {
-	    //TODO
+		String eventKey = wxMessage.getEventKey();
+		boolean isScanSubcribe = eventKey.contains("qrscene_");
+		if (isScanSubcribe) {
+			String qrcodeInfo = eventKey.replace("qrscene_", "");
+			log.info("\n扫码关注：{}", qrcodeInfo);
+			scanHandler.processQrcodeInfo(qrcodeInfo, wxMessage.getFromUser());
+		}
 	    return null;
 	}
 

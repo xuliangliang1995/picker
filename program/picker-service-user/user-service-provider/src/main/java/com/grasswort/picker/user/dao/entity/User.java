@@ -26,6 +26,11 @@ public class User {
     private String phone;
 
     private String email;
+    /**
+     * 卷耳 Picker 公众号 open_id
+     */
+    @Column(name = "mp_open_id")
+    private String mpOpenId;
 
     /**
      * 性别 0、未知 1、男 2、女
@@ -226,5 +231,13 @@ public class User {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getMpOpenId() {
+        return mpOpenId;
+    }
+
+    public void setMpOpenId(String mpOpenId) {
+        this.mpOpenId = mpOpenId;
     }
 }

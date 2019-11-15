@@ -6,10 +6,13 @@ import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.constant.WxMpEventConstants;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xuliangliang
@@ -41,6 +44,8 @@ public class WechatConfiguration {
     private SubscribeHandler subscribeHandler;
     @Autowired
     private UnsubscribeHandler unsubscribeHandler;
+    @Autowired
+    private ScanHandler scanHandler;
 
     /**
      * 消息处理 router
@@ -97,12 +102,22 @@ public class WechatConfiguration {
 
         // 扫码事件
         router.rule().async(false).msgType(WxConsts.XmlMsgType.EVENT)
-                .event(WxConsts.EventType.SCAN).handler(this.nullHandler).end();
+                .event(WxConsts.EventType.SCAN).handler(this.scanHandler).end();
 
         // 默认
         router.rule().async(false).handler(this.msgHandler).end();
 
         return router;
+    }
+
+    @Bean
+    public OkHttpClient okHttpClient() {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(10, TimeUnit.SECONDS)//设置写的超时时间
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
+                .build();
+        return client;
     }
 
 }

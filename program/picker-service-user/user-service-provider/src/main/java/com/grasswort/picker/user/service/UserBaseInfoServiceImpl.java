@@ -1,6 +1,9 @@
 package com.grasswort.picker.user.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
@@ -24,8 +27,11 @@ import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.service.token.UserTokenGenerator;
+import com.grasswort.picker.wechat.ITemplateMsgService;
+import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
@@ -36,10 +42,9 @@ import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * @author xuliangliang
@@ -72,6 +77,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
     @Autowired CaptchaMapper captchaMapper;
 
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
+
+    @Reference(version = "1.0", timeout = 10000) ITemplateMsgService iTemplateMsgService;
 
     /**
      * 获取用户基本信息
@@ -280,6 +287,52 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         changePhoneResponse.setMsg(SysRetCodeConstants.SYSTEM_ERROR.getMsg());
         log.info("\n修改手机号。系统错误。{}", changePhoneRequest);
         return changePhoneResponse;
+    }
+
+    /**
+     * 更换绑定公众号用户
+     *
+     * @param changeMpOpenIdRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public ChangeMpOpenIdResponse changeOrBindMpOpenId(ChangeMpOpenIdRequest changeMpOpenIdRequest) {
+        ChangeMpOpenIdResponse response = new ChangeMpOpenIdResponse();
+
+        Long userId = changeMpOpenIdRequest.getUserId();
+        String openId = changeMpOpenIdRequest.getOpenId();
+
+        // 不做非空判断。自认为空的走不到这一步
+        User user = userMapper.selectByPrimaryKey(userId);
+        String oldOpenId = user.getMpOpenId();
+
+        if (! Objects.equals(openId, oldOpenId)) {
+            DBLocalHolder.selectDBGroup(DBGroup.MASTER);
+
+            User userSelective = new User();
+            userSelective.setId(userId);
+            userSelective.setMpOpenId(openId);
+            userSelective.setGmtModified(DateTime.now().toDate());
+
+            userMapper.updateByPrimaryKeySelective(userSelective);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("first.DATA", "您好，您的账号已成功绑定此微信。");
+        jsonObject.put("keyword1.DATA", MaskUtil.maskEmail(user.getEmail()));
+        jsonObject.put("keyword2.DATA", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", ""));
+        jsonObject.put("remark.DATA", "感谢您的使用。");
+
+        WxMpTemplateMsgRequest.Builder.aWxMpTemplateMsgRequest()
+                .withTemplateId("KHMQ17xWd1cDIDBZ2G4p1AhCu-ee6zxo2drDwJSEiQs")
+                .withJson(JSON.toJSONString(jsonObject))
+                .withToOpenId(openId)
+                .build();
+
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return response;
     }
 
 

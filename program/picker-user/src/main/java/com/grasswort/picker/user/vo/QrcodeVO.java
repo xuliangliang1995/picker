@@ -1,8 +1,10 @@
 package com.grasswort.picker.user.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.dubbo.common.URL;
 
 /**
  * @author xuliangliang
@@ -16,11 +18,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QrcodeVO {
 
+    private static final String QRCODE_URL_PREFIX = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    @JsonIgnore
     private String ticket;
-
+    @JsonIgnore
     private String url;
 
     public String getQrcode() {
-        return "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=".concat(ticket);
+        return QRCODE_URL_PREFIX.concat(URL.encode(ticket));
     }
 }

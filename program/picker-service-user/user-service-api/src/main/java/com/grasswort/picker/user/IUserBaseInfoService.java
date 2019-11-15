@@ -40,5 +40,11 @@ public interface IUserBaseInfoService {
      */
     UserChangePhoneResponse changePhone(UserChangePhoneRequest changePhoneRequest);
 
+    /**
+     * 更换绑定公众号用户
+     * @param changeMpOpenIdRequest
+     * @return
+     */
+    ChangeMpOpenIdResponse changeOrBindMpOpenId(ChangeMpOpenIdRequest changeMpOpenIdRequest);
 
 }
