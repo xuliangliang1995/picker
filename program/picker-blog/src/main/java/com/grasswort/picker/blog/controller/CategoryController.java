@@ -69,7 +69,7 @@ public class CategoryController {
                     if (r.isSuccess()) {
                         CategoryTreeNodeVO vo = new CategoryTreeNodeVO();
                         vo.setNodes(queryResponse.getCategorys());
-                        return new ResponseUtil<>().setData(null);
+                        return new ResponseUtil<>().setData(vo);
                     } else {
                         return new ResponseUtil<>().setErrorMsg(queryResponse.getMsg());
                     }
