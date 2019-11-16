@@ -7,7 +7,6 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.persistence.BlogTriggerMapper;
 import com.grasswort.picker.blog.dao.persistence.RetentionCurveMapper;
-import com.grasswort.picker.blog.dao.persistence.ext.BlogTriggerDao;
 import com.grasswort.picker.blog.dao.persistence.ext.RetentionCurveDao;
 import com.grasswort.picker.blog.dto.BlogCurveRequest;
 import com.grasswort.picker.blog.dto.BlogCurveResponse;
@@ -17,11 +16,9 @@ import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +38,6 @@ public class RetentionCurveServiceImpl implements IRetentionCurveService {
     @Autowired RetentionCurveMapper retentionCurveMapper;
 
     @Autowired BlogTriggerMapper blogTriggerMapper;
-
-    @Autowired BlogTriggerDao blogTriggerDao;
 
     @Autowired RetentionCurveDao retentionCurveDao;
 
@@ -101,7 +96,7 @@ public class RetentionCurveServiceImpl implements IRetentionCurveService {
 
         BlogCurveStatusEnum statusEnum = blogCurveRequest.getStatus();
 
-        BlogTrigger blogTrigger = blogTriggerDao.selectOneByBlogId(blogId);
+        BlogTrigger blogTrigger = blogTriggerMapper.selectOneByBlogId(blogId);
         Date now = DateTime.now().toDate();
         if (blogTrigger == null) {
             // 新增

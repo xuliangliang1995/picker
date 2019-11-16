@@ -6,7 +6,6 @@ import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.entity.RetentionCurve;
 import com.grasswort.picker.blog.dao.persistence.BlogTriggerMapper;
 import com.grasswort.picker.blog.dao.persistence.RetentionCurveMapper;
-import com.grasswort.picker.blog.dao.persistence.ext.BlogTriggerDao;
 import com.grasswort.picker.commons.config.DBLocalHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -34,8 +33,6 @@ import java.util.stream.Collectors;
 public class BlogAutoPushJob extends QuartzJobBean {
 
     @Autowired
-    BlogTriggerDao blogTriggerDao;
-    @Autowired
     BlogTriggerMapper blogTriggerMapper;
     @Autowired
     RetentionCurveMapper retentionCurveMapper;
@@ -51,7 +48,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
                 .stream()
                 .collect(Collectors.toMap(RetentionCurve::getCurveOrder, RetentionCurve::getIntervalDay));
         final int MAX_ORDER = ORDER_INTERVAL_DAY_MAP.keySet().stream().max(Comparator.naturalOrder()).get();
-        List<BlogTrigger> blogTriggers = blogTriggerDao.listBlogTriggerToday();
+        List<BlogTrigger> blogTriggers = blogTriggerMapper.listBlogTriggerToday();
         log.info("triggers:{}", Optional.ofNullable(blogTriggers).map(List::size).orElse(0));
         for (BlogTrigger trigger: blogTriggers) {
             log.info("trigger:{}", JSON.toJSONString(trigger));
