@@ -114,7 +114,7 @@ public class BlogController {
 
     @Anoymous
     @ApiOperation("获取博客 html")
-    @GetMapping("/{blogId}.html")
+    @GetMapping("/{blogId}/html")
     public ResponseEntity getBlogHtml(@PathVariable("blogId") String blogId) {
         BlogHtmlRequest htmlRequest = new BlogHtmlRequest();
         htmlRequest.setBlogId(blogId);
