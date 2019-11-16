@@ -9,7 +9,8 @@ package com.grasswort.picker.user.constants;
  */
 public enum CAPTCHAReceiver {
     PHONE(1, "手机"),
-    EMAIL(2, "邮箱");
+    EMAIL(2, "邮箱"),
+    WECHAT(3, "微信");
 
     CAPTCHAReceiver(int id, String type) {
         this.id = id;

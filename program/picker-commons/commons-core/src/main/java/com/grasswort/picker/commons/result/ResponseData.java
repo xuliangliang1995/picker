@@ -12,6 +12,10 @@ public class ResponseData<T> {
      * 系统异常
      */
     public static final ResponseData SYSTEM_ERROR = new ResponseUtil<>().setErrorMsg("系统错误");
+    /**
+     * 权限不足
+     */
+    public static final ResponseData PERMISSION_DENIED = new ResponseUtil<>().setErrorMsg("权限不足");
 
     private boolean success;
 

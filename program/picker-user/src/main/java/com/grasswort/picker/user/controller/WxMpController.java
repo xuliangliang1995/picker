@@ -46,6 +46,11 @@ public class WxMpController {
     @ApiOperation(value = "获取账号绑定二维码")
     @GetMapping("/bind/qrcode")
     public ResponseData<QrcodeVO> getQrcodeForBind() {
+        boolean hasPrivilege = PickerInfoHolder.getPickerInfo().isPrivilege();
+        if (! hasPrivilege) {
+            return ResponseData.PERMISSION_DENIED;
+        }
+
         WxQrcodeRequest wxQrcodeRequest = WxQrcodeRequest.Builder.aWxQrcodeRequest()
                 .withScene("USER_BIND_WXMP")
                 .withText(PickerInfoHolder.getPickerInfo().getId().toString())

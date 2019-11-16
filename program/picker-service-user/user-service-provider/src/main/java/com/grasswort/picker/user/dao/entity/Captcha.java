@@ -16,6 +16,11 @@ public class Captcha {
     private String phone;
 
     private String email;
+    /**
+     * 卷耳 Picker openId
+     */
+    @Column(name = "open_id")
+    private String openId;
 
     private String captcha;
 
@@ -142,5 +147,13 @@ public class Captcha {
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

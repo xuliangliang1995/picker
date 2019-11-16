@@ -1,5 +1,7 @@
 package com.grasswort.picker.user.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
@@ -22,8 +24,11 @@ import com.grasswort.picker.user.dto.PhoneCaptchaResponse;
 import com.grasswort.picker.user.service.mailbuilder.CaptchaMailGenerator;
 import com.grasswort.picker.user.service.mailbuilder.wrapper.CaptchaMailInfoWrapper;
 import com.grasswort.picker.user.util.sms.MobileCaptchaSender;
+import com.grasswort.picker.wechat.ITemplateMsgService;
+import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +64,8 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
     @Autowired LifelineConfiguration lifelineConfiguration;
 
     @Autowired CaptchaMailGenerator captchaMailGenerator;
+
+    @Reference(version = "1.0", timeout = 10000) ITemplateMsgService iTemplateMsgService;
     /**
      * 验证码长度
      */
@@ -86,6 +93,9 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
                 break;
             case PHONE:
                 sendPhoneCAPCHA(captchaResponse, user);
+                break;
+            case WECHAT:
+                sendWechatCAPCHA(captchaResponse, user);
                 break;
             default:
                 captchaResponse.setCode(SysRetCodeConstants.SYSTEM_ERROR.getCode());
@@ -215,6 +225,51 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
         kafkaTemplate.send(topicActivateEmail.getTopicName(), mail);
 
         response.setEmail(MaskUtil.maskEmail(user.getEmail()));
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+    }
+
+    /**
+     * 发送微信验证码（通过公众号）
+     * @param response
+     * @param user
+     */
+    private void sendWechatCAPCHA(CAPTCHAResponse response, User user) {
+        String openId = user.getMpOpenId();
+        if (StringUtils.isBlank(openId)) {
+            response.setCode(SysRetCodeConstants.UNBIND_WXMP.getCode());
+            response.setMsg(SysRetCodeConstants.UNBIND_WXMP.getMsg());
+            return;
+        }
+        // 生成验证码
+        String captchaCode = RandomStringUtils.randomNumeric(CAPTCHA_CODE_LENGTH);
+
+        // 记录到数据库中
+        Captcha captcha = new Captcha();
+        captcha.setReceiver((byte) CAPTCHAReceiver.EMAIL.getId());
+        captcha.setOpenId(openId);
+        captcha.setCaptcha(captchaCode);
+        captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());
+        Date now = DateTime.now().toDate();
+        captcha.setGmtCreate(now);
+        captcha.setGmtModified(now);
+        captchaMapper.insertUseGeneratedKeys(captcha);
+
+        // 发送微信公众号验证码
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("first", "您好，".concat(user.getMpNickName()));
+        jsonObject.put("keyword1", captchaCode);
+        jsonObject.put("keyword2", lifelineConfiguration.getCaptchaLifeMinutes() + "分钟内有效");
+        jsonObject.put("remark", "如非您本人操作，请及时修改密码。");
+
+        WxMpTemplateMsgRequest wxMpTemplateMsgRequest = WxMpTemplateMsgRequest.Builder.aWxMpTemplateMsgRequest()
+                .withToOpenId(openId)
+                .withTemplateId("a5_yk8Vn5FAXwk9wkBuvoDMaw1IPDnhE1cVbEK7xFSc")
+                .withJson(JSON.toJSONString(jsonObject))
+                .build();
+        iTemplateMsgService.sendTemplateMsg(wxMpTemplateMsgRequest);
+
+        response.setMpNickName(user.getMpNickName());
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
     }

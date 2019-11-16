@@ -72,6 +72,24 @@ public class CaptchaController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
+    @ApiOperation(value = "登录状态发送验证码到微信")
+    @GetMapping("/wechat")
+    public ResponseData getWechatCaptcha() {
+        CAPTCHARequest captchaRequest = CAPTCHARequest.Builder.aCAPTCHARequest()
+                .withReceiver(CAPTCHAReceiver.WECHAT)
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+
+        CAPTCHAResponse captchaResponse = icaptchaService.sendCAPCHA(captchaRequest);
+
+        return Optional.ofNullable(captchaResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(captchaResponse.getMpNickName())
+                        : new ResponseUtil<>().setErrorMsg(captchaResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
     @Anoymous
     @ApiOperation(value = "获取手机号验证码（不需要登录）")
     @PostMapping("/phone")

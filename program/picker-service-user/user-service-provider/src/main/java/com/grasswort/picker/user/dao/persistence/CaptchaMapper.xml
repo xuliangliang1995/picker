@@ -9,6 +9,7 @@
     <result column="receiver" jdbcType="TINYINT" property="receiver" />
     <result column="phone" jdbcType="CHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="open_id" jdbcType="CHAR" property="openId"/>
     <result column="captcha" jdbcType="CHAR" property="captcha" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />

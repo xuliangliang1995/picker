@@ -1,7 +1,6 @@
 package com.grasswort.picker.blog.controller;
 
 import com.grasswort.picker.blog.IBlogCategoryService;
-import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.vo.CategoryTreeNodeVO;
 import com.grasswort.picker.blog.vo.CreateCategoryForm;
@@ -58,7 +57,7 @@ public class CategoryController {
 
     @ApiOperation(value = "类别树")
     @GetMapping("/tree")
-    public ResponseData<CategoryTreeNodeVO> categoryTree() {
+    public ResponseData categoryTree() {
         QueryBlogCategoryRequest queryRequest = new QueryBlogCategoryRequest();
         queryRequest.setUserId(PickerInfoHolder.getPickerInfo().getId());
 

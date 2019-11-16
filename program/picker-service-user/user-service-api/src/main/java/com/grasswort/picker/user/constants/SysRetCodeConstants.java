@@ -34,7 +34,8 @@ public enum SysRetCodeConstants {
 
     // 用户信息
     PHONE_IS_NULL                       ("004001", "手机号为空"),
-    EMAIL_IS_NULL                       ("004002", "邮箱为空");
+    EMAIL_IS_NULL                       ("004002", "邮箱为空"),
+    UNBIND_WXMP                         ("004003", "尚未绑定公众号");
 
     private String code;
     private String msg;

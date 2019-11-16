@@ -22,6 +22,10 @@ public class CAPTCHAResponse extends AbstractResponse {
      * 发送的手机号码
      */
     private String phone;
+    /**
+     * 微信昵称
+     */
+    private String mpNickName;
 
     @Override
     public boolean isSuccess() {
