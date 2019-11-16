@@ -60,7 +60,10 @@ public class UserPrivilegeServiceImpl implements IUserPrivilegeService {
                 User user = userMapper.selectByPrimaryKey(userId);
                 // 不认为此处 user 会为 null
                 boolean privilegeSuccess = captchs.stream()
-                        .filter(c -> Objects.equals(c.getPhone(), user.getPhone()) || Objects.equals(c.getEmail(), user.getEmail()))
+                        .filter(c -> Objects.equals(c.getPhone(), user.getPhone())
+                                || Objects.equals(c.getEmail(), user.getEmail())
+                                || Objects.equals(c.getOpenId(), user.getMpOpenId())
+                        )
                         .findFirst().isPresent();
                 if (privilegeSuccess) {
                     String privilegeAccessToken = userTokenGenerator.generatePrivilegeAccessToken(user, privilegeRequest.getIp());

@@ -246,7 +246,7 @@ public class CAPTCHAServiceImpl implements ICAPTCHAService {
 
         // 记录到数据库中
         Captcha captcha = new Captcha();
-        captcha.setReceiver((byte) CAPTCHAReceiver.EMAIL.getId());
+        captcha.setReceiver((byte) CAPTCHAReceiver.WECHAT.getId());
         captcha.setOpenId(openId);
         captcha.setCaptcha(captchaCode);
         captcha.setExpireTime(DateTime.now().plusMinutes(lifelineConfiguration.getCaptchaLifeMinutes()).toDate());

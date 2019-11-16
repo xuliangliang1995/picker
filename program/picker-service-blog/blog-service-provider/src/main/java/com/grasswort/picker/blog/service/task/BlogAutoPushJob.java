@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service.task;
 
 import com.alibaba.fastjson.JSON;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.entity.RetentionCurve;
@@ -14,6 +15,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Comparator;
 import java.util.List;
@@ -48,7 +50,13 @@ public class BlogAutoPushJob extends QuartzJobBean {
                 .stream()
                 .collect(Collectors.toMap(RetentionCurve::getCurveOrder, RetentionCurve::getIntervalDay));
         final int MAX_ORDER = ORDER_INTERVAL_DAY_MAP.keySet().stream().max(Comparator.naturalOrder()).get();
-        List<BlogTrigger> blogTriggers = blogTriggerMapper.listBlogTriggerToday();
+
+        Example example = new Example(BlogTrigger.class);
+        example.createCriteria()
+                .andCondition("datediff(trigger_time, now()) <= 0")
+                .andEqualTo("status", 0);
+        List<BlogTrigger> blogTriggers = blogTriggerMapper.selectByExample(example);
+
         log.info("triggers:{}", Optional.ofNullable(blogTriggers).map(List::size).orElse(0));
         for (BlogTrigger trigger: blogTriggers) {
             log.info("trigger:{}", JSON.toJSONString(trigger));
