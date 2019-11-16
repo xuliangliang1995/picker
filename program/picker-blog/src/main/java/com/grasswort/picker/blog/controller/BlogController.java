@@ -114,20 +114,22 @@ public class BlogController {
 
     @Anoymous
     @ApiOperation("获取博客 html")
-    @GetMapping("/{blogId}.html")
-    public ResponseEntity getBlogHtml(@PathVariable("blogId") String blogId) {
+    @GetMapping("/{blogId}/page")
+    public String getBlogHtml(@PathVariable("blogId") String blogId) {
         BlogHtmlRequest htmlRequest = new BlogHtmlRequest();
         htmlRequest.setBlogId(blogId);
 
         BlogHtmlResponse htmlResponse = iBlogService.html(htmlRequest);
 
-        HttpHeaders headers = new HttpHeaders();
+        return htmlResponse.getHtml();
+
+        /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/html;charset=utf-8"));;
         return new ResponseEntity<>(
                 Optional.ofNullable(htmlResponse)
                         .map(BlogHtmlResponse::getHtml)
                         .orElse("系统错误"),
-                headers, HttpStatus.OK);
+                headers, HttpStatus.OK);*/
     }
 
     @ApiOperation(value = "修改博客")

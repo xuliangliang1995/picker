@@ -22,8 +22,10 @@ public class FreeMarkerUtil {
     public static String getMailTextForTemplate(String templatePath, String filename, Map datas) throws IOException, TemplateException {
         Configuration configuration = Singleton.configuration;
         //获取class下面的模板文件
-        configuration.setDirectoryForTemplateLoading(new File(FreeMarkerUtil.class.getClass().getResource(
-                "/"+templatePath).getPath()));
+        File path = new File(FreeMarkerUtil.class.getClass().getResource(
+                "/"+templatePath).getPath());
+        System.out.println(path.getPath());
+        configuration.setDirectoryForTemplateLoading(path);
         Template template = configuration.getTemplate(filename,"utf-8");
         StringWriter out = new StringWriter();
         template.process(datas,out);

@@ -24,6 +24,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -168,6 +169,13 @@ public class BlogServiceImpl implements IBlogService {
         return markdownResponse;
     }
 
+    @PostConstruct
+    public void test() {
+        BlogHtmlRequest blogHtmlRequest = new BlogHtmlRequest();
+        blogHtmlRequest.setBlogId("309460d8c88cbfc2");
+        this.html(blogHtmlRequest);
+    }
+
     /**
      * 获取博客 HTML 内容
      *
@@ -197,7 +205,7 @@ public class BlogServiceImpl implements IBlogService {
                     .withContent(content.getHtml())
                     .withTheme("github")
                     .build()
-                    .toString();
+                    .toHtml();
 
             htmlResponse.setHtml(html);
         }
@@ -207,9 +215,10 @@ public class BlogServiceImpl implements IBlogService {
                             .withContent("浏览资源不存在或已被删除")
                             .withTheme("github")
                             .build()
-                            .toString()
+                            .toHtml()
             );
         }
+        System.out.println(htmlResponse.getHtml());
         htmlResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         htmlResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return htmlResponse;

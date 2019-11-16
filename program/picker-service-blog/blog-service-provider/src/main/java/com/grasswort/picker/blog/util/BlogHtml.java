@@ -20,8 +20,7 @@ public class BlogHtml {
 
     private String content;
 
-    @Override
-    public String toString() {
+    public String toHtml() {
         Map<String, String> data = new HashMap<>();
         data.put("theme", theme);
         data.put("content", content);
