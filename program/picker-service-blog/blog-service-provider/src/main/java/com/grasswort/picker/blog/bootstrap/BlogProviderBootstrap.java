@@ -15,7 +15,9 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @blame Java Team
  */
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(
+        excludeName = { "org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration" }
+)
 @ComponentScans(value = {
         @ComponentScan("com.grasswort.picker.blog"),
         @ComponentScan("com.grasswort.picker.commons.config")
