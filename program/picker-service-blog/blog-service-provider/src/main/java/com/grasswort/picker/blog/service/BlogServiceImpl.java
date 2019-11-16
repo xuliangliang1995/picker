@@ -11,12 +11,10 @@ import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
-import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
-import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
-import com.grasswort.picker.blog.dto.OwnBlogListRequest;
-import com.grasswort.picker.blog.dto.OwnBlogListResponse;
+import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
+import com.grasswort.picker.blog.util.BlogHtml;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
@@ -168,5 +166,52 @@ public class BlogServiceImpl implements IBlogService {
         }
 
         return markdownResponse;
+    }
+
+    /**
+     * 获取博客 HTML 内容
+     *
+     * @param htmlRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public BlogHtmlResponse html(BlogHtmlRequest htmlRequest) {
+        BlogHtmlResponse htmlResponse = new BlogHtmlResponse();
+
+        BlogIdEncrypt.BlogKey blogKey = BlogIdEncrypt.decrypt(htmlRequest.getBlogId());
+        Blog blog = Optional.ofNullable(blogKey).map(BlogIdEncrypt.BlogKey::getBlogId)
+                .map(blogMapper::selectByPrimaryKey).orElse(null);
+
+        boolean blogExists = blog != null && Objects.equals(blog.getStatus(), BlogStatusEnum.NORMAL.status());
+
+        if (blogExists) {
+            final int VERSION = blogKey.getVersion() > 0 ? blogKey.getVersion() : blog.getVersion();
+            Example example = new Example(BlogContent.class);
+            example.createCriteria().andEqualTo("blogId", blog.getId())
+                    .andEqualTo("blogVersion", VERSION);
+
+            BlogContent content = blogContentMapper.selectOneByExample(example);
+
+            String html = BlogHtml.Builder.aBlogHtml()
+                    .withContent(content.getHtml())
+                    .withTheme("github")
+                    .build()
+                    .toString();
+
+            htmlResponse.setHtml(html);
+        }
+        if (StringUtils.isBlank(htmlResponse.getHtml())) {
+            htmlResponse.setHtml(
+                    BlogHtml.Builder.aBlogHtml()
+                            .withContent("浏览资源不存在或已被删除")
+                            .withTheme("github")
+                            .build()
+                            .toString()
+            );
+        }
+        htmlResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        htmlResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return htmlResponse;
     }
 }

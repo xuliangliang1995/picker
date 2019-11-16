@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.BlogMarkdownRequest;
-import com.grasswort.picker.blog.dto.BlogMarkdownResponse;
-import com.grasswort.picker.blog.dto.OwnBlogListRequest;
-import com.grasswort.picker.blog.dto.OwnBlogListResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -26,5 +23,12 @@ public interface IBlogService {
      * @return
      */
     BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest);
+
+    /**
+     * 获取博客 HTML 内容
+     * @param htmlRequest
+     * @return
+     */
+    BlogHtmlResponse html(BlogHtmlRequest htmlRequest);
 
 }

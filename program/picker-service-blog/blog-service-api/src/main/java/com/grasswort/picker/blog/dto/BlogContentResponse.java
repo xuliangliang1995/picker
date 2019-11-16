@@ -12,13 +12,8 @@ import lombok.Data;
  * @blame Java Team
  */
 @Data
-public class BlogContentResponse extends AbstractResponse {
+public class BlogContentResponse extends AbstractBlogResponse {
 
     private String markdown;
-
-    @Override
-    public boolean isSuccess() {
-        return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
-    }
 
 }
