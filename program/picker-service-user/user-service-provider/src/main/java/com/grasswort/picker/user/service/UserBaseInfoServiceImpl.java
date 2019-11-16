@@ -34,6 +34,7 @@ import com.grasswort.picker.wechat.dto.WxMpUserInfoRequest;
 import com.grasswort.picker.wechat.dto.WxMpUserInfoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
@@ -109,6 +110,9 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
         baseInfoResponse.setPhone(MaskUtil.maskMobile(user.getPhone()));
         baseInfoResponse.setAvatar(user.getAvatar());
+        baseInfoResponse.setMpNickName(user.getMpNickName());
+        baseInfoResponse.setMpHeadImgUrl(user.getMpHeadImgUrl());
+        baseInfoResponse.setBindWechat(StringUtils.isNotBlank(user.getMpOpenId()));
         baseInfoResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         baseInfoResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return baseInfoResponse;
@@ -313,7 +317,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         User user = userMapper.selectByPrimaryKey(userId);
         String oldOpenId = user.getMpOpenId();
 
-        if (! Objects.equals(openId, oldOpenId)) {
+        if (! Objects.equals(openId, oldOpenId) || StringUtils.isAnyBlank(user.getMpNickName(), user.getMpHeadImgUrl())) {
             DBLocalHolder.selectDBGroup(DBGroup.MASTER);
 
             User userSelective = new User();

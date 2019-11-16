@@ -24,6 +24,12 @@ public class UserBaseInfoResponse extends AbstractResponse {
 
     private String avatar;
 
+    private Boolean bindWechat;
+
+    private String mpNickName;
+
+    private String mpHeadImgUrl;
+
     @Override
     public boolean isSuccess() {
         return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());
