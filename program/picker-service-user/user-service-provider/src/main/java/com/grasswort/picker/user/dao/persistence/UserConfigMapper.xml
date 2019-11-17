@@ -9,6 +9,8 @@
     <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId" />
     <result column="markdown_theme" jdbcType="VARCHAR" property="markdownTheme" />
     <result column="safety_check_mode" jdbcType="TINYINT" property="safetyCheckMode" />
+    <result column="is_open_blog_push" jdbcType="TINYINT" property="openBlogPush"/>
+    <result column="blog_push_mode" jdbcType="TINYINT" property="blogPushMode"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>

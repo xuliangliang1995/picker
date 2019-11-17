@@ -20,6 +20,18 @@ public class UserConfig {
     @Column(name = "safety_check_mode")
     private Integer safetyCheckMode;
 
+    /**
+     * 是否开启博客推送
+     */
+    @Column(name = "is_open_blog_push")
+    private Boolean openBlogPush;
+
+    /**
+     * 博客推送方式
+     */
+    @Column(name = "blog_push_mode")
+    private Integer blogPushMode;
+
     @Column(name = "gmt_create")
     private Date gmtCreate;
 
@@ -112,5 +124,21 @@ public class UserConfig {
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public Boolean isOpenBlogPush() {
+        return openBlogPush;
+    }
+
+    public void setOpenBlogPush(Boolean openBlogPush) {
+        this.openBlogPush = openBlogPush;
+    }
+
+    public Integer getBlogPushMode() {
+        return blogPushMode;
+    }
+
+    public void setBlogPushMode(Integer blogPushMode) {
+        this.blogPushMode = blogPushMode;
     }
 }

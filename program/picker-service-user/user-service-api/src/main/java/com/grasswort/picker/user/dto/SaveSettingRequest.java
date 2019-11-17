@@ -26,6 +26,11 @@ public class SaveSettingRequest extends AbstractRequest {
     @NotNull
     @Min(0)
     private Integer safetyCheckMode;
+    @NotNull
+    private Boolean openBlogPush;
+    @NotNull
+    @Min(0)
+    private Integer blogPushMode;
 
     @Override
     public void requestCheck() {
@@ -36,6 +41,8 @@ public class SaveSettingRequest extends AbstractRequest {
         private Long userId;
         private String markdownTheme;
         private Integer safetyCheckMode;
+        private Boolean openBlogPush;
+        private Integer blogPushMode;
 
         private Builder() {
         }
@@ -59,11 +66,23 @@ public class SaveSettingRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withOpenBlogPush(Boolean openBlogPush) {
+            this.openBlogPush = openBlogPush;
+            return this;
+        }
+
+        public Builder withBlogPushMode(Integer blogPushMode) {
+            this.blogPushMode = blogPushMode;
+            return this;
+        }
+
         public SaveSettingRequest build() {
             SaveSettingRequest saveSettingRequest = new SaveSettingRequest();
             saveSettingRequest.setUserId(userId);
             saveSettingRequest.setMarkdownTheme(markdownTheme);
             saveSettingRequest.setSafetyCheckMode(safetyCheckMode);
+            saveSettingRequest.setOpenBlogPush(openBlogPush);
+            saveSettingRequest.setBlogPushMode(blogPushMode);
             return saveSettingRequest;
         }
     }

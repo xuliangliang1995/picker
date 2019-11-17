@@ -2,19 +2,18 @@ package com.grasswort.picker.user.constants;
 
 /**
  * @author xuliangliang
- * @Classname SafetyCheckMode
- * @Description 安全检测方式
- * @Date 2019/11/4 16:05
+ * @Classname BlogPushMode
+ * @Description 博客推送方式
+ * @Date 2019/11/17 13:20
  * @blame Java Team
  */
-public enum SafetyCheckMode {
+public enum BlogPushMode {
     EMAIL(0, "邮件"),
-    SMS(1, "短信"),
-    WX(2, "微信");
+    WX(1, "微信");
     private int id;
     private String note;
 
-    SafetyCheckMode(int id, String note) {
+    BlogPushMode(int id, String note) {
         this.id = id;
         this.note = note;
     }

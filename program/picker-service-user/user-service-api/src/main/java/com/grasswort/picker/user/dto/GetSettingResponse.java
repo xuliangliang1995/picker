@@ -18,6 +18,10 @@ public class GetSettingResponse extends AbstractResponse {
 
     private Integer safetyCheckMode;
 
+    private Boolean openBlogPush;
+
+    private Integer blogPushMode;
+
     @Override
     public boolean isSuccess() {
         return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());

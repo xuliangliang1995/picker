@@ -2,10 +2,7 @@ package com.grasswort.picker.user.service;
 
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserSettingService;
-import com.grasswort.picker.user.constants.DBGroup;
-import com.grasswort.picker.user.constants.MarkdownTheme;
-import com.grasswort.picker.user.constants.SafetyCheckMode;
-import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.constants.*;
 import com.grasswort.picker.user.dao.entity.UserConfig;
 import com.grasswort.picker.user.dao.persistence.UserConfigMapper;
 import com.grasswort.picker.user.dto.GetSettingRequest;
@@ -56,6 +53,8 @@ public class UserSettingServiceImpl implements IUserSettingService {
         }
         userConfig.setMarkdownTheme(saveSettingRequest.getMarkdownTheme());
         userConfig.setSafetyCheckMode(saveSettingRequest.getSafetyCheckMode());
+        userConfig.setOpenBlogPush(saveSettingRequest.getOpenBlogPush());
+        userConfig.setBlogPushMode(saveSettingRequest.getBlogPushMode());
         userConfig.setGmtModified(now);
 
         if (insert) {
@@ -87,6 +86,9 @@ public class UserSettingServiceImpl implements IUserSettingService {
 
         getSettingResponse.setMarkdownTheme(Optional.ofNullable(userConfig).map(UserConfig::getMarkdownTheme).orElse(MarkdownTheme.GITHUB));
         getSettingResponse.setSafetyCheckMode(Optional.ofNullable(userConfig).map(UserConfig::getSafetyCheckMode).orElse(SafetyCheckMode.EMAIL.getId()));
+        getSettingResponse.setOpenBlogPush(Optional.ofNullable(userConfig).map(UserConfig::isOpenBlogPush).orElse(false));
+        getSettingResponse.setBlogPushMode(Optional.ofNullable(userConfig).map(UserConfig::getBlogPushMode).orElse(BlogPushMode.EMAIL.getId()));
+
         getSettingResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         getSettingResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
 

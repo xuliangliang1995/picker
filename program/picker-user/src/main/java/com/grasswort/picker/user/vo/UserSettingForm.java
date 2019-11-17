@@ -22,4 +22,9 @@ public class UserSettingForm {
     @NotNull
     @Min(0)
     private Integer safetyCheckMode;
+    @NotNull
+    private Boolean openBlogPush;
+    @NotNull
+    @Min(0)
+    private Integer blogPushMode;
 }

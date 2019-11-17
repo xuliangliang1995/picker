@@ -56,6 +56,8 @@ public class SettingController {
         SaveSettingRequest saveRequest = SaveSettingRequest.Builder.aSaveSettingRequest()
                 .withMarkdownTheme(form.getMarkdownTheme())
                 .withSafetyCheckMode(form.getSafetyCheckMode())
+                .withOpenBlogPush(form.getOpenBlogPush())
+                .withBlogPushMode(form.getBlogPushMode())
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .build();
 
