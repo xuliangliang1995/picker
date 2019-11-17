@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.grasswort.picker.blog.configuration.kafka.TopicBlogPush;
 import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
-import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
@@ -22,7 +21,6 @@ import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserSettingService;
 import com.grasswort.picker.user.dto.BlogPushSettingRequest;
 import com.grasswort.picker.user.dto.BlogPushSettingResponse;
-import com.grasswort.picker.user.dto.GetSettingRequest;
 import com.grasswort.picker.wechat.ITemplateMsgService;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
@@ -153,7 +150,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
             mail.setHtml(true);
             mail.setContent(htmlResponse.getHtml());
             mail.setToAddress(Collections.singletonList(email));
-            kafkaTemplate.send(topicBlogPush.getTopicName(), new Mail());
+            kafkaTemplate.send(topicBlogPush.getTopicName(), mail);
         }
     }
 
