@@ -7,6 +7,7 @@ import com.grasswort.picker.wechat.dto.WxMpUserInfoResponse;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,7 +36,9 @@ public class WxMpUserInfoService implements IWxMpUserInfoService {
         String openId = wxMpUserInfoRequest.getOpenId();
         try {
             WxMpUser mpUser = wxMpService.getUserService().userInfo(openId);
-            response.setHeadImgUrl(mpUser.getHeadImgUrl());
+            if (StringUtils.isNotBlank(mpUser.getHeadImgUrl())) {
+                response.setHeadImgUrl(mpUser.getHeadImgUrl().replace("http://", "https://"));
+            }
             response.setNickName(mpUser.getNickname());
             response.setSubscribe(mpUser.getSubscribe());
         } catch (WxErrorException e) {
