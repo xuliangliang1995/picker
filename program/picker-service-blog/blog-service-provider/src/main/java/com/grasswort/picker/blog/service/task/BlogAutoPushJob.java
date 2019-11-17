@@ -185,6 +185,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
                         .withTemplateId("-nCGb9KHz3gMRWtE3DFh8q88UvrsmiwMES3m1VpR2vY")
                         .withToOpenId(openId)
                         .withUrl(blogUrlDecorator.url())
+                        .withJson(JSON.toJSONString(jsonObject))
                         .build()
         );
     }
