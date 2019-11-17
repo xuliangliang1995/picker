@@ -1,12 +1,5 @@
 package com.grasswort.picker.blog.util;
 
-import com.grasswort.picker.commons.email.freemarker.FreeMarkerUtil;
-import freemarker.template.TemplateException;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author xuliangliang
  * @Classname BlogHtmlBuilder
@@ -21,17 +14,23 @@ public class BlogHtml {
     private String content;
 
     public String toHtml() {
-        Map<String, String> data = new HashMap<>();
-        data.put("theme", theme);
-        data.put("content", content);
-        try {
-            return FreeMarkerUtil.getMailTextForTemplate("emailTemplate", "blog.html", data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TemplateException e) {
-            e.printStackTrace();
-        }
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <title>picker</title>\n" +
+                "    <link rel=\"stylesheet\" type=\"text/css\" href=\"https://picker-oss.oss-cn-beijing.aliyuncs.com/meta/css/");
+        sb.append(theme);
+        sb.append(".min.css\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div id=\"app\">");
+        sb.append(content);
+        sb.append("</div>\n" +
+                "</body>\n" +
+                "</html>");
+        return sb.toString();
     }
 
     public static final class Builder {
