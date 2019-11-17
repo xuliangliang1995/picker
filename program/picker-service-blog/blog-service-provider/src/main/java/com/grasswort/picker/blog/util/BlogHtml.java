@@ -24,6 +24,11 @@ public class BlogHtml {
         sb.append(theme);
         sb.append(".min.css\">\n" +
                 "</head>\n" +
+                "  <style>\n" +
+                "    #app {\n" +
+                "      font-size: 20px;\n" +
+                "    }\n" +
+                "  </style>" +
                 "<body>\n" +
                 "<div id=\"app\">");
         sb.append(content);
