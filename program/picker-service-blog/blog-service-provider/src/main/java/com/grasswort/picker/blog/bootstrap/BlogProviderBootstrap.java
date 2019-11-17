@@ -15,12 +15,11 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @blame Java Team
  */
 @Slf4j
-@SpringBootApplication(
-        excludeName = { "org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration" }
-)
+@SpringBootApplication
 @ComponentScans(value = {
         @ComponentScan("com.grasswort.picker.blog"),
-        @ComponentScan("com.grasswort.picker.commons.config")
+        @ComponentScan("com.grasswort.picker.commons.config"),
+        @ComponentScan("com.grasswort.picker.email.kafka")
 })
 @MapperScan("com.grasswort.picker.blog.dao.persistence")
 public class BlogProviderBootstrap {
