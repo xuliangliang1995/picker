@@ -46,6 +46,24 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.grasswort.picker</groupId>
+            <artifactId>wechat-service-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.grasswort.picker</groupId>
+            <artifactId>user-service-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.grasswort.picker</groupId>
+            <artifactId>email-center-sdk</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- dubbo -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -82,11 +100,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <!-- quartz -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
             <version>2.2.1.RELEASE</version>
+        </dependency>
+
+        <!-- kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>

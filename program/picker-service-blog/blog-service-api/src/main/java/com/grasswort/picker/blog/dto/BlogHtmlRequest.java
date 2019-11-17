@@ -1,7 +1,9 @@
 package com.grasswort.picker.blog.dto;
 
 import com.grasswort.picker.commons.result.AbstractRequest;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -13,6 +15,8 @@ import javax.validation.constraints.NotEmpty;
  * @blame Java Team
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BlogHtmlRequest extends AbstractRequest {
     @NotEmpty
     private String blogId;

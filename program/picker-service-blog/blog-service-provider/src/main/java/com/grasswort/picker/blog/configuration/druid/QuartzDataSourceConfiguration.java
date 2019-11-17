@@ -1,4 +1,4 @@
-package com.grasswort.picker.blog.configuration;
+package com.grasswort.picker.blog.configuration.druid;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.grasswort.picker.blog.service.task.BlogAutoPushJob;

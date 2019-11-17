@@ -1,4 +1,4 @@
-package com.grasswort.picker.blog.configuration;
+package com.grasswort.picker.blog.configuration.druid;
 
 import com.grasswort.picker.commons.constant.ConstantMultiDB;
 import com.grasswort.picker.commons.wrapper.MultiDataSourceWrapper;

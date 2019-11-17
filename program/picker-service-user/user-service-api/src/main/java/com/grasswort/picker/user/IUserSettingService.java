@@ -1,9 +1,6 @@
 package com.grasswort.picker.user;
 
-import com.grasswort.picker.user.dto.GetSettingRequest;
-import com.grasswort.picker.user.dto.GetSettingResponse;
-import com.grasswort.picker.user.dto.SaveSettingRequest;
-import com.grasswort.picker.user.dto.SaveSettingResponse;
+import com.grasswort.picker.user.dto.*;
 
 /**
  * @author xuliangliang
@@ -26,4 +23,12 @@ public interface IUserSettingService {
      * @return
      */
     GetSettingResponse getSetting(GetSettingRequest getSettingRequest);
+
+    /**
+     * 获取博客推送设置
+     * @param blogPushSettingRequest
+     * @return
+     */
+    BlogPushSettingResponse getBlogPushSetting(BlogPushSettingRequest blogPushSettingRequest);
+
 }
