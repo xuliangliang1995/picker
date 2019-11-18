@@ -150,6 +150,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
             mail.setHtml(true);
             mail.setContent(htmlResponse.getHtml());
             mail.setToAddress(Collections.singletonList(email));
+            mail.setCcAddress(Collections.EMPTY_LIST);
             kafkaTemplate.send(topicBlogPush.getTopicName(), mail);
         }
     }
