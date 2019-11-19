@@ -8,6 +8,7 @@ import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
 import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.commons.mask.MaskUtil;
+import com.grasswort.picker.commons.time.TimeFormat;
 import com.grasswort.picker.oss.IOssRefService;
 import com.grasswort.picker.oss.constants.OssConstants;
 import com.grasswort.picker.oss.dto.OssRefRequest;
@@ -35,7 +36,6 @@ import com.grasswort.picker.wechat.dto.WxMpUserInfoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
@@ -339,7 +339,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("first", "您好，您的账号已成功绑定此微信。");
         jsonObject.put("keyword1", MaskUtil.maskEmail(user.getEmail()));
-        jsonObject.put("keyword2", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", " "));
+        jsonObject.put("keyword2", TimeFormat.format());
         jsonObject.put("remark", "感谢您的使用。");
 
         iTemplateMsgService.sendTemplateMsg(

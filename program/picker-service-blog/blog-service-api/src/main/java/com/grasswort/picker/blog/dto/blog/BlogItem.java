@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.dto.blog;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -48,6 +49,11 @@ public class BlogItem {
      */
     private Integer version;
     /**
+     * 推送触发状态（
+     * @see BlogCurveStatusEnum
+     */
+    private Integer triggerStatus;
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
@@ -67,6 +73,7 @@ public class BlogItem {
         private String category;
         private List<String> labels;
         private Integer version;
+        private Integer triggerStatus;
         private Date gmtCreate;
         private Date gmtModified;
 
@@ -117,6 +124,11 @@ public class BlogItem {
             return this;
         }
 
+        public Builder withTriggerStatus(Integer triggerStatus) {
+            this.triggerStatus = triggerStatus;
+            return this;
+        }
+
         public Builder withGmtCreate(Date gmtCreate) {
             this.gmtCreate = gmtCreate;
             return this;
@@ -137,6 +149,7 @@ public class BlogItem {
             blogItem.setCategory(category);
             blogItem.setLabels(labels);
             blogItem.setVersion(version);
+            blogItem.setTriggerStatus(triggerStatus);
             blogItem.setGmtCreate(gmtCreate);
             blogItem.setGmtModified(gmtModified);
             return blogItem;

@@ -17,6 +17,7 @@ import com.grasswort.picker.blog.service.BlogServiceImpl;
 import com.grasswort.picker.blog.service.decorator.BlogUrlDecorator;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.config.DBLocalHolder;
+import com.grasswort.picker.commons.time.TimeFormat;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserSettingService;
 import com.grasswort.picker.user.dto.BlogPushSettingRequest;
@@ -25,7 +26,6 @@ import com.grasswort.picker.wechat.ITemplateMsgService;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
@@ -166,7 +166,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("first", "您有新的内容需要回顾啦 ~ ");
         jsonObject.put("keyword1", blog.getTitle());
-        jsonObject.put("keyword2", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(DateTime.now().toDate()).replace("T", " "));
+        jsonObject.put("keyword2", TimeFormat.format());
 
         String summary = blog.getSummary();
         if (StringUtils.isBlank(summary)) {
@@ -187,4 +187,6 @@ public class BlogAutoPushJob extends QuartzJobBean {
                         .build()
         );
     }
+
+
 }

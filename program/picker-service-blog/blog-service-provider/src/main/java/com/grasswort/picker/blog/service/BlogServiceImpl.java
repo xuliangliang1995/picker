@@ -1,15 +1,18 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogService;
+import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
+import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogTriggerMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
@@ -25,10 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +48,8 @@ public class BlogServiceImpl implements IBlogService {
     @Autowired BlogLabelDao blogLabelDao;
 
     @Autowired BlogContentMapper blogContentMapper;
+
+    @Autowired BlogTriggerMapper blogTriggerMapper;
 
     /**
      * 查看自己的博客列表
@@ -95,6 +97,11 @@ public class BlogServiceImpl implements IBlogService {
 
                         // 标签
                         List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
+                        // 博客推送状态
+                        BlogTrigger trigger = blogTriggerMapper.selectOneByBlogId(blog.getId());
+                        BlogCurveStatusEnum curveStatusEnum = Arrays.stream(BlogCurveStatusEnum.values())
+                                .filter(curve -> Objects.equals(curve.status(), trigger.getStatus()))
+                                .findFirst().orElse(BlogCurveStatusEnum.STOP);
 
                         return BlogItem.Builder.aBlogItem()
                                 .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
@@ -104,6 +111,7 @@ public class BlogServiceImpl implements IBlogService {
                                 .withCategory(category)
                                 .withLabels(labels)
                                 .withVersion(blog.getVersion())
+                                .withTriggerStatus(curveStatusEnum.status())
                                 .withGmtCreate(blog.getGmtCreate())
                                 .withGmtModified(blog.getGmtModified())
                                 .build();
@@ -167,13 +175,6 @@ public class BlogServiceImpl implements IBlogService {
         }
 
         return markdownResponse;
-    }
-
-    @PostConstruct
-    public void test() {
-        BlogHtmlRequest blogHtmlRequest = new BlogHtmlRequest();
-        blogHtmlRequest.setBlogId("309460d8c88cbfc2");
-        this.html(blogHtmlRequest);
     }
 
     /**
