@@ -99,9 +99,11 @@ public class BlogServiceImpl implements IBlogService {
                         List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
                         // 博客推送状态
                         BlogTrigger trigger = blogTriggerMapper.selectOneByBlogId(blog.getId());
-                        BlogCurveStatusEnum curveStatusEnum = Arrays.stream(BlogCurveStatusEnum.values())
-                                .filter(curve -> Objects.equals(curve.status(), trigger.getStatus()))
-                                .findFirst().orElse(BlogCurveStatusEnum.STOP);
+                        BlogCurveStatusEnum curveStatusEnum = Optional.ofNullable(trigger)
+                                .map(t -> Arrays.stream(BlogCurveStatusEnum.values())
+                                        .filter(curve -> Objects.equals(curve.status(), t.getStatus()))
+                                        .findFirst().orElse(BlogCurveStatusEnum.STOP))
+                                .orElse(BlogCurveStatusEnum.STOP);
 
                         return BlogItem.Builder.aBlogItem()
                                 .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
