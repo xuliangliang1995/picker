@@ -64,6 +64,7 @@ public class BlogItem {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
 
+
     public static final class Builder {
         private String blogId;
         private String title;

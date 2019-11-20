@@ -27,7 +27,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,21 +154,18 @@ public class BlogServiceImpl implements IBlogService {
 
             BlogContent content = blogContentMapper.selectOneByExample(example);
 
-            BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
-
-            blogItemWithMarkdown.setBlogId(markdownRequest.getBlogId());
-            blogItemWithMarkdown.setTitle(blog.getTitle());
-            blogItemWithMarkdown.setSummary(blog.getSummary());
-            blogItemWithMarkdown.setCategoryId(blog.getCategoryId());
-            blogItemWithMarkdown.setCoverImg(blog.getCoverImg());
-            blogItemWithMarkdown.setVersion(VERSION);
-
-            blogItemWithMarkdown.setMarkdown(content.getMarkdown());
-
-            blogItemWithMarkdown.setLabels(blogLabelDao.listBlogLabels(blog.getId()));
-
-            blogItemWithMarkdown.setGmtCreate(content.getGmtCreate());
-            blogItemWithMarkdown.setGmtModified(content.getGmtModified());
+            BlogItemWithMarkdown blogItemWithMarkdown = BlogItemWithMarkdown.Builder.aBlogItemWithMarkdown()
+                    .withBlogId(markdownRequest.getBlogId())
+                    .withTitle(blog.getTitle())
+                    .withSummary(blog.getSummary())
+                    .withCategoryId(blog.getCategoryId())
+                    .withCoverImg(blog.getCoverImg())
+                    .withVersion(VERSION)
+                    .withMarkdown(content.getMarkdown())
+                    .withLabels(blogLabelDao.listBlogLabels(blog.getId()))
+                    .withGmtCreate(content.getGmtCreate())
+                    .withGmtModified(content.getGmtModified())
+                    .build();
 
             markdownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
             markdownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
