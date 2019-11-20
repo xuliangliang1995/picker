@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogPoolService;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
@@ -66,6 +67,7 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
             // TODO 根据关键词搜索
         } else {
             Example example = new Example(Blog.class);
+            example.createCriteria().andEqualTo("status", BlogStatusEnum.NORMAL.status());
             example.setOrderByClause("id desc");
             long total = blogMapper.selectCountByExample(example);
             List<BlogItemWithAuthor> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds).parallelStream().map(blog -> {
