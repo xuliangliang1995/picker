@@ -27,4 +27,6 @@ public class UserSettingForm {
     @NotNull
     @Min(0)
     private Integer blogPushMode;
+
+    private String blogPushTime;
 }

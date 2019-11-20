@@ -58,6 +58,7 @@ public class SettingController {
                 .withSafetyCheckMode(form.getSafetyCheckMode())
                 .withOpenBlogPush(form.getOpenBlogPush())
                 .withBlogPushMode(form.getBlogPushMode())
+                .withBlogPushTime(form.getBlogPushTime())
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .build();
 

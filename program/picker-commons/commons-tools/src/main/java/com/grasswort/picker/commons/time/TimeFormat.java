@@ -14,11 +14,13 @@ import java.time.format.DateTimeFormatter;
  */
 public class TimeFormat {
 
-    private final static ZoneId ZONE_ID = ZoneId.of("Asia/Shanghai");
+    private final static ZoneId ZONE_SHANGHAI = ZoneId.of("Asia/Shanghai");
 
     public final static String yyyyMMddHHmm = "yyyy-MM-dd HH:mm";
 
     public final static String yyyyMMdd = "yyyy-MM-dd";
+
+    public final static DateTimeFormatter DEFAULT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withZone(ZONE_SHANGHAI);
 
     /**
      * 格式化当前时间
@@ -26,7 +28,7 @@ public class TimeFormat {
      * @return
      */
     public static String format(String pattern) {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern).withZone(ZONE_ID));
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern).withZone(ZONE_SHANGHAI));
     }
 
     /**
@@ -36,7 +38,7 @@ public class TimeFormat {
      * @return
      */
     public static String format(Instant instant, String pattern) {
-        return instant.atZone(ZONE_ID).format(DateTimeFormatter.ofPattern(pattern));
+        return instant.atZone(ZONE_SHANGHAI).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
@@ -44,7 +46,7 @@ public class TimeFormat {
      * @return
      */
     public static String format() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(yyyyMMddHHmm).withZone(ZONE_ID));
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(yyyyMMddHHmm).withZone(ZONE_SHANGHAI));
     }
 
     /**
@@ -53,7 +55,7 @@ public class TimeFormat {
      * @return
      */
     public static String format(Instant instant) {
-        return instant.atZone(ZONE_ID).format(DateTimeFormatter.ofPattern(yyyyMMddHHmm));
+        return instant.atZone(ZONE_SHANGHAI).format(DateTimeFormatter.ofPattern(yyyyMMddHHmm));
     }
 
 }

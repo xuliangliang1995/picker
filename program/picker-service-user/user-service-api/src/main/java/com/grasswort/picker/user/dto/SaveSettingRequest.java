@@ -32,6 +32,8 @@ public class SaveSettingRequest extends AbstractRequest {
     @Min(0)
     private Integer blogPushMode;
 
+    private String blogPushTime;
+
     @Override
     public void requestCheck() {
 
@@ -43,6 +45,7 @@ public class SaveSettingRequest extends AbstractRequest {
         private Integer safetyCheckMode;
         private Boolean openBlogPush;
         private Integer blogPushMode;
+        private String blogPushTime;
 
         private Builder() {
         }
@@ -76,6 +79,11 @@ public class SaveSettingRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withBlogPushTime(String blogPushTime) {
+            this.blogPushTime = blogPushTime;
+            return this;
+        }
+
         public SaveSettingRequest build() {
             SaveSettingRequest saveSettingRequest = new SaveSettingRequest();
             saveSettingRequest.setUserId(userId);
@@ -83,6 +91,7 @@ public class SaveSettingRequest extends AbstractRequest {
             saveSettingRequest.setSafetyCheckMode(safetyCheckMode);
             saveSettingRequest.setOpenBlogPush(openBlogPush);
             saveSettingRequest.setBlogPushMode(blogPushMode);
+            saveSettingRequest.setBlogPushTime(blogPushTime);
             return saveSettingRequest;
         }
     }

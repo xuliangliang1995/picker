@@ -11,6 +11,7 @@
     <result column="safety_check_mode" jdbcType="TINYINT" property="safetyCheckMode" />
     <result column="is_open_blog_push" jdbcType="TINYINT" property="openBlogPush"/>
     <result column="blog_push_mode" jdbcType="TINYINT" property="blogPushMode"/>
+    <result column="blog_push_time" jdbcType="VARCHAR" property="blogPushTime"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>

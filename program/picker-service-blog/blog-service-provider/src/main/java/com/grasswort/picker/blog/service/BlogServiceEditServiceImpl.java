@@ -25,6 +25,12 @@ import com.grasswort.picker.oss.dto.OssRefRequest;
 import com.grasswort.picker.oss.dto.OssRefResponse;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
+import com.grasswort.picker.user.IUserBaseInfoService;
+import com.grasswort.picker.user.IUserSettingService;
+import com.grasswort.picker.user.dto.BlogPushSettingRequest;
+import com.grasswort.picker.user.dto.BlogPushSettingResponse;
+import com.grasswort.picker.user.dto.UserBaseInfoRequest;
+import com.grasswort.picker.user.dto.UserBaseInfoResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
@@ -62,6 +68,8 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Autowired BlogLabelDao blogLabelDao;
 
     @Autowired RetentionCurveServiceImpl retentionCurveServiceImpl;
+
+    @Reference(version = "1.0", timeout = 10000) IUserSettingService iUserSettingService;
 
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
     /**
@@ -129,15 +137,23 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         // 存储标签
         processLabels(blog.getId(), labels);
 
-        // 开启记忆曲线
-        retentionCurveServiceImpl.blogCurvePatch(
-                BlogCurveRequest.Builder.aBlogCurveRequest()
-                .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
-                .withUserId(userId)
-                .withOrder(1)
-                .withStatus(BlogCurveStatusEnum.NORMAL)
-                .build()
-        );
+        BlogPushSettingResponse pushSettingResponse = iUserSettingService.getBlogPushSetting(new BlogPushSettingRequest(userId));
+
+        boolean openPush = Optional.ofNullable(pushSettingResponse)
+                .filter(BlogPushSettingResponse::isSuccess)
+                .map(BlogPushSettingResponse::getOpenBlogPush)
+                .orElse(false);
+        if (openPush) {
+            // 开启记忆曲线
+            retentionCurveServiceImpl.blogCurvePatch(
+                    BlogCurveRequest.Builder.aBlogCurveRequest()
+                            .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
+                            .withUserId(userId)
+                            .withOrder(1)
+                            .withStatus(BlogCurveStatusEnum.NORMAL)
+                            .build()
+            );
+        }
 
         createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());

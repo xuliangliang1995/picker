@@ -36,6 +36,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,19 +82,40 @@ public class BlogAutoPushJob extends QuartzJobBean {
         final int MAX_ORDER = ORDER_INTERVAL_DAY_MAP.keySet().stream().max(Comparator.naturalOrder()).get();
 
         Example example = new Example(BlogTrigger.class);
-        example.createCriteria()
-                .andCondition("datediff(trigger_time, now()) <= 0")
+        example.createCriteria().andCondition("datediff(trigger_time, now()) <= 0")
                 .andEqualTo("status", BlogCurveStatusEnum.NORMAL.status());
         List<BlogTrigger> blogTriggers = blogTriggerMapper.selectByExample(example);
 
-        log.info("triggers:{}", Optional.ofNullable(blogTriggers).map(List::size).orElse(0));
         for (BlogTrigger trigger: blogTriggers) {
-            log.info("trigger:{}", JSON.toJSONString(trigger));
-            boolean push = pushBlog(trigger);
+            Blog blog = blogMapper.selectByPrimaryKey(trigger.getBlogId());
+            BlogPushSettingResponse blogPushSettingResponse = iUserSettingService.getBlogPushSetting(new BlogPushSettingRequest(blog.getPkUserId()));
 
+            boolean openPush = false;
+
+            if (Optional.ofNullable(blogPushSettingResponse).map(BlogPushSettingResponse::isSuccess).orElse(false)) {
+                // 1.确认开启推送
+                openPush = blogPushSettingResponse.getOpenBlogPush();
+                if (openPush) {
+                    String pushTime = blogPushSettingResponse.getBlogPushTime();
+                    // 2. 已到达推送时间
+                    if (LocalTime.now().isAfter(LocalTime.parse(pushTime, TimeFormat.DEFAULT_TIME_FORMATTER))) {
+                        switch (blogPushSettingResponse.getMode()) {
+                            case EMAIL:
+                                pushToEmail(blog, blogPushSettingResponse.getEmail());
+                                break;
+                            case WX:
+                                pushToWechat(blog, blogPushSettingResponse.getOpenId());
+                                break;
+                            default:
+                                // ignore
+                                break;
+                        }
+                    }
+                }
+            }
+            // 推送完更改状态
             DBLocalHolder.selectDBGroup(DBGroup.MASTER);
-
-            if (push) {
+            if (openPush) {
                 int newOrder = Math.min(trigger.getRetentionCurveOrder() + 1, MAX_ORDER);
                 BlogTrigger triggerSelective = new BlogTrigger();
                 triggerSelective.setId(trigger.getId());
@@ -110,33 +134,6 @@ public class BlogAutoPushJob extends QuartzJobBean {
 
         DBLocalHolder.clear();
         log.info("\n博客推送定时任务执行结束。");
-    }
-
-    /**
-     * 推送博客
-     * @param trigger
-     */
-    private boolean pushBlog(BlogTrigger trigger) {
-        Blog blog = blogMapper.selectByPrimaryKey(trigger.getBlogId());
-        BlogPushSettingResponse blogPushSettingResponse = iUserSettingService.getBlogPushSetting(new BlogPushSettingRequest(blog.getPkUserId()));
-
-        if (Optional.ofNullable(blogPushSettingResponse).map(BlogPushSettingResponse::isSuccess).orElse(false)) {
-            if (blogPushSettingResponse.getOpenBlogPush()) {
-                switch (blogPushSettingResponse.getMode()) {
-                    case EMAIL:
-                        pushToEmail(blog, blogPushSettingResponse.getEmail());
-                        break;
-                    case WX:
-                        pushToWechat(blog, blogPushSettingResponse.getOpenId());
-                        break;
-                    default:
-                        // ignore
-                        break;
-                }
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -187,6 +184,5 @@ public class BlogAutoPushJob extends QuartzJobBean {
                         .build()
         );
     }
-
 
 }

@@ -22,6 +22,8 @@ public class GetSettingResponse extends AbstractResponse {
 
     private Integer blogPushMode;
 
+    private String blogPushTime;
+
     @Override
     public boolean isSuccess() {
         return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());

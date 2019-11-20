@@ -17,6 +17,8 @@ public class BlogPushSettingResponse extends AbstractUserResponse {
 
     private BlogPushMode mode;
 
+    private String blogPushTime;
+
     private String openId;
 
     private String email;

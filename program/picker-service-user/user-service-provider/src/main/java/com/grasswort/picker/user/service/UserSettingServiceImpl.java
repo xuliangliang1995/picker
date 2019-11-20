@@ -8,6 +8,7 @@ import com.grasswort.picker.user.dao.entity.UserConfig;
 import com.grasswort.picker.user.dao.persistence.UserConfigMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dto.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,9 @@ public class UserSettingServiceImpl implements IUserSettingService {
         userConfig.setSafetyCheckMode(saveSettingRequest.getSafetyCheckMode());
         userConfig.setOpenBlogPush(saveSettingRequest.getOpenBlogPush());
         userConfig.setBlogPushMode(saveSettingRequest.getBlogPushMode());
+        if (StringUtils.isNotBlank(saveSettingRequest.getBlogPushTime())) {
+            userConfig.setBlogPushTime(saveSettingRequest.getBlogPushTime());
+        }
         userConfig.setGmtModified(now);
 
         if (insert) {
@@ -91,6 +95,7 @@ public class UserSettingServiceImpl implements IUserSettingService {
         getSettingResponse.setSafetyCheckMode(Optional.ofNullable(userConfig).map(UserConfig::getSafetyCheckMode).orElse(SafetyCheckMode.EMAIL.getId()));
         getSettingResponse.setOpenBlogPush(Optional.ofNullable(userConfig).map(UserConfig::isOpenBlogPush).orElse(false));
         getSettingResponse.setBlogPushMode(Optional.ofNullable(userConfig).map(UserConfig::getBlogPushMode).orElse(BlogPushMode.EMAIL.getId()));
+        getSettingResponse.setBlogPushTime(Optional.ofNullable(userConfig).map(UserConfig::getBlogPushTime).orElse("20:00"));
 
         getSettingResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         getSettingResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -122,6 +127,7 @@ public class UserSettingServiceImpl implements IUserSettingService {
 
         blogPushSettingResponse.setOpenBlogPush(openBlogPush);
         blogPushSettingResponse.setMode(blogPushMode);
+        blogPushSettingResponse.setBlogPushTime(Optional.ofNullable(userConfig).map(UserConfig::getBlogPushTime).orElse("20:00"));
         if (openBlogPush) {
             User user = userMapper.selectByPrimaryKey(userId);
             switch (blogPushMode) {

@@ -31,6 +31,11 @@ public class UserConfig {
      */
     @Column(name = "blog_push_mode")
     private Integer blogPushMode;
+    /**
+     * 推送时间：默认 20:00
+     */
+    @Column(name = "blog_push_time")
+    private String blogPushTime;
 
     @Column(name = "gmt_create")
     private Date gmtCreate;
@@ -140,5 +145,13 @@ public class UserConfig {
 
     public void setBlogPushMode(Integer blogPushMode) {
         this.blogPushMode = blogPushMode;
+    }
+
+    public String getBlogPushTime() {
+        return blogPushTime;
+    }
+
+    public void setBlogPushTime(String blogPushTime) {
+        this.blogPushTime = blogPushTime;
     }
 }
