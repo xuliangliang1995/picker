@@ -99,7 +99,7 @@ public class BlogServiceImpl implements IBlogService {
                         List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
                         // 博客推送状态
                         Example ex = new Example(BlogTrigger.class);
-                        example.createCriteria().andEqualTo("blogId", blog.getId());
+                        ex.createCriteria().andEqualTo("blogId", blog.getId());
                         BlogTrigger trigger = blogTriggerMapper.selectOneByExample(ex);
 
                         BlogCurveStatusEnum curveStatusEnum = Optional.ofNullable(trigger)
