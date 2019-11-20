@@ -1,5 +1,7 @@
 package com.grasswort.picker.blog.dto.blog;
 
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * @Date 2019/11/20 15:52
  * @blame Java Team
  */
+@Data
 public class BlogItemWithAuthor extends BlogItem {
     /**
      * 作者
