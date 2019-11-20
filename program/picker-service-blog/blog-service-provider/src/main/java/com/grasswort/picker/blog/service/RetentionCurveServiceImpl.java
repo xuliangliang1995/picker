@@ -17,6 +17,7 @@ import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import tk.mybatis.mapper.entity.Example;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -96,7 +97,10 @@ public class RetentionCurveServiceImpl implements IRetentionCurveService {
 
         BlogCurveStatusEnum statusEnum = blogCurveRequest.getStatus();
 
-        BlogTrigger blogTrigger = blogTriggerMapper.selectOneByBlogId(blogId);
+        Example example = new Example(BlogTrigger.class);
+        example.createCriteria().andEqualTo("blogId", blogId);
+        BlogTrigger blogTrigger = blogTriggerMapper.selectOneByExample(example);
+
         Date now = DateTime.now().toDate();
         if (blogTrigger == null) {
             // 新增
