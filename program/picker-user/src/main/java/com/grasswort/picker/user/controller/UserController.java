@@ -4,14 +4,13 @@ import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
+import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.IUserLoginService;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
-import com.grasswort.picker.user.dto.UserLoginRequest;
-import com.grasswort.picker.user.dto.UserLoginResponse;
-import com.grasswort.picker.user.dto.UserRegisterRequest;
-import com.grasswort.picker.user.dto.UserRegisterResponse;
+import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import com.grasswort.picker.user.vo.LoginForm;
 import com.grasswort.picker.user.vo.SignUpForm;
 import com.grasswort.picker.user.vo.SignUpVO;
@@ -20,10 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -46,6 +42,9 @@ public class UserController {
 
     @Reference(version = "1.0", timeout = 10000, validation = TOrF.FALSE, mock = TOrF.TRUE)
     IUserLoginService iUserLoginService;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserBaseInfoService iUserBaseInfoService;
 
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
@@ -91,6 +90,25 @@ public class UserController {
                     }
                     return new ResponseUtil<>().setErrorMsg(loginResponse.getMsg());
                 })
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "获取作者信息")
+    @GetMapping("/{pickerID}")
+    public ResponseData authorInfo(@PathVariable("pickerID")String pickerID) {
+        Long pickerId = PickerIdEncrypt.decrypt(pickerID);
+        if (pickerId == null) {
+            return new ResponseUtil<>().setErrorMsg("访问用户不存在！");
+        }
+        UserBaseInfoRequest baseInfoRequest = UserBaseInfoRequest.Builder.anUserBaseInfoRequest()
+                .withUserId(pickerId)
+                .build();
+        UserBaseInfoResponse baseInfoResponse = iUserBaseInfoService.userBaseInfo(baseInfoRequest);
+        return Optional.ofNullable(baseInfoResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(baseInfoResponse)
+                        : new ResponseUtil<>().setErrorMsg(baseInfoResponse.getMsg())
+                )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 }

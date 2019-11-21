@@ -51,7 +51,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
         authRequest.setToken(token);
         authRequest.setIp(PickerIpUtil.getIp(request));
         CheckAuthResponse authResponse = iUserLoginService.validToken(authRequest);
-        if (SysRetCodeConstants.SUCCESS.getCode().equals(authResponse.getCode())) {
+        if (authResponse != null && authResponse.isSuccess()) {
             PickerInfoHolder.setPickerInfo(PickerInfo.builder()
                     .id(authResponse.getId())
                     .name(authResponse.getName())

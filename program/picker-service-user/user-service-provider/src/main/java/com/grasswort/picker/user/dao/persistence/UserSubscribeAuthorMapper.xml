@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.grasswort.picker.user.dao.persistence.UserSubscribeAuthorMapper">
+  <resultMap id="BaseResultMap" type="com.grasswort.picker.user.dao.entity.UserSubscribeAuthor">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pk_user_id" jdbcType="BIGINT" property="pkUserId" />
+    <result column="author_id" jdbcType="BIGINT" property="authorId" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+</mapper>
