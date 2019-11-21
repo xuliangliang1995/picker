@@ -2,17 +2,13 @@ package com.grasswort.picker.user.controller;
 
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
-import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserSubscribeService;
 import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
-import com.grasswort.picker.user.vo.AuthorForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -33,14 +29,13 @@ public class SubscribeAuthorController {
     IUserSubscribeService iUserSubscribeService;
 
     @ApiOperation(value = "关注")
-    @PostMapping
-    public ResponseData subscribeAuthor(@RequestBody @Validated AuthorForm form, BindingResult bindingResult) {
-        ValidatorTool.check(bindingResult);
-
-        Long authorId = PickerIdEncrypt.decrypt(form.getPickerId());
+    @PostMapping("/{pickerID}")
+    public ResponseData subscribeAuthor(@PathVariable("pickerID")String pickerID) {
+        Long authorId = PickerIdEncrypt.decrypt(pickerID);
         if (authorId == null) {
             return new ResponseUtil<>().setErrorMsg("关注用户不存在！");
         }
+
         SubscribeRequest subscribeRequest = SubscribeRequest.Builder.aSubscribeRequest()
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .withAuthorId(authorId)
@@ -55,14 +50,13 @@ public class SubscribeAuthorController {
     }
 
     @ApiOperation(value = "取消关注")
-    @DeleteMapping
-    public ResponseData unsubscribeAuthor(@RequestBody @Validated AuthorForm form, BindingResult bindingResult) {
-        ValidatorTool.check(bindingResult);
-
-        Long authorId = PickerIdEncrypt.decrypt(form.getPickerId());
+    @DeleteMapping("/{pickerID}")
+    public ResponseData unsubscribeAuthor(@PathVariable("pickerID")String pickerID) {
+        Long authorId = PickerIdEncrypt.decrypt(pickerID);
         if (authorId == null) {
             return new ResponseUtil<>().setData(null);
         }
+
         UnsubscribeRequest unsubscribeRequest = UnsubscribeRequest.Builder.anUnsubscribeRequest()
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
                 .withAuthorId(authorId)
