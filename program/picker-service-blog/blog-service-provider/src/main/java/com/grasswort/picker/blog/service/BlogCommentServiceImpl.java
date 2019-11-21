@@ -119,11 +119,11 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
             List<CommentItem> comments = blogCommentMapper.selectByExampleAndRowBounds(example, rowBounds).stream()
                     .map(comment -> {
                         String content = blogCommentContentMapper.getContent(comment.getId());
-                        CommentItem item = CommentItem.builder()
-                                .commentId(comment.getId())
-                                .userId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
-                                .replyCommentId(comment.getReplyCommentId())
-                                .commentContent(content)
+                        CommentItem item = CommentItem.Builder.aCommentItem()
+                                .withCommentId(comment.getId())
+                                .withUserId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
+                                .withReplyCommentId(comment.getReplyCommentId())
+                                .withCommentContent(content)
                                 .build();
                         return item;
                     }).collect(Collectors.toList());
@@ -171,11 +171,11 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
             List<CommentItem> comments = blogCommentMapper.selectByExample(example).stream()
                     .map(comment -> {
                         String content = blogCommentContentMapper.getContent(comment.getId());
-                        CommentItem citem = CommentItem.builder()
-                                .commentId(comment.getId())
-                                .userId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
-                                .replyCommentId(comment.getReplyCommentId())
-                                .commentContent(content)
+                        CommentItem citem = CommentItem.Builder.aCommentItem()
+                                .withCommentId(comment.getId())
+                                .withUserId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
+                                .withReplyCommentId(comment.getReplyCommentId())
+                                .withCommentContent(content)
                                 .build();
                         return citem;
                     }).collect(Collectors.toList());
