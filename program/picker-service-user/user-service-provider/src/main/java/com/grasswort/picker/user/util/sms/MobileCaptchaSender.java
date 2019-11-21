@@ -1,9 +1,8 @@
 package com.grasswort.picker.user.util.sms;
 
 import com.alibaba.fastjson.JSONObject;
-import com.grasswort.picker.user.util.AliSmsTemplate;
+import com.grasswort.picker.user.constants.AliSmsTemplate;
 import com.grasswort.picker.user.util.AliSmsUtil;
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
 
 import java.util.Optional;
 

@@ -25,18 +25,20 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
     private Byte sex;
     @Size(max = 120)
     private String avatar;
+    @Size(max = 50)
+    private String signature;
 
     @Override
     public void requestCheck() {
 
     }
 
-
     public static final class Builder {
         private Long userId;
         private String name;
         private Byte sex;
         private String avatar;
+        private String signature;
 
         private Builder() {
         }
@@ -65,12 +67,18 @@ public class UserBaseInfoEditRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withSignature(String signature) {
+            this.signature = signature;
+            return this;
+        }
+
         public UserBaseInfoEditRequest build() {
             UserBaseInfoEditRequest userBaseInfoEditRequest = new UserBaseInfoEditRequest();
             userBaseInfoEditRequest.setUserId(userId);
             userBaseInfoEditRequest.setName(name);
             userBaseInfoEditRequest.setSex(sex);
             userBaseInfoEditRequest.setAvatar(avatar);
+            userBaseInfoEditRequest.setSignature(signature);
             return userBaseInfoEditRequest;
         }
     }

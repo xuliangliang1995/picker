@@ -21,6 +21,7 @@ import com.grasswort.picker.blog.util.BlogHtml;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.constants.cluster.ClusterFaultMechanism;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.apache.ibatis.session.RowBounds;
@@ -108,6 +109,7 @@ public class BlogServiceImpl implements IBlogService {
                                 .orElse(BlogCurveStatusEnum.STOP);
 
                         return BlogItem.Builder.aBlogItem()
+                                .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
                                 .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
                                 .withTitle(blog.getTitle())
                                 .withSummary(blog.getSummary())
@@ -155,6 +157,7 @@ public class BlogServiceImpl implements IBlogService {
             BlogContent content = blogContentMapper.selectOneByExample(example);
 
             BlogItemWithMarkdown blogItemWithMarkdown = BlogItemWithMarkdown.Builder.aBlogItemWithMarkdown()
+                    .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
                     .withBlogId(markdownRequest.getBlogId())
                     .withTitle(blog.getTitle())
                     .withSummary(blog.getSummary())

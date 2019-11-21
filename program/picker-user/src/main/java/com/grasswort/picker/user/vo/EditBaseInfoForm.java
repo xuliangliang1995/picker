@@ -25,4 +25,6 @@ public class EditBaseInfoForm {
     private Byte sex;
     @Size(max = 120)
     private String avatar;
+    @Size(max = 50)
+    private String signature;
 }

@@ -24,6 +24,8 @@ public class UserBaseInfoResponse extends AbstractResponse {
 
     private String avatar;
 
+    private String signature;
+
     private Boolean bindWechat;
 
     private String mpNickName;

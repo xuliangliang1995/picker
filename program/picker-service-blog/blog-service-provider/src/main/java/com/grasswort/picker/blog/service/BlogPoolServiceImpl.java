@@ -17,6 +17,7 @@ import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.dto.UserBaseInfoRequest;
 import com.grasswort.picker.user.dto.UserBaseInfoResponse;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
@@ -81,6 +82,7 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
                 String author = Optional.ofNullable(baseInfoResponse).filter(UserBaseInfoResponse::isSuccess).map(UserBaseInfoResponse::getName).orElse("");
                 String avatar = Optional.ofNullable(baseInfoResponse).filter(UserBaseInfoResponse::isSuccess).map(UserBaseInfoResponse::getAvatar).orElse("");
                 return BlogItemWithAuthor.Builder.aBlogItemWithAuthor()
+                        .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
                         .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
                         .withTitle(blog.getTitle())
                         .withSummary(blog.getSummary())

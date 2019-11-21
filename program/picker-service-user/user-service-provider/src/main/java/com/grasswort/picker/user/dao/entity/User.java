@@ -51,6 +51,10 @@ public class User {
      */
     private String avatar;
     /**
+     * 个性签名
+     */
+    private String signature;
+    /**
      * 版本
      */
     private Integer version;
@@ -265,5 +269,13 @@ public class User {
 
     public void setMpNickName(String mpNickName) {
         this.mpNickName = mpNickName;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

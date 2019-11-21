@@ -17,6 +17,7 @@
     <result column="mp_nick_name" jdbcType="VARCHAR" property="mpNickName"/>
     <result column="sex" jdbcType="TINYINT" property="sex" />
     <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+    <result column="signature" jdbcType="VARCHAR" property="signature"/>
     <result column="version" jdbcType="INTEGER" property="version"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />

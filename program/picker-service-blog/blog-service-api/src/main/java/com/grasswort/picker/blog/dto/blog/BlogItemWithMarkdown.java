@@ -17,9 +17,9 @@ public class BlogItemWithMarkdown extends BlogItem {
 
     private String markdown;
 
-
     public static final class Builder {
         private String markdown;
+        private String pickerId;
         private String blogId;
         private String title;
         private String summary;
@@ -41,6 +41,11 @@ public class BlogItemWithMarkdown extends BlogItem {
 
         public Builder withMarkdown(String markdown) {
             this.markdown = markdown;
+            return this;
+        }
+
+        public Builder withPickerId(String pickerId) {
+            this.pickerId = pickerId;
             return this;
         }
 
@@ -102,6 +107,7 @@ public class BlogItemWithMarkdown extends BlogItem {
         public BlogItemWithMarkdown build() {
             BlogItemWithMarkdown blogItemWithMarkdown = new BlogItemWithMarkdown();
             blogItemWithMarkdown.setMarkdown(markdown);
+            blogItemWithMarkdown.setPickerId(pickerId);
             blogItemWithMarkdown.setBlogId(blogId);
             blogItemWithMarkdown.setTitle(title);
             blogItemWithMarkdown.setSummary(summary);

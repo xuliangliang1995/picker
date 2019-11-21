@@ -24,6 +24,8 @@ public class UserBaseInfoEditResponse extends AbstractResponse {
 
     private String avatar;
 
+    private String signature;
+
     @Override
     public boolean isSuccess() {
         return SysRetCodeConstants.SUCCESS.getCode().equals(this.getCode());

@@ -23,9 +23,11 @@ public class BlogItemWithAuthor extends BlogItem {
      */
     private String authorAvatar;
 
+
     public static final class Builder {
         private String author;
         private String authorAvatar;
+        private String pickerId;
         private String blogId;
         private String title;
         private String summary;
@@ -52,6 +54,11 @@ public class BlogItemWithAuthor extends BlogItem {
 
         public Builder withAuthorAvatar(String authorAvatar) {
             this.authorAvatar = authorAvatar;
+            return this;
+        }
+
+        public Builder withPickerId(String pickerId) {
+            this.pickerId = pickerId;
             return this;
         }
 
@@ -112,6 +119,9 @@ public class BlogItemWithAuthor extends BlogItem {
 
         public BlogItemWithAuthor build() {
             BlogItemWithAuthor blogItemWithAuthor = new BlogItemWithAuthor();
+            blogItemWithAuthor.setAuthor(author);
+            blogItemWithAuthor.setAuthorAvatar(authorAvatar);
+            blogItemWithAuthor.setPickerId(pickerId);
             blogItemWithAuthor.setBlogId(blogId);
             blogItemWithAuthor.setTitle(title);
             blogItemWithAuthor.setSummary(summary);
@@ -123,8 +133,6 @@ public class BlogItemWithAuthor extends BlogItem {
             blogItemWithAuthor.setTriggerStatus(triggerStatus);
             blogItemWithAuthor.setGmtCreate(gmtCreate);
             blogItemWithAuthor.setGmtModified(gmtModified);
-            blogItemWithAuthor.authorAvatar = this.authorAvatar;
-            blogItemWithAuthor.author = this.author;
             return blogItemWithAuthor;
         }
     }

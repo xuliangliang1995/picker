@@ -17,6 +17,10 @@ import java.util.List;
 @Data
 public class BlogItem {
     /**
+     * 作者ID
+     */
+    private String pickerId;
+    /**
      * 博客 ID
      */
     private String blogId;
@@ -66,6 +70,7 @@ public class BlogItem {
 
 
     public static final class Builder {
+        private String pickerId;
         private String blogId;
         private String title;
         private String summary;
@@ -83,6 +88,11 @@ public class BlogItem {
 
         public static Builder aBlogItem() {
             return new Builder();
+        }
+
+        public Builder withPickerId(String pickerId) {
+            this.pickerId = pickerId;
+            return this;
         }
 
         public Builder withBlogId(String blogId) {
@@ -142,6 +152,7 @@ public class BlogItem {
 
         public BlogItem build() {
             BlogItem blogItem = new BlogItem();
+            blogItem.setPickerId(pickerId);
             blogItem.setBlogId(blogId);
             blogItem.setTitle(title);
             blogItem.setSummary(summary);

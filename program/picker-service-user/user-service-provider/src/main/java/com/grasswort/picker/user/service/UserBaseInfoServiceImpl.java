@@ -110,6 +110,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
         baseInfoResponse.setPhone(MaskUtil.maskMobile(user.getPhone()));
         baseInfoResponse.setAvatar(user.getAvatar());
+        baseInfoResponse.setSignature(user.getSignature());
         baseInfoResponse.setMpNickName(user.getMpNickName());
         baseInfoResponse.setMpHeadImgUrl(user.getMpHeadImgUrl());
         baseInfoResponse.setBindWechat(StringUtils.isNotBlank(user.getMpOpenId()));
@@ -141,6 +142,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         userSelective.setName(editRequest.getName());
         userSelective.setSex(editRequest.getSex());
         userSelective.setAvatar(editRequest.getAvatar());
+        userSelective.setSignature(editRequest.getSignature());
         userSelective.setGmtModified(DateTime.now().toDate());
         userMapper.updateByPrimaryKeySelective(userSelective);
 
@@ -152,6 +154,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         editResponse.setPhone(user.getPhone());
         editResponse.setEmail(user.getEmail());
         editResponse.setAvatar(user.getAvatar());
+        editResponse.setSignature(user.getSignature());
         editResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return editResponse;

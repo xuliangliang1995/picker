@@ -1,4 +1,4 @@
-package com.grasswort.picker.user.util;
+package com.grasswort.picker.user.constants;
 
 /**
  * @author xuliangliang
