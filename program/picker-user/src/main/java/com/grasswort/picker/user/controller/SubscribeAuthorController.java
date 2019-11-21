@@ -77,11 +77,10 @@ public class SubscribeAuthorController {
     }
 
     @ApiOperation(value = "关注状态")
-    @GetMapping("/status")
-    public ResponseData subscribeStatus(@Validated AuthorForm form, BindingResult bindingResult) {
-        ValidatorTool.check(bindingResult);
+    @GetMapping("/{pickerID}/status")
+    public ResponseData subscribeStatus(@PathVariable("pickerID")String pickerID) {
 
-        Long authorId = PickerIdEncrypt.decrypt(form.getPickerId());
+        Long authorId = PickerIdEncrypt.decrypt(pickerID);
         if (authorId == null) {
             return new ResponseUtil<>().setData(false);
         }
