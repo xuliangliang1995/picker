@@ -78,6 +78,16 @@
                    enableDeleteByExample="false" enableSelectByExample="false"
                    selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_blog_comment" domainObjectName="BlogComment"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            </table>
+            <table tableName="pk_blog_comment_content" domainObjectName="BlogCommentContent"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
         -->
 
 

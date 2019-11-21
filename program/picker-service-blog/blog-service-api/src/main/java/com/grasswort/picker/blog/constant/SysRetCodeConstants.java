@@ -22,7 +22,9 @@ public enum SysRetCodeConstants {
 
     BLOG_NOT_EXISTS                 ("002001", "博客不存在"),
 
-    CURVE_NOT_EXISTS                 ("003001", "记忆曲线节点不存在");
+    CURVE_NOT_EXISTS                 ("003001", "记忆曲线节点不存在"),
+
+    COMMENT_NOT_EXISTS              ("004001", "目标评论不存在或已被删除");
 
     private String code;
     private String msg;
