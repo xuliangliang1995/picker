@@ -34,7 +34,7 @@ public class SubscribeAuthorController {
 
     @ApiOperation(value = "关注")
     @PostMapping
-    public ResponseData subscribeAuthor(@Validated AuthorForm form, BindingResult bindingResult) {
+    public ResponseData subscribeAuthor(@RequestBody @Validated AuthorForm form, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
 
         Long authorId = PickerIdEncrypt.decrypt(form.getPickerId());
@@ -56,7 +56,7 @@ public class SubscribeAuthorController {
 
     @ApiOperation(value = "取消关注")
     @DeleteMapping
-    public ResponseData unsubscribeAuthor(@Validated AuthorForm form, BindingResult bindingResult) {
+    public ResponseData unsubscribeAuthor(@RequestBody @Validated AuthorForm form, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
 
         Long authorId = PickerIdEncrypt.decrypt(form.getPickerId());
