@@ -10,6 +10,7 @@ import com.grasswort.picker.blog.vo.GetCommentForm;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
+import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +55,7 @@ public class CommentController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
+    @Anoymous
     @ApiOperation(value = "获取评论")
     @GetMapping
     public ResponseData getComments(@Validated GetCommentForm form, BindingResult bindingResult, @PathVariable("blogId") String blogId) {
