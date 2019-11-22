@@ -124,6 +124,7 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
                                 .withUserId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
                                 .withReplyCommentId(comment.getReplyCommentId())
                                 .withCommentContent(content)
+                                .withGmtCreate(comment.getGmtCreate())
                                 .build();
                         return item;
                     }).collect(Collectors.toList());
@@ -176,6 +177,7 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
                                 .withUserId(PickerIdEncrypt.encrypt(comment.getPkUserId()))
                                 .withReplyCommentId(comment.getReplyCommentId())
                                 .withCommentContent(content)
+                                .withGmtCreate(comment.getGmtCreate())
                                 .build();
                         return citem;
                     }).collect(Collectors.toList());
