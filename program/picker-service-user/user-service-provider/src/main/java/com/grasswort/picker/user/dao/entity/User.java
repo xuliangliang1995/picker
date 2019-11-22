@@ -55,6 +55,11 @@ public class User {
      */
     private String signature;
     /**
+     * 个人公众号二维码图片（推广）
+     */
+    @Column(name = "private_mp_qrcode")
+    private String privateMpQrcode;
+    /**
      * 版本
      */
     private Integer version;
@@ -277,5 +282,13 @@ public class User {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getPrivateMpQrcode() {
+        return privateMpQrcode;
+    }
+
+    public void setPrivateMpQrcode(String privateMpQrcode) {
+        this.privateMpQrcode = privateMpQrcode;
     }
 }

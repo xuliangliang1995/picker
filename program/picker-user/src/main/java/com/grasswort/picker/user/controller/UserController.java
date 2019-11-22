@@ -6,10 +6,12 @@ import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.IUserLoginService;
+import com.grasswort.picker.user.IUserPrivateMpQrcodeService;
 import com.grasswort.picker.user.IUserRegisterService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import com.grasswort.picker.user.vo.LoginForm;
 import com.grasswort.picker.user.vo.SignUpForm;
@@ -45,6 +47,9 @@ public class UserController {
 
     @Reference(version = "1.0", timeout = 10000)
     IUserBaseInfoService iUserBaseInfoService;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserPrivateMpQrcodeService iUserPrivateMpQrcodeService;
 
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
@@ -108,6 +113,22 @@ public class UserController {
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(baseInfoResponse)
                         : new ResponseUtil<>().setErrorMsg(baseInfoResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "获取作者推广公众号二维码")
+    @GetMapping("/{pickerID}/mpQrcode")
+    public ResponseData authorMpQrcode(@PathVariable("pickerID")String pickerID) {
+        PrivateMpQrcodeRequest mpQrcodeRequest = PrivateMpQrcodeRequest.Builder.aPrivateMpQrcodeRequest()
+                .withUserId(PickerIdEncrypt.decrypt(pickerID))
+                .build();
+
+        PrivateMpQrcodeResponse mpQrcodeResponse = iUserPrivateMpQrcodeService.getPrivateMpQrcode(mpQrcodeRequest);
+        return Optional.ofNullable(mpQrcodeResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(mpQrcodeResponse.getQrcode())
+                        : new ResponseUtil<>().setErrorMsg(mpQrcodeResponse.getQrcode())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

@@ -18,6 +18,7 @@
     <result column="sex" jdbcType="TINYINT" property="sex" />
     <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <result column="signature" jdbcType="VARCHAR" property="signature"/>
+    <result column="private_mp_qrcode" jdbcType="VARCHAR" property="privateMpQrcode"/>
     <result column="version" jdbcType="INTEGER" property="version"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
