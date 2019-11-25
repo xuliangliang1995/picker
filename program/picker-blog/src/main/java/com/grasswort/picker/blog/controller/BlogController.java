@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.controller;
 
+import com.grasswort.picker.blog.IBlogBrowseService;
 import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.IBlogService;
 import com.grasswort.picker.blog.IRetentionCurveService;
@@ -47,6 +48,9 @@ public class BlogController {
 
     @Reference(version = "1.0", cluster = ClusterFaultMechanism.FAIL_OVER)
     IRetentionCurveService iRetentionCurveService;
+
+    @Reference(version = "1.0", cluster = ClusterFaultMechanism.FAIL_FAST)
+    IBlogBrowseService iBlogBrowseService;
 
     @ApiOperation("创建博客")
     @PostMapping
@@ -99,11 +103,13 @@ public class BlogController {
     @ApiOperation("获取博客 markdown")
     @GetMapping("/{blogId}/markdown")
     public ResponseData getBlogWithMarkdown(@PathVariable("blogId") String blogId) {
+
         BlogMarkdownRequest markdownRequest = new BlogMarkdownRequest();
         markdownRequest.setBlogId(blogId);
 
         BlogMarkdownResponse markdownResponse = iBlogService.markdown(markdownRequest);
-
+        iBlogBrowseService.browse(BlogBrowseRequest.Builder.aBlogBrowseRequest().withBlogId(blogId).build());
+        
         return Optional.ofNullable(markdownResponse)
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(markdownResponse.getBlog())

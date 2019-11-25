@@ -20,4 +20,26 @@ public class BlogBrowseRequest extends AbstractRequest {
     public void requestCheck() {
 
     }
+
+    public static final class Builder {
+        private String blogId;
+
+        private Builder() {
+        }
+
+        public static Builder aBlogBrowseRequest() {
+            return new Builder();
+        }
+
+        public Builder withBlogId(String blogId) {
+            this.blogId = blogId;
+            return this;
+        }
+
+        public BlogBrowseRequest build() {
+            BlogBrowseRequest blogBrowseRequest = new BlogBrowseRequest();
+            blogBrowseRequest.setBlogId(blogId);
+            return blogBrowseRequest;
+        }
+    }
 }
