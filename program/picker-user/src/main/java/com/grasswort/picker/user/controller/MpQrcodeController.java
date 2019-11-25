@@ -65,7 +65,7 @@ public class MpQrcodeController {
         return Optional.ofNullable(mpQrcodeResponse)
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(mpQrcodeResponse.getQrcode())
-                        : new ResponseUtil<>().setErrorMsg(mpQrcodeResponse.getQrcode())
+                        : new ResponseUtil<>().setErrorMsg(mpQrcodeResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

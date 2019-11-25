@@ -88,8 +88,16 @@
                    enableDeleteByExample="false" enableSelectByExample="false"
                    selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_blog_like" domainObjectName="BlogLike"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
+            <table tableName="pk_blog_favorite" domainObjectName="BlogFavorite"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
         -->
-
-
     </context>
 </generatorConfiguration>
