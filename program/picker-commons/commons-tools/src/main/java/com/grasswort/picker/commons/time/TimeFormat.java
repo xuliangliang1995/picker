@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class TimeFormat {
 
-    private final static ZoneId ZONE_SHANGHAI = ZoneId.of("Asia/Shanghai");
+    public final static ZoneId ZONE_SHANGHAI = ZoneId.of("Asia/Shanghai");
 
     public final static String yyyyMMddHHmm = "yyyy-MM-dd HH:mm";
 

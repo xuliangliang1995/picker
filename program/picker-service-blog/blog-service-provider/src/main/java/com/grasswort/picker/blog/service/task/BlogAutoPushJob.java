@@ -96,7 +96,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
                 if (openPush) {
                     String pushTime = blogPushSettingResponse.getBlogPushTime();
                     // 2. 已到达推送时间
-                    if (LocalTime.now().isAfter(LocalTime.parse(pushTime, TimeFormat.DEFAULT_TIME_FORMATTER))) {
+                    if (LocalTime.now(TimeFormat.ZONE_SHANGHAI).isAfter(LocalTime.parse(pushTime, TimeFormat.DEFAULT_TIME_FORMATTER))) {
                         switch (blogPushSettingResponse.getMode()) {
                             case EMAIL:
                                 pushToEmail(blog, blogPushSettingResponse.getEmail());
