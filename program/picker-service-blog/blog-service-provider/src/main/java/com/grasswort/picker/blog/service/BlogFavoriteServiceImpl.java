@@ -53,6 +53,8 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
                 .orElse(null);
 
         favoriteStatusResponse.setFavorite(favorite != null);
+        favoriteStatusResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        favoriteStatusResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return favoriteStatusResponse;
     }
 
