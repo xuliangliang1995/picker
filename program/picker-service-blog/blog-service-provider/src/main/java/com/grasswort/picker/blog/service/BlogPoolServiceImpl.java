@@ -6,12 +6,12 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
-import com.grasswort.picker.blog.dao.persistence.BlogLabelMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogMapper;
+import com.grasswort.picker.blog.dao.persistence.*;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.BlogPoolQueryRequest;
 import com.grasswort.picker.blog.dto.BlogPoolQueryResponse;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithAuthor;
+import com.grasswort.picker.blog.dto.blog.InteractionData;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
@@ -44,6 +44,12 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
     @Autowired BlogLabelMapper blogLabelMapper;
 
     @Autowired BlogLabelDao blogLabelDao;
+
+    @Autowired BlogLikeMapper blogLikeMapper;
+
+    @Autowired BlogFavoriteMapper blogFavoriteMapper;
+
+    @Autowired BlogBrowseMapper blogBrowseMapper;
 
     @Reference(version = "1.0", timeout = 10000) IUserBaseInfoService iUserBaseInfoService;
 
@@ -81,7 +87,7 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
                 UserBaseInfoResponse baseInfoResponse = iUserBaseInfoService.userBaseInfo(UserBaseInfoRequest.Builder.anUserBaseInfoRequest().withUserId(blog.getPkUserId()).build());
                 String author = Optional.ofNullable(baseInfoResponse).filter(UserBaseInfoResponse::isSuccess).map(UserBaseInfoResponse::getName).orElse("");
                 String avatar = Optional.ofNullable(baseInfoResponse).filter(UserBaseInfoResponse::isSuccess).map(UserBaseInfoResponse::getAvatar).orElse("");
-                return BlogItemWithAuthor.Builder.aBlogItemWithAuthor()
+                BlogItemWithAuthor blogWithAuthor = BlogItemWithAuthor.Builder.aBlogItemWithAuthor()
                         .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
                         .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
                         .withTitle(blog.getTitle())
@@ -94,6 +100,15 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
                         .withAuthor(author)
                         .withAuthorAvatar(avatar)
                         .build();
+
+                InteractionData interactionData = InteractionData.Builder.anInteractionData()
+                        .withLike(blogLikeMapper.getLikeCount(blog.getId()))
+                        .withFavorite(blogFavoriteMapper.getBlogFavoriteCount(blog.getId()))
+                        .withBrowse(blogBrowseMapper.getBrowseCount(blog.getId()))
+                        .build();
+                blogWithAuthor.setInteraction(interactionData);
+
+                return blogWithAuthor;
             }).collect(Collectors.toList());
             response.setBlogs(blogs);
             response.setTotal(total);

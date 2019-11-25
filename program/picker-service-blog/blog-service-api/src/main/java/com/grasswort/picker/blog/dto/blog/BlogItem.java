@@ -17,6 +17,10 @@ import java.util.List;
 @Data
 public class BlogItem {
     /**
+     * 交互数据
+     */
+    private InteractionData interaction;
+    /**
      * 作者ID
      */
     private String pickerId;
