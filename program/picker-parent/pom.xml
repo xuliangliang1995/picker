@@ -48,7 +48,7 @@
     <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
   </properties>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -57,7 +57,7 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 
   <dependencyManagement>
     <dependencies>

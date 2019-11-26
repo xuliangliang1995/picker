@@ -15,7 +15,7 @@
 
   <name>picker-user</name>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -24,7 +24,7 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 
   <dependencies>
     <!-- web -->
@@ -170,7 +170,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>harbor.grasswort.com/picker/picker-user</repository>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/picker-user</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

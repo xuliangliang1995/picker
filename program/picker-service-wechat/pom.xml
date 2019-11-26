@@ -16,7 +16,7 @@
 
   <name>picker-service-wechat</name>
   <packaging>pom</packaging>
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -25,5 +25,5 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 </project>

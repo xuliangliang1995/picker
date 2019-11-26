@@ -160,7 +160,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>harbor.grasswort.com/picker/picker-blog</repository>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/picker-blog</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

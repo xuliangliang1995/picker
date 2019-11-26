@@ -17,7 +17,7 @@
 
   <name>user-service-provider</name>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -26,7 +26,7 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 
   <dependencies>
     <dependency>
@@ -235,7 +235,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>harbor.grasswort.com/picker/user-service-provider</repository>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/user-service-provider</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

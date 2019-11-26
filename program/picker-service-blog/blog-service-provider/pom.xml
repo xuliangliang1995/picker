@@ -11,7 +11,7 @@
 
     <artifactId>blog-service-provider</artifactId>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>releases</id>
             <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -20,7 +20,7 @@
             <id>snapshots</id>
             <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
     <dependencies>
         <dependency>
@@ -205,7 +205,7 @@
                 <configuration>
                     <skip>false</skip>
                     <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-                    <repository>harbor.grasswort.com/picker/blog-service-provider</repository>
+                    <repository>registry.cn-beijing.aliyuncs.com/grasswort/blog-service-provider</repository>
                     <dockerfile>Dockerfile</dockerfile>
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                 </configuration>

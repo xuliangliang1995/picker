@@ -88,7 +88,7 @@
     </dependency>
   </dependencies>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -97,7 +97,7 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 
   <build>
     <plugins>
@@ -134,7 +134,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>harbor.grasswort.com/picker/wechat-service-provider</repository>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/wechat-service-provider</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>

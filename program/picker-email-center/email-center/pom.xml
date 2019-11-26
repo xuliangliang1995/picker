@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
   <name>email-center</name>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>releases</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-releases/</url>
@@ -23,7 +23,7 @@
       <id>snapshots</id>
       <url>http://nexus.grasswort.com:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 
   <dependencies>
     <!-- springBoot -->
@@ -83,7 +83,7 @@
         <configuration>
           <skip>false</skip>
           <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-          <repository>harbor.grasswort.com/picker/email-center</repository>
+          <repository>registry.cn-beijing.aliyuncs.com/grasswort/email-center</repository>
           <dockerfile>Dockerfile</dockerfile>
           <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
         </configuration>
