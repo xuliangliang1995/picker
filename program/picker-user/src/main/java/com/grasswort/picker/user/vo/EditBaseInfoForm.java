@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Data
 public class EditBaseInfoForm {
     @NotNull
-    @Size(min = 2, max = 10)
+    @Size(min = 0, max = 10)
     private String name;
     @NotNull
     @Min(0)
