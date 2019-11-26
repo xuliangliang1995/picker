@@ -1,18 +1,13 @@
 package com.grasswort.picker.user.service.mailbuilder;
 
-import com.grasswort.picker.commons.email.freemarker.FreeMarkerUtil;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.config.lifeline.LifelineConfiguration;
 import com.grasswort.picker.user.service.mailbuilder.wrapper.ActivateMailInfoWrapper;
-import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author xuliangliang
@@ -34,34 +29,43 @@ public class ActivateMailGenerator extends AbstractMailGenerator<ActivateMailInf
         mail.setSubject(SUBJECT);
         mail.setToAddress(wrapper.getReceivers());
         mail.setCcAddress(Collections.emptyList());
-        try {
-            Map<String, Object> map = new HashMap<>();
-            map.put(Key.TITLE, SUBJECT);
-            map.put(Key.URL, url);
-            map.put(Key.MINUTES, lifelineConfiguration.getActivationCodeLifeMinutes());
-            mail.setContent(FreeMarkerUtil.getMailTextForTemplate(TEMPLATE_PATH, TEMPLATE_NAME, map));
-            mail.setHtml(true);
-        } catch (IOException | TemplateException e) {
-            e.printStackTrace();
-            log.info("\n邮件模板解析失败");
-            mail.setContent(url);
-            mail.setHtml(false);
-        }
+
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\" />\n" +
+                "</head>\n" +
+                "<title>");
+        contentBuilder.append(SUBJECT);
+        contentBuilder.append("</title>\n" +
+                "<body style=\"height: 100%\">\n" +
+                "    <div style=\"width: 100%;height: 300px;background-color: whitesmoke;border-color: gainsboro\">\n" +
+                "        <div>\n" +
+                "            <P><strong>Picker 账户激活邮件</strong></P>\n" +
+                "        </div>\n" +
+                "        <div>\n" +
+                "            <p>尊敬的用户，您好。</p>\n" +
+                "            <p>欢迎成为新的 <strong>Picker</strong> 注册用户。</p>\n" +
+                "            <p>请点击以下链接完成账户的激活（");
+
+        contentBuilder.append(lifelineConfiguration.getActivationCodeLifeMinutes());
+        contentBuilder.append("分钟内有效）。如非本人操作，请忽略。</p>\n" +
+                "            <p><h3>");
+        contentBuilder.append(url);
+        contentBuilder.append("</h3></p>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "\n" +
+                "</body>\n" +
+                "</html>");
+        mail.setContent(contentBuilder.toString());
+        mail.setHtml(true);
         return mail;
     }
 
     private final String ACTIVATE_URL_TEMPLATE = "http://localhost:10001/user/activate?username=%s&code=%s&activateId=%s";
 
     private final String SUBJECT = "Picker 账户激活";
-
-    private final String TEMPLATE_PATH = "emailTemplate";
-
-    private final String TEMPLATE_NAME = "picker_activate.html";
-
-    private static class Key {
-        private static final String TITLE = "title";
-        private static final String URL = "url";
-        private static final String MINUTES = "minutes";
-    }
 
 }
