@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/picker-kafka/pom.xml" />
         <option value="$PROJECT_DIR$/picker-email/pom.xml" />
         <option value="$PROJECT_DIR$/picker-quartz/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-nacos/pom.xml" />
       </list>
     </option>
   </component>

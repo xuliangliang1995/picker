@@ -17,11 +17,13 @@
         <option value="$PROJECT_DIR$/picker-blog/pom.xml" />
         <option value="$PROJECT_DIR$/picker-service-wechat/pom.xml" />
         <option value="$PROJECT_DIR$/picker-wechat/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-wss/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/picker-commons/picker-oss/pom.xml" />
+        <option value="$PROJECT_DIR$/picker-service-wss/pom.xml" />
       </set>
     </option>
   </component>

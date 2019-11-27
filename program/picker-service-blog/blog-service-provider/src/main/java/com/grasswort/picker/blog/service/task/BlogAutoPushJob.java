@@ -95,8 +95,11 @@ public class BlogAutoPushJob extends QuartzJobBean {
                 openPush = blogPushSettingResponse.getOpenBlogPush();
                 if (openPush) {
                     String pushTime = blogPushSettingResponse.getBlogPushTime();
+                    log.info("当前时间：{}", LocalTime.now(TimeFormat.ZONE_SHANGHAI));
+                    log.info("推送时间：{}", LocalTime.parse(pushTime, TimeFormat.DEFAULT_TIME_FORMATTER));
                     // 2. 已到达推送时间
                     if (LocalTime.now(TimeFormat.ZONE_SHANGHAI).isAfter(LocalTime.parse(pushTime, TimeFormat.DEFAULT_TIME_FORMATTER))) {
+                        log.info("触发推送");
                         switch (blogPushSettingResponse.getMode()) {
                             case EMAIL:
                                 pushToEmail(blog, blogPushSettingResponse.getEmail());
@@ -108,6 +111,8 @@ public class BlogAutoPushJob extends QuartzJobBean {
                                 // ignore
                                 break;
                         }
+                    } else {
+                        log.info("不触发推送");
                     }
                 }
             }
