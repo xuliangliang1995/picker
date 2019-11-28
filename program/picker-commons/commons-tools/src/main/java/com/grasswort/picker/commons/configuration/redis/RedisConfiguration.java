@@ -28,15 +28,25 @@ public class RedisConfiguration {
     @Bean
     RedissonClient redissonClient() {
         Config config = new Config();
-        String node = redissonProperties.getAddress();
-        node = node.startsWith("redis://") ? node : "redis://" + node;
-        SingleServerConfig serverConfig = config.useSingleServer()
-                .setAddress(node)
-                .setTimeout(redissonProperties.getTimeout())
-                .setConnectionMinimumIdleSize(redissonProperties.getPool().getMinIdle());
-        if (StringUtils.isNotBlank(redissonProperties.getPassword())) {
-            serverConfig.setPassword(redissonProperties.getPassword());
+        String[] nodes = redissonProperties.getAddress().split(",");
+        for (int i = 0; i < nodes.length; i++) {
+            String node = nodes[i];
+            nodes[i] = node.startsWith("redis://") ? node : "redis://" + node;
+        }
+        if (nodes.length == 1) {
+            config.useSingleServer()
+                    .setAddress(nodes[0])
+                    .setTimeout(redissonProperties.getTimeout())
+                    .setConnectionMinimumIdleSize(redissonProperties.getPool().getMinIdle())
+                    .setPassword(redissonProperties.getPassword());
+        } else {
+            config.useClusterServers()
+                    .addNodeAddress(nodes)
+                    .setScanInterval(3000)
+                    .setPassword(redissonProperties.getPassword());
         }
         return Redisson.create(config);
     }
+
+
 }
