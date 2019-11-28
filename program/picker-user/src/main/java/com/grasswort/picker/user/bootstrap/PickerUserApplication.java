@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * @author xuliangliang
  * @Classname PickerUserApplication
- * @Description TODO
+ * @Description 启动
  * @Date 2019/9/22 10:24
  * @blame Java Team
  */

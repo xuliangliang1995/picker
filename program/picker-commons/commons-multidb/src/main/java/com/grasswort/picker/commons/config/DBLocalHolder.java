@@ -63,7 +63,7 @@ public class DBLocalHolder {
                 }
             }
         }
-        log.info("切换数据源：{}", key);
+        log.debug("切换数据源：{}", key);
         return key;
     }
 
