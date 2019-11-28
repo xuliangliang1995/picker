@@ -113,6 +113,7 @@ public class BlogAutoPushJob extends QuartzJobBean {
                         }
                     } else {
                         log.info("不触发推送");
+                        continue;
                     }
                 }
             }
