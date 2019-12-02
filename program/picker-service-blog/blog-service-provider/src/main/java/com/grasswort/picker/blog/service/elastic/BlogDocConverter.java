@@ -9,6 +9,7 @@ import com.grasswort.picker.blog.dto.blog.InteractionData;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import com.grasswort.picker.blog.service.elastic.converter.Blog2DocConverter;
 import com.grasswort.picker.blog.service.elastic.converter.BlogDocMapStructConverter;
+import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -47,12 +48,14 @@ public class BlogDocConverter {
      * @return
      */
     public BlogItemWithAuthor blogDoc2BlogItemWithAuthor(BlogDoc blogDoc) {
+        Long blogId = blogDoc.getBlogId();
         BlogItemWithAuthor blogItemWithAuthor = blogDocMapStructConverter.doc2BlogItemWithAuthor(blogDoc);
         InteractionData interactionData = InteractionData.Builder.anInteractionData()
                 .withLike(blogLikeMapper.getLikeCount(blogDoc.getBlogId()))
                 .withFavorite(blogFavoriteMapper.getBlogFavoriteCount(blogDoc.getBlogId()))
                 .withBrowse(blogBrowseMapper.getBrowseCount(blogDoc.getBlogId()))
                 .build();
+        blogItemWithAuthor.setBlogId(BlogIdEncrypt.encrypt(blogId));
         blogItemWithAuthor.setInteraction(interactionData);
         return blogItemWithAuthor;
     }
