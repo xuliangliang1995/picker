@@ -48,9 +48,9 @@ public class BlogSearchService {
 
         boolQueryBuilder.must(
                 QueryBuilders.boolQuery()
-                        .should(QueryBuilders.matchQuery("title", keyword).boost(3.0f))
-                        .should(QueryBuilders.matchQuery("labels", keyword).boost(2.0f))
-                        .should(QueryBuilders.matchQuery("summary", keyword).boost(1.0f))
+                        .should(QueryBuilders.fuzzyQuery("title", keyword).boost(3.0f))
+                        .should(QueryBuilders.fuzzyQuery("labels", keyword).boost(2.0f))
+                        .should(QueryBuilders.fuzzyQuery("summary", keyword).boost(1.0f))
         );
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -59,7 +59,7 @@ public class BlogSearchService {
                 .withQuery(boolQueryBuilder)
                 .withPageable(pageable)
                 .withHighlightBuilder(HIGH_LIGHT_BUILDER)
-                .withHighlightFields(new HighlightBuilder.Field("title"))
+                .withHighlightFields(new HighlightBuilder.Field("title"), new HighlightBuilder.Field("summary"))
                 .build();
 
         AggregatedPage<BlogDoc> page = elasticsearchTemplate.queryForPage(query, BlogDoc.class, blogDocHighLightMapper);
