@@ -9,14 +9,12 @@ import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogCategory;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
 import com.grasswort.picker.blog.dao.entity.BlogTrigger;
-import com.grasswort.picker.blog.dao.persistence.BlogCategoryMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogTriggerMapper;
+import com.grasswort.picker.blog.dao.persistence.*;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
+import com.grasswort.picker.blog.dto.blog.InteractionData;
 import com.grasswort.picker.blog.util.BlogHtml;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
@@ -50,6 +48,12 @@ public class BlogServiceImpl implements IBlogService {
     @Autowired BlogContentMapper blogContentMapper;
 
     @Autowired BlogTriggerMapper blogTriggerMapper;
+
+    @Autowired BlogLikeMapper blogLikeMapper;
+
+    @Autowired BlogFavoriteMapper blogFavoriteMapper;
+
+    @Autowired BlogBrowseMapper blogBrowseMapper;
 
     /**
      * 查看自己的博客列表
@@ -108,7 +112,7 @@ public class BlogServiceImpl implements IBlogService {
                                         .findFirst().orElse(BlogCurveStatusEnum.STOP))
                                 .orElse(BlogCurveStatusEnum.STOP);
 
-                        return BlogItem.Builder.aBlogItem()
+                        BlogItem blogItem =  BlogItem.Builder.aBlogItem()
                                 .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
                                 .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
                                 .withTitle(blog.getTitle())
@@ -121,6 +125,15 @@ public class BlogServiceImpl implements IBlogService {
                                 .withGmtCreate(blog.getGmtCreate())
                                 .withGmtModified(blog.getGmtModified())
                                 .build();
+
+                        InteractionData interactionData = InteractionData.Builder.anInteractionData()
+                                .withLike(blogLikeMapper.getLikeCount(blog.getId()))
+                                .withFavorite(blogFavoriteMapper.getBlogFavoriteCount(blog.getId()))
+                                .withBrowse(blogBrowseMapper.getBrowseCount(blog.getId()))
+                                .build();
+                        blogItem.setInteraction(interactionData);
+
+                        return blogItem;
                     }).collect(Collectors.toList())
             );
         } else {

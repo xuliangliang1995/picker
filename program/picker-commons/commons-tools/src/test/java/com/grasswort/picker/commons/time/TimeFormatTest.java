@@ -18,7 +18,7 @@ public class TimeFormatTest {
 
     @Test
     public void format() {
-        System.out.println(TimeFormat.format(TimeFormat.yyyyMMddHHmm));
+        System.out.println(TimeFormat.format());
         assertTrue(true);
     }
 

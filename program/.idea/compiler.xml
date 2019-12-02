@@ -9,7 +9,6 @@
         <module name="wechat-service-api" />
         <module name="picker-wechat" />
         <module name="picker-blog" />
-        <module name="wss-service-provider" />
         <module name="user-service-api" />
         <module name="blog-service-api" />
         <module name="picker-user" />
@@ -17,20 +16,21 @@
         <module name="commons-multidb" />
         <module name="wechat-service-provider" />
         <module name="email-center-sdk" />
-        <module name="oss-service-api" />
+        <module name="commons-core" />
         <module name="user-service-sdk" />
         <module name="user-service-provider" />
         <module name="blog-service-provider" />
         <module name="oss-service-sdk" />
         <module name="commons-tools" />
         <module name="picker-oss" />
-        <module name="commons-core" />
+        <module name="oss-service-api" />
         <module name="email-center" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="picker-service-wss" target="1.8" />
       <module name="picker-wss" target="1.8" />
+      <module name="wss-service-provider" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

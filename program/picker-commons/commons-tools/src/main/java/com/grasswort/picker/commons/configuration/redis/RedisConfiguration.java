@@ -48,5 +48,22 @@ public class RedisConfiguration {
         return Redisson.create(config);
     }
 
+    /*public static void main(String[] args) {
+        String[] nodes = "114.67.105.79:7001,114.67.105.79:7002,114.67.84.153:7001,114.67.84.153:7002,114.67.104.148:7001,114.67.104.148:7002"
+                .split(",");
+        for (int i = 0; i < nodes.length; i++) {
+            String node = nodes[i];
+            nodes[i] = node.startsWith("redis://") ? node : "redis://" + node;
+        }
+        Config config = new Config();
+        config.useClusterServers()
+                .addNodeAddress(nodes)
+                .setScanInterval(3000)
+                .setPassword("xol4l2y2xx");
+        RedissonClient client = Redisson.create(config);
+        System.out.println(client);
+
+
+    }*/
 
 }

@@ -1,9 +1,12 @@
 package com.grasswort.picker.commons.time;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * @author xuliangliang
@@ -14,7 +17,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class TimeFormat {
 
-    public final static ZoneId ZONE_SHANGHAI = ZoneId.of("Asia/Shanghai");
+    public final static ZoneId ZONE_SHANGHAI = ZoneId.of("Asia/Shanghai");//Asia/Shanghai
 
     public final static String yyyyMMddHHmm = "yyyy-MM-dd HH:mm";
 
@@ -28,7 +31,7 @@ public class TimeFormat {
      * @return
      */
     public static String format(String pattern) {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern).withZone(ZONE_SHANGHAI));
+        return LocalDateTime.now(ZONE_SHANGHAI).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
@@ -46,7 +49,7 @@ public class TimeFormat {
      * @return
      */
     public static String format() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(yyyyMMddHHmm).withZone(ZONE_SHANGHAI));
+        return LocalDateTime.now(ZONE_SHANGHAI).format(DateTimeFormatter.ofPattern(yyyyMMddHHmm));
     }
 
     /**

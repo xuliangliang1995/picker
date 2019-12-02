@@ -1,0 +1,10 @@
+spring:
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: 114.67.105.79:9300,114.67.105.79:9301,114.67.105.79:9302
+      repositories:
+        enabled: true
+logging:
+  level:
+    root: info

@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/picker-elastic" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-elastic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-elastic/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-email" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-email/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-email/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-kafka" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-kafka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-kafka/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-nacos" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-nacos/pay-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-nacos/pay-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-nacos/pay-client" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-nacos/pay-client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-nacos/pay-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-nacos/pay-service-provider/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-quartz" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-quartz/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-quartz/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-redisson" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-redisson/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-zookeeper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-zookeeper/src/main/java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

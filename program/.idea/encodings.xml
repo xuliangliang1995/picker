@@ -2,34 +2,62 @@
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/picker-blog" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-blog/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-blog/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-commons" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-commons/commons-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-commons/commons-multidb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-multidb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-multidb/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-commons/commons-tools" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-tools/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-commons/commons-tools/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-email-center" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-email-center/email-center" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-email-center/email-center-sdk" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-email-center/email-center-sdk/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-email-center/email-center/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-email-center/email-center/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-oss" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-oss/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-oss/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-parent" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-blog" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-blog/blog-service-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-blog/blog-service-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-blog/blog-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-blog/blog-service-provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-blog/blog-service-provider/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-oss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-provider/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-sdk" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-oss/oss-service-sdk/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-user" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-user/user-service-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-user/user-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-provider/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-user/user-service-sdk" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-user/user-service-sdk/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-wechat" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-wechat/wechat-service-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-wechat/wechat-service-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-service-wechat/wechat-service-provider" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/picker-service-wss" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/picker-service-wss/wss-service-provider" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-wechat/wechat-service-provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-service-wechat/wechat-service-provider/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-user" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-user/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/picker-wechat" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/picker-wss" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-wechat/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/picker-wechat/src/main/resources" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

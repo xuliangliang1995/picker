@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="pay-client" />
         <module name="picker-kafka" />
+        <module name="picker-redisson" />
         <module name="picker-quartz" />
         <module name="picker-email" />
         <module name="picker-zookeeper" />
         <module name="pay-service-provider" />
         <module name="pay-api" />
+        <module name="picker-elastic" />
       </profile>
     </annotationProcessing>
   </component>

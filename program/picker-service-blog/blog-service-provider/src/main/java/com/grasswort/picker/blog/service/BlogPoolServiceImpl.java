@@ -5,13 +5,16 @@ import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
-import com.grasswort.picker.blog.dao.entity.BlogTrigger;
 import com.grasswort.picker.blog.dao.persistence.*;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.BlogPoolQueryRequest;
 import com.grasswort.picker.blog.dto.BlogPoolQueryResponse;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithAuthor;
 import com.grasswort.picker.blog.dto.blog.InteractionData;
+import com.grasswort.picker.blog.elastic.entity.BlogDoc;
+import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
+import com.grasswort.picker.blog.service.elastic.BlogSearchService;
+import com.grasswort.picker.blog.service.hotword.SearchHotWordService;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
@@ -23,8 +26,10 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,6 +56,12 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
 
     @Autowired BlogBrowseMapper blogBrowseMapper;
 
+    @Autowired BlogDocConverter blogDocConverter;
+
+    @Autowired BlogSearchService blogSearchService;
+
+    @Resource SearchHotWordService searchHotWordService;
+
     @Reference(version = "1.0", timeout = 10000) IUserBaseInfoService iUserBaseInfoService;
 
     /**
@@ -71,7 +82,16 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
         RowBounds rowBounds = new RowBounds(pageSize * (pageNo - 1), pageSize);
 
         if (StringUtils.isNotBlank(keyword)) {
-            // TODO 根据关键词搜索
+            // 统计搜索热词
+            searchHotWordService.staticsSearchHotWord(keyword);
+            // 根据关键词搜索
+            Page<BlogDoc> blogDocs = blogSearchService.search(keyword, pageNo, pageSize);
+            response.setBlogs(
+                    blogDocs.getContent().stream()
+                    .map(doc -> blogDocConverter.blogDoc2BlogItemWithAuthor(doc))
+                    .collect(Collectors.toList())
+            );
+            response.setTotal(blogDocs.getTotalElements());
         } else {
             Example example = new Example(Blog.class);
             example.createCriteria().andEqualTo("status", BlogStatusEnum.NORMAL.status());
@@ -80,9 +100,6 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
             List<BlogItemWithAuthor> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds).parallelStream().map(blog -> {
                 // 标签
                 List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
-                // 博客推送状态
-                Example ex = new Example(BlogTrigger.class);
-                ex.createCriteria().andEqualTo("blogId", blog.getId());
 
                 UserBaseInfoResponse baseInfoResponse = iUserBaseInfoService.userBaseInfo(UserBaseInfoRequest.Builder.anUserBaseInfoRequest().withUserId(blog.getPkUserId()).build());
                 String author = Optional.ofNullable(baseInfoResponse).filter(UserBaseInfoResponse::isSuccess).map(UserBaseInfoResponse::getName).orElse("");
