@@ -85,7 +85,7 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
             // 统计搜索热词
             searchHotWordService.staticsSearchHotWord(keyword);
             // 根据关键词搜索
-            Page<BlogDoc> blogDocs = blogSearchService.search(keyword, pageNo, pageSize);
+            Page<BlogDoc> blogDocs = blogSearchService.search(keyword, (pageNo - 1), pageSize);
             response.setBlogs(
                     blogDocs.getContent().stream()
                     .map(doc -> blogDocConverter.blogDoc2BlogItemWithAuthor(doc))
