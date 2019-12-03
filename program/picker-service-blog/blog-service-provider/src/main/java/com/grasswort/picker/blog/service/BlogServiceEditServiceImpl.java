@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogEditService;
+import com.grasswort.picker.blog.configuration.kafka.TopicUpdateBlogDoc;
 import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.constant.DBGroup;
@@ -25,17 +26,15 @@ import com.grasswort.picker.oss.dto.OssRefRequest;
 import com.grasswort.picker.oss.dto.OssRefResponse;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
-import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.IUserSettingService;
 import com.grasswort.picker.user.dto.BlogPushSettingRequest;
 import com.grasswort.picker.user.dto.BlogPushSettingResponse;
-import com.grasswort.picker.user.dto.UserBaseInfoRequest;
-import com.grasswort.picker.user.dto.UserBaseInfoResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -68,6 +67,10 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Autowired BlogLabelDao blogLabelDao;
 
     @Autowired RetentionCurveServiceImpl retentionCurveServiceImpl;
+
+    @Autowired KafkaTemplate<String, Long> kafkaTemplate;
+
+    @Autowired TopicUpdateBlogDoc topicUpdateBlogDoc;
 
     @Reference(version = "1.0", timeout = 10000) IUserSettingService iUserSettingService;
 
@@ -154,6 +157,8 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
                             .build()
             );
         }
+        // 发布 博客更新消息
+        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
 
         createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -230,6 +235,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
         // 存储标签
         processLabels(blog.getId(), labels);
+
+        // 发布 博客更新消息
+        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
 
         editBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -316,6 +324,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             blogMapper.updateByPrimaryKeySelective(blogSelective);
         }
 
+        // 发布 博客更新消息
+        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
+
         deleteBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return deleteBlogResponse;
@@ -355,6 +366,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             blogSelective.setGmtModified(new Date(System.currentTimeMillis()));
             blogMapper.updateByPrimaryKeySelective(blogSelective);
         }
+
+        // 发布 博客更新消息
+        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
 
         recycleBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         recycleBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());

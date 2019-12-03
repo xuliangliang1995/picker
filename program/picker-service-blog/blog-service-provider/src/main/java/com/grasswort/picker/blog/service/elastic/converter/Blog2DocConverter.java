@@ -72,6 +72,7 @@ public class Blog2DocConverter {
                 .withGmtModified(content.getGmtModified())
                 .withLabels(labels)
                 .withMarkdown(content.getMarkdown())
+                .withAuthorId(blog.getPkUserId())
                 .withAuthor(author)
                 .withAuthorAvatar(authorAvatar)
                 .withStatus(blog.getStatus())

@@ -23,4 +23,10 @@ public class KafkaTopicConfiguration {
         return new NewTopic(topicBlogPush.getTopicName(), topicBlogPush.getPartitions(), topicBlogPush.getReplicationFactor());
     }
 
+    @Bean
+    public NewTopic blogUpdateTopic(@Autowired TopicUpdateBlogDoc topicUpdateBlogDoc) {
+        log.info("\n[TopicConfiguration]{}", topicUpdateBlogDoc);
+        return new NewTopic(topicUpdateBlogDoc.getTopicName(), topicUpdateBlogDoc.getPartitions(), topicUpdateBlogDoc.getReplicationFactor());
+    }
+
 }

@@ -60,6 +60,12 @@ public class BlogDoc {
     private Integer version;
 
     /**
+     * 作者 id
+     */
+    @Field(type = FieldType.Long, index = false)
+    private Long authorId;
+
+    /**
      * 作者
      */
     @Field(type = FieldType.Text)
@@ -193,6 +199,13 @@ public class BlogDoc {
         this.status = status;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
 
     public static final class Builder {
         private Long blogId;
@@ -203,6 +216,7 @@ public class BlogDoc {
         private String coverImg;
         private List<String> labels;
         private Integer version;
+        private Long authorId;
         private String author;
         private String authorAvatar;
         private String markdown;
@@ -256,6 +270,11 @@ public class BlogDoc {
             return this;
         }
 
+        public Builder withAuthorId(Long authorId) {
+            this.authorId = authorId;
+            return this;
+        }
+
         public Builder withAuthor(String author) {
             this.author = author;
             return this;
@@ -291,6 +310,7 @@ public class BlogDoc {
             blogDoc.setCoverImg(coverImg);
             blogDoc.setLabels(labels);
             blogDoc.setVersion(version);
+            blogDoc.setAuthorId(authorId);
             blogDoc.setAuthor(author);
             blogDoc.setAuthorAvatar(authorAvatar);
             blogDoc.setMarkdown(markdown);
