@@ -1,5 +1,8 @@
 package com.grasswort.picker.user.service;
 
+import com.grasswort.picker.blog.IUserInteractionDataService;
+import com.grasswort.picker.blog.dto.UserInteractionDataRequest;
+import com.grasswort.picker.blog.dto.UserInteractionDataResponse;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserSearchService;
 import com.grasswort.picker.user.constants.DBGroup;
@@ -12,10 +15,12 @@ import com.grasswort.picker.user.dto.UserSearchResponse;
 import com.grasswort.picker.user.dto.user.InteractionData;
 import com.grasswort.picker.user.dto.user.UserItem;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +37,9 @@ public class UserSearchServiceImpl implements IUserSearchService {
 
     @Autowired UserSubscribeAuthorMapper userSubscribeAuthorMapper;
 
+    @Reference(version = "1.0", timeout = 10000)
+    IUserInteractionDataService iUserInteractionDataService;
+
 
     /**
      * 用户查询
@@ -46,8 +54,16 @@ public class UserSearchServiceImpl implements IUserSearchService {
         List<User> users = userMapper.selectAll();
         List<UserItem> userItems = users.stream().map(user -> {
             InteractionData interactionData = new InteractionData();
-            interactionData.setBlogCount(10L);
-            interactionData.setLikeCount(10L);
+
+            UserInteractionDataResponse interactionDataResponse = iUserInteractionDataService.userInteractionData(new UserInteractionDataRequest(user.getId()));
+            if (interactionDataResponse != null && interactionDataResponse.isSuccess()) {
+                interactionData.setBlogCount(interactionDataResponse.getBlogCount());
+                interactionData.setLikedCount(interactionDataResponse.getLikedCount());
+            } else {
+                interactionData.setBlogCount(0L);
+                interactionData.setLikedCount(0L);
+            }
+
             interactionData.setSubscribeCount(userSubscribeAuthorMapper.subscribeCount(user.getId()));
             interactionData.setFansCount(userSubscribeAuthorMapper.fansCount(user.getId()));
 

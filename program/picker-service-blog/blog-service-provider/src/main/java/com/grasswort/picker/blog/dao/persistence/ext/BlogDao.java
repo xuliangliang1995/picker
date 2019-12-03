@@ -16,4 +16,7 @@ public interface BlogDao extends Mapper<Blog> {
 
     @Select("select count(*) from pk_blog where category_id = #{categoryId} and status = #{status}")
     Long selectCountByCategoryIdAndStatus(@Param("categoryId") Long categoryId, @Param("status") Integer status);
+
+    @Select("select count(*) from pk_blog where pk_user_id = #{pkUserId} and status = 0")
+    Long getBlogCount(@Param("pkUserId") Long pkUserId);
 }

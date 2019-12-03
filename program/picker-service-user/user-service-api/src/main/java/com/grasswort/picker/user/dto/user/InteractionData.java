@@ -26,6 +26,6 @@ public class InteractionData {
     /**
      * 获赞
      */
-    private Long likeCount;
+    private Long likedCount;
 
 }
