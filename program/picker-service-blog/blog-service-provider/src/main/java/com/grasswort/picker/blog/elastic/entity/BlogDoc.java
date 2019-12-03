@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.elastic.entity;
 
+import com.grasswort.picker.blog.elastic.constants.EsAnalyzer;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -35,12 +36,12 @@ public class BlogDoc {
     /**
      * 标题
      */
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = EsAnalyzer.IK)
     private String title;
     /**
      * 摘要
      */
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = EsAnalyzer.IK)
     private String summary;
     /**
      * 封面配图
@@ -50,7 +51,7 @@ public class BlogDoc {
     /**
      * 标签
      */
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = EsAnalyzer.IK)
     private List<String> labels;
     /**
      * 版本
@@ -73,7 +74,7 @@ public class BlogDoc {
     /**
      * markdown
      */
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = EsAnalyzer.IK)
     private String markdown;
 
     /**

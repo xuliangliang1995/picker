@@ -5,7 +5,6 @@ import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +15,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -30,6 +28,14 @@ import javax.annotation.Resource;
 @Service
 public class BlogSearchService {
 
+    /*@Resource
+    BlogMapper blogMapper;
+
+    @Resource
+    BlogDocRepository blogDocRepository;
+
+    @Resource BlogDocConverter blogDocConverter;*/
+
     @Resource ElasticsearchTemplate elasticsearchTemplate;
 
     @Resource BlogDocHighLightMapper blogDocHighLightMapper;
@@ -37,14 +43,10 @@ public class BlogSearchService {
     private final static HighlightBuilder HIGH_LIGHT_BUILDER = new HighlightBuilder().preTags("<strong style='color:red'>").postTags("</strong>");
 
 
-    @PostConstruct
+    /*@PostConstruct
     public void test() {
-        Page<BlogDoc> items = search("elastic", 0, 10);
-        log.info("查询结果：{}", items.getTotalElements());
-        items.getContent().forEach(blogDoc -> {
-            log.info(blogDoc.getTitle());
-        });
-    }
+        blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
+    }*/
 
     /**
      *
