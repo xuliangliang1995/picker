@@ -2,6 +2,7 @@ package com.grasswort.picker.blog.controller;
 
 import com.grasswort.picker.blog.LexiconService;
 import com.grasswort.picker.blog.dto.LexiconResponse;
+import com.grasswort.picker.user.annotation.Anoymous;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @blame Java Team
  */
 @Api(tags = "词库")
+@Anoymous
 @RestController
 @RequestMapping("/lexicon")
 public class LexiconController {
