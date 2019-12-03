@@ -5,6 +5,7 @@ import com.grasswort.picker.blog.dto.HotWordRequest;
 import com.grasswort.picker.blog.dto.HotWordResponse;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
+import com.grasswort.picker.user.annotation.Anoymous;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
@@ -29,6 +30,7 @@ public class HotWordController {
     @Reference(version = "1.0", timeout = 10000)
     IHotWordService iHotWordService;
 
+    @Anoymous
     @ApiOperation(value = "热词")
     @GetMapping
     public ResponseData hotWords() {
