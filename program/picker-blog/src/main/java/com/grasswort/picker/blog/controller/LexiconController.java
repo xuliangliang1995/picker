@@ -37,7 +37,7 @@ public class LexiconController {
      */
     @Anoymous
     @ApiOperation(value = "词库获取")
-    @GetMapping
+    @GetMapping("/ik")
     public ResponseEntity<String> lexicon() {
         LexiconResponse lexiconResponse = lexiconService.lexicon();
 
