@@ -1,6 +1,6 @@
 package com.grasswort.picker.blog.service;
 
-import com.grasswort.picker.blog.LexiconService;
+import com.grasswort.picker.blog.ILexiconService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
@@ -20,7 +20,7 @@ import java.util.Set;
  * @blame Java Team
  */
 @Service(version = "1.0", timeout = 10000)
-public class LexiconServiceImpl implements LexiconService {
+public class LexiconServiceImpl implements ILexiconService {
 
     @Resource BlogLabelDao blogLabelDao;
 

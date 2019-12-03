@@ -1,6 +1,6 @@
 package com.grasswort.picker.blog.controller;
 
-import com.grasswort.picker.blog.LexiconService;
+import com.grasswort.picker.blog.ILexiconService;
 import com.grasswort.picker.blog.dto.LexiconResponse;
 import com.grasswort.picker.user.annotation.Anoymous;
 import io.swagger.annotations.Api;
@@ -24,18 +24,18 @@ import java.util.Optional;
  * @blame Java Team
  */
 @Api(tags = "词库")
-@Anoymous
 @RestController
 @RequestMapping("/lexicon")
 public class LexiconController {
 
     @Reference(version = "1.0", timeout = 10000)
-    LexiconService lexiconService;
+    ILexiconService lexiconService;
 
     /**
      * 接口返回规范： https://github.com/medcl/elasticsearch-analysis-ik
      * @return
      */
+    @Anoymous
     @ApiOperation(value = "词库获取")
     @GetMapping
     public ResponseEntity<String> lexicon() {
