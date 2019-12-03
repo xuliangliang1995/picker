@@ -159,10 +159,17 @@ spring:
             threadCount: 10
             threadPriority: 5
             threadsInheritContextClassLoaderOfInitializingThread: true
+
   kafka:
     bootstrap-servers: 182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
     producer:
       acks: 1
+    consumer:
+      group-id: picker-blog-consumer
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      max-poll-records: 100
+
 
   data:
     elasticsearch:

@@ -2,10 +2,7 @@ package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogEditService;
 import com.grasswort.picker.blog.configuration.kafka.TopicUpdateBlogDoc;
-import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
-import com.grasswort.picker.blog.constant.BlogStatusEnum;
-import com.grasswort.picker.blog.constant.DBGroup;
-import com.grasswort.picker.blog.constant.SysRetCodeConstants;
+import com.grasswort.picker.blog.constant.*;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
 import com.grasswort.picker.blog.dao.entity.BlogLabel;
@@ -34,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -68,9 +66,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired RetentionCurveServiceImpl retentionCurveServiceImpl;
 
-    @Autowired KafkaTemplate<String, Long> kafkaTemplate;
-
     @Autowired TopicUpdateBlogDoc topicUpdateBlogDoc;
+
+    @Autowired @Qualifier(KafkaTemplateConstant.BLOG_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
 
     @Reference(version = "1.0", timeout = 10000) IUserSettingService iUserSettingService;
 

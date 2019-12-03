@@ -1,13 +1,14 @@
-package com.grasswort.picker.blog.service.elastic;
+package com.grasswort.picker.blog.configuration.kafka;
 
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.elastic.repository.BlogDocRepository;
+import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
 import com.grasswort.picker.email.constants.EmailCenterConstant;
-import com.grasswort.picker.email.serializer.MailDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -33,7 +34,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Configuration
-public class KafkaBlogDocRefreshConsumer {
+public class KafkaBlogDocConsumerConfiguration {
 
     @Autowired KafkaProperties kafkaProperties;
 
@@ -47,7 +48,7 @@ public class KafkaBlogDocRefreshConsumer {
     public DefaultKafkaConsumerFactory kafkaEmailConsumerFactory() {
         Map<String, Object> consumerProps = kafkaProperties.buildConsumerProperties();
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MailDeserializer.class.getCanonicalName());
+        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getCanonicalName());
         return new DefaultKafkaConsumerFactory<>(consumerProps);
     }
 

@@ -3,3 +3,7 @@ spring:
     name: picker-blog-service-provider
   profiles:
     active: dev
+
+logging:
+  level:
+    root: info
