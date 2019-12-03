@@ -41,6 +41,12 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.grasswort.picker</groupId>
+      <artifactId>user-service-sdk</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
     <!-- wechat-service-api -->
     <dependency>
       <groupId>com.grasswort.picker</groupId>
