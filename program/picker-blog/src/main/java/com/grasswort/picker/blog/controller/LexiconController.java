@@ -44,8 +44,8 @@ public class LexiconController {
         if (Optional.ofNullable(lexiconResponse).map(LexiconResponse::isSuccess).orElse(false)) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("text/html;charset=utf-8"));
-            headers.set("Last-Modified", String.valueOf(lexiconResponse.getLastModified()));
-            headers.set("ETag", lexiconResponse.getETag());
+            headers.add("Last-Modified", String.valueOf(lexiconResponse.getLastModified()));
+            headers.add("ETag", lexiconResponse.getETag());
             String content = lexiconResponse.getLexicon().stream().reduce((a, b) -> a + "\n" + b).orElse("");
             return new ResponseEntity<>(
                     content,
