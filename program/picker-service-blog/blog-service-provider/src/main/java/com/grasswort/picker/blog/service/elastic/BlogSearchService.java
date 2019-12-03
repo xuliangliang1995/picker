@@ -5,6 +5,7 @@ import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -35,6 +37,15 @@ public class BlogSearchService {
     private final static HighlightBuilder HIGH_LIGHT_BUILDER = new HighlightBuilder().preTags("<strong style='color:red'>").postTags("</strong>");
 
 
+    @PostConstruct
+    public void test() {
+        Page<BlogDoc> items = search("elastic", 0, 10);
+        log.info("查询结果：{}", items.getTotalElements());
+        items.getContent().forEach(blogDoc -> {
+            log.info(blogDoc.getTitle());
+        });
+    }
+
     /**
      *
      * @param keyword
@@ -44,18 +55,20 @@ public class BlogSearchService {
      */
     public Page<BlogDoc> search(String keyword, int pageNo, int pageSize) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.filter(QueryBuilders.termQuery("status", BlogStatusEnum.NORMAL.status()));
-
         boolQueryBuilder.must(
                 QueryBuilders.boolQuery()
-                        .should(QueryBuilders.fuzzyQuery("title", keyword).boost(3.0f))
-                        .should(QueryBuilders.fuzzyQuery("labels", keyword).boost(2.0f))
-                        .should(QueryBuilders.fuzzyQuery("summary", keyword).boost(1.0f))
+                        .should(QueryBuilders.matchQuery("title", keyword).boost(3.0f))
+                        .should(QueryBuilders.prefixQuery("title", keyword).boost(2.0f))
+                        .should(QueryBuilders.matchQuery("labels", keyword).boost(2.0f))
+                        .should(QueryBuilders.prefixQuery("labels", keyword).boost(1.0f))
+                        .should(QueryBuilders.matchQuery("summary", keyword).boost(1.0f))
+                        .should(QueryBuilders.prefixQuery("summary", keyword).boost(1.0f))
         );
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         SearchQuery query = new NativeSearchQueryBuilder()
+                .withFilter(QueryBuilders.termQuery("status", BlogStatusEnum.NORMAL.status()))
                 .withQuery(boolQueryBuilder)
                 .withPageable(pageable)
                 .withHighlightBuilder(HIGH_LIGHT_BUILDER)
