@@ -65,7 +65,7 @@ public class KafkaBlogDocConsumerConfiguration {
         return conFactory;
     }
 
-    @KafkaListener(topicPattern = EmailCenterConstant.LISTENING_TOPIC, containerFactory = "blogDocRefreshKafkaListenerContainerFactory")
+    @KafkaListener(topicPattern = TopicUpdateBlogDoc.TOPIC, containerFactory = "blogDocRefreshKafkaListenerContainerFactory")
     public void consumer(ConsumerRecord<String, Long> record, Acknowledgment acknowledgment) {
         log.info("\n主题：{}\n分区：{}\n偏移量：{}", record.topic(), record.partition(), record.offset());
 

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class TopicUpdateBlogDoc {
-    private String topicName = "topic-picker-elastic-blog-update";
+    public static final String TOPIC = "topic-picker-elastic-blog-update";
+
+    private String topicName = TOPIC;
 
     private Integer partitions = 2;
 
