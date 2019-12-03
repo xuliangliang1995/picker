@@ -37,7 +37,7 @@ public class LexiconController {
      */
     @Anoymous
     @ApiOperation(value = "词库获取")
-    @GetMapping("/ik")
+    @GetMapping
     public ResponseEntity<String> lexicon() {
         LexiconResponse lexiconResponse = lexiconService.lexicon();
 
@@ -45,13 +45,13 @@ public class LexiconController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("text/html;charset=utf-8"));
             headers.setLastModified(lexiconResponse.getLastModified());
-            headers.setETag(lexiconResponse.getETag());
+            headers.set("ETag", lexiconResponse.getETag());
             String content = lexiconResponse.getLexicon().stream().reduce((a, b) -> a + "\n" + b).orElse("");
             return new ResponseEntity<>(
                     content,
                     headers,
                     HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 }
