@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author xuliangliang
@@ -22,4 +23,7 @@ public interface BlogLabelDao extends TkMapper<BlogLabel> {
 
     @Delete("delete from pk_blog_label where blog_id = #{blogId}")
     int deleteLabelByBlogId(@Param("blogId") Long blogId);
+
+    @Select("select label from pk_blog_label")
+    Set<String> getAllLabels();
 }
