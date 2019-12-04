@@ -4,6 +4,7 @@ import com.grasswort.picker.user.elastic.entity.UserDoc;
 import com.grasswort.picker.user.elastic.repository.UserDocRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +36,11 @@ public class UserSearchService {
     public Page<UserDoc> search(String keyword, Integer pageNo, Integer pageSize) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(keyword)) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("nickName", keyword));
+            boolQueryBuilder.must(
+                    QueryBuilders.boolQuery()
+                            .should(QueryBuilders.matchQuery("nickName", keyword)).boost(2.0f)
+                            .should(QueryBuilders.prefixQuery("nickName", keyword)).boost(1.0f)
+            );
         }
         Sort sort = new Sort(Sort.Direction.DESC, "likedCount");
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
