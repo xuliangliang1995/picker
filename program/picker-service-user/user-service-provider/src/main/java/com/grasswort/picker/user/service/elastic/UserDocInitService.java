@@ -46,7 +46,7 @@ public class UserDocInitService {
         });
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void search() {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.matchQuery("nickName", "鞋"));
