@@ -78,15 +78,68 @@ multidb:
         filters: stat,config
         connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
         useGlobalDataSourceStat: true
-# kafka
+# quartz 数据源
+quartz:
+  datasource:
+    url: jdbc:mysql://114.67.99.146:3306/picker_quartz?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+    username: xuliang
+    password: xol4l2y2xx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 2
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: false
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,config
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    useGlobalDataSourceStat: true
+
 spring:
+  # quartz
+  quartz:
+    auto-startup: true
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    overwrite-existing-jobs: false
+    properties:
+      org:
+        quartz:
+          scheduler:
+            # 同一个集群下的实例 instanceName 必须一致
+            instanceName: clusteredScheduler
+            # AUTO 就是最好的选择
+            instanceId: AUTO
+          jobStore:
+            # 数据源名称
+            dataSource: quartzDataSource
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            # 开启集群
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+  # elasticsearch
   data:
     elasticsearch:
       cluster-name: docker-cluster
       cluster-nodes: 114.67.105.79:9300,114.67.105.79:9301,114.67.105.79:9302
       repositories:
         enabled: true
-
+  # kafka
   kafka:
     bootstrap-servers: 182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
     producer:
@@ -96,7 +149,7 @@ spring:
       enable-auto-commit: false
       auto-offset-reset: latest
       max-poll-records: 100
-
+  # redisson
   redisson:
     address: 114.67.105.79:7001,114.67.105.79:7002,114.67.84.153:7001,114.67.84.153:7002,114.67.104.148:7001,114.67.104.148:7002
     password: xol4l2y2xx

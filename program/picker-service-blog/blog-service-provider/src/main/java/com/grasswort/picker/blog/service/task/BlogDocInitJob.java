@@ -33,7 +33,7 @@ public class BlogDocInitJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("\nexecute 【BlogDocInitJob】");
+        log.info("\n执行博客ES存储更新任务");
         blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
     }
 }

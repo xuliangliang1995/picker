@@ -35,24 +35,23 @@ public class UserDocInitService {
     @Resource
     private UserDocConverter userDocConverter;
 
-    //@PostConstruct
+    /**
+     * 初始化 es 存储
+     */
     public void init() {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("activated", 1);
         List<User> users = userMapper.selectByExample(example);
-        users.forEach(user -> {
-            System.out.println("\n转储：" + user.getName());
-            userDocRepository.save(userDocConverter.user2Doc(user));
-        });
+        users.forEach(user -> userDocRepository.save(userDocConverter.user2Doc(user)));
     }
 
     //@PostConstruct
-    public void search() {
+    /*public void search() {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.matchQuery("nickName", "鞋"));
         Pageable pageable = PageRequest.of(0, 10);
         Page<UserDoc> users = userDocRepository.search(boolQueryBuilder, pageable);
         System.out.println("\n匹配结果：" + users.getTotalElements());
         users.forEach(user -> System.out.println(user.getNickName()));
-    }
+    }*/
 }
