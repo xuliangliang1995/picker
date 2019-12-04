@@ -7,6 +7,8 @@ import com.grasswort.picker.user.IUserSearchService;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.dto.UserSearchRequest;
 import com.grasswort.picker.user.dto.UserSearchResponse;
+import com.grasswort.picker.user.model.PickerInfo;
+import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.vo.SearchUserForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +29,7 @@ import java.util.Optional;
  * @blame Java Team
  */
 @Api(tags = "用户查询")
-@Anoymous
+@Anoymous(resolve = true)
 @RestController
 @RequestMapping("/search")
 public class UserSearchController {
@@ -42,6 +44,10 @@ public class UserSearchController {
                 .withKeyword(form.getKeyword())
                 .withPageNo(form.getPageNo())
                 .withPageSize(form.getPageSize())
+                .withPkUserId(
+                        Optional.ofNullable(PickerInfoHolder.getPickerInfo())
+                        .map(PickerInfo::getId).orElse(null)
+                )
                 .build();
         UserSearchResponse searchResponse = iUserSearchService.search(searchRequest);
         return Optional.ofNullable(searchResponse)

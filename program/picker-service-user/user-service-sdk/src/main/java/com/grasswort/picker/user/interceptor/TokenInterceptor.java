@@ -18,6 +18,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -38,28 +39,35 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
         }
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
-        if (isAnoymous(handlerMethod)) {
+        Anoymous anoymous = getAnoymous(handlerMethod);
+        if (anoymous != null && ! anoymous.resolve()) {
             return true;
         }
 
+        // 是否强制身份校验
+        boolean tokenForceValid = anoymous == null;
+
         String token = request.getHeader(JwtTokenConstants.JWT_ACCESS_TOKEN_KEY);
-        if (StringUtils.isBlank(token)) {
-            throw TokenExpiredException.getInstance();
+        if (StringUtils.isNotBlank(token)) {
+            CheckAuthRequest authRequest = new CheckAuthRequest();
+            authRequest.setToken(token);
+            authRequest.setIp(PickerIpUtil.getIp(request));
+            CheckAuthResponse authResponse = iUserLoginService.validToken(authRequest);
+            if (authResponse != null && authResponse.isSuccess()) {
+                PickerInfoHolder.setPickerInfo(PickerInfo.builder()
+                        .id(authResponse.getId())
+                        .name(authResponse.getName())
+                        .privilege(authResponse.isPrivilege())
+                        .build());
+                return super.preHandle(request, response, handler);
+            }
+        }
+        // 未通过身份校验、但是要求强制校验的、抛出异常
+        if (tokenForceValid) {
+            throw TokenVerifyFailException.getInstance();
         }
 
-        CheckAuthRequest authRequest = new CheckAuthRequest();
-        authRequest.setToken(token);
-        authRequest.setIp(PickerIpUtil.getIp(request));
-        CheckAuthResponse authResponse = iUserLoginService.validToken(authRequest);
-        if (authResponse != null && authResponse.isSuccess()) {
-            PickerInfoHolder.setPickerInfo(PickerInfo.builder()
-                    .id(authResponse.getId())
-                    .name(authResponse.getName())
-                    .privilege(authResponse.isPrivilege())
-                    .build());
-            return super.preHandle(request, response, handler);
-        }
-       throw TokenVerifyFailException.getInstance();
+        return super.preHandle(request, response, handler);
     }
 
     /**
@@ -67,13 +75,15 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
      * @param handlerMethod
      * @return
      */
-    private boolean isAnoymous(HandlerMethod handlerMethod) {
+    private Anoymous getAnoymous(HandlerMethod handlerMethod) {
         Object bean = handlerMethod.getBean();
-        Class clazz = bean.getClass();
-        if (clazz.getAnnotation(Anoymous.class) != null) {
-            return true;
-        }
         Method method = handlerMethod.getMethod();
-        return method.getAnnotation(Anoymous.class) != null;
+        Anoymous anoymous = method.getAnnotation(Anoymous.class);
+        if (anoymous != null) {
+            return anoymous;
+        }
+        Class clazz = bean.getClass();
+        anoymous = (Anoymous) clazz.getDeclaredAnnotation(Anoymous.class);
+        return anoymous;
     }
 }
