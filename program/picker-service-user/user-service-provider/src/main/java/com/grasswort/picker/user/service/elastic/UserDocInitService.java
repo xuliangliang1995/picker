@@ -1,19 +1,13 @@
 package com.grasswort.picker.user.service.elastic;
 
+import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
-import com.grasswort.picker.user.elastic.entity.UserDoc;
 import com.grasswort.picker.user.elastic.repository.UserDocRepository;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -38,6 +32,7 @@ public class UserDocInitService {
     /**
      * 初始化 es 存储
      */
+    @DB(DBGroup.SLAVE)
     public void init() {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("activated", 1);

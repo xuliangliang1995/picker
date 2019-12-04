@@ -23,13 +23,13 @@ import javax.sql.DataSource;
 public class DruidDataSourceConfiguration {
     private final static String MAPPER_XML_LOCATION = "classpath:com.grasswort.picker.user.dao.persistence.*Mapper.xml";
 
-    @Bean
+    @Bean(name = "dataSource")
     public DataSource dataSource(@Autowired @Qualifier(ConstantMultiDB.MULIDB_DATA_SOURCE_WRAPPER_BEAN_NAME) MultiDataSourceWrapper wrapper) {
         return wrapper.getDataSource();
     }
 
     @Bean
-    public SqlSessionFactory sqlSessionFactory(@Autowired DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Autowired @Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setMapperLocations(

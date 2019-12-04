@@ -3,6 +3,8 @@ package com.grasswort.picker.user.service.elastic;
 import com.grasswort.picker.blog.IUserInteractionDataService;
 import com.grasswort.picker.blog.dto.UserInteractionDataRequest;
 import com.grasswort.picker.blog.dto.UserInteractionDataResponse;
+import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.user.constants.DBGroup;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserSubscribeAuthorMapper;
 import com.grasswort.picker.user.dto.user.InteractionData;
@@ -28,6 +30,12 @@ public class UserDocConverter {
     @Resource
     UserSubscribeAuthorMapper userSubscribeAuthorMapper;
 
+    /**
+     * user2Doc
+     * @param user
+     * @return
+     */
+    @DB(DBGroup.SLAVE)
     public UserDoc user2Doc(User user) {
         InteractionData interactionData = new InteractionData();
 
@@ -56,6 +64,11 @@ public class UserDocConverter {
                 .build();
     }
 
+    /**
+     * UserDoc2Item
+     * @param userDoc
+     * @return
+     */
     public UserItem userDoc2Item(UserDoc userDoc) {
         InteractionData interactionData = new InteractionData();
         interactionData.setBlogCount(userDoc.getBlogCount());

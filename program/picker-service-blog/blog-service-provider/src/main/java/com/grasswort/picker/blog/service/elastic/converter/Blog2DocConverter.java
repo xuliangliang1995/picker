@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.service.elastic.converter;
 
+import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
 import com.grasswort.picker.blog.dao.entity.BlogLabel;
@@ -9,6 +10,7 @@ import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithAuthor;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
+import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.dto.UserBaseInfoRequest;
 import com.grasswort.picker.user.dto.UserBaseInfoResponse;
@@ -43,6 +45,7 @@ public class Blog2DocConverter {
      * @param blog
      * @return
      */
+    @DB(DBGroup.SLAVE)
     public BlogDoc blog2BlogDoc(Blog blog) {
         List<String> labels = blogLabelDao.listBlogLabels(blog.getId());
         Example example = new Example(BlogContent.class);

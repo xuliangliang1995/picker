@@ -1,5 +1,6 @@
 package com.grasswort.picker.blog.service.elastic;
 
+import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.persistence.BlogBrowseMapper;
 import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
@@ -10,6 +11,7 @@ import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import com.grasswort.picker.blog.service.elastic.converter.Blog2DocConverter;
 import com.grasswort.picker.blog.service.elastic.converter.BlogDocMapStructConverter;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
+import com.grasswort.picker.commons.annotation.DB;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -47,6 +49,7 @@ public class BlogDocConverter {
      * @param blogDoc
      * @return
      */
+    @DB(DBGroup.SLAVE)
     public BlogItemWithAuthor blogDoc2BlogItemWithAuthor(BlogDoc blogDoc) {
         Long blogId = blogDoc.getBlogId();
         BlogItemWithAuthor blogItemWithAuthor = blogDocMapStructConverter.doc2BlogItemWithAuthor(blogDoc);

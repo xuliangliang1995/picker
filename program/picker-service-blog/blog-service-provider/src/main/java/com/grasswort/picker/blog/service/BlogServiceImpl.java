@@ -152,6 +152,7 @@ public class BlogServiceImpl implements IBlogService {
      * @return
      */
     @Override
+    @DB(DBGroup.SLAVE)
     public BlogMarkdownResponse markdown(BlogMarkdownRequest markdownRequest) {
         BlogMarkdownResponse markdownResponse = new BlogMarkdownResponse();
 
@@ -236,7 +237,6 @@ public class BlogServiceImpl implements IBlogService {
                             .toHtml()
             );
         }
-        System.out.println(htmlResponse.getHtml());
         htmlResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         htmlResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return htmlResponse;
