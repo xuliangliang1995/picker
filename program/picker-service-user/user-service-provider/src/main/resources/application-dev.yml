@@ -15,7 +15,70 @@ nacos:
     config-long-poll-timeout: 46000
     enable-remote-sync-config: false
 
-
+# 以下内容在 nacos 配置中心进行了配置
+# dubbo
+dubbo:
+  application:
+    name: picker-user-service-provider
+    owner: xuliangliang
+  scan:
+    base-packages: com.grasswort.picker.user.service
+  protocol:
+    name: dubbo
+    port: 20880
+    serialization: kryo
+  registry:
+    address: nacos://nacos.grasswort.com:8848
+    check: false
+# 多数据源配置
+multidb:
+  defaultGroup: MASTER
+  wrappers:
+    - group: MASTER
+      weight: 1
+      dataSource:
+        url: jdbc:mysql://114.67.99.146:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+        username: xuliang
+        password: xol4l2y2xx
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        initialSize: 2
+        minIdle: 1
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: false
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,config
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+        useGlobalDataSourceStat: true
+    - group: SLAVE
+      weight: 1
+      dataSource:
+        url: jdbc:mysql://114.67.84.153:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
+        username: xuliang
+        password: xol4l2y2xx
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        initialSize: 2
+        minIdle: 1
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: false
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,config
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+        useGlobalDataSourceStat: true
+# kafka
 spring:
   data:
     elasticsearch:
@@ -23,83 +86,25 @@ spring:
       cluster-nodes: 114.67.105.79:9300,114.67.105.79:9301,114.67.105.79:9302
       repositories:
         enabled: true
-## 以下内容在 nacos 配置中心进行了配置
-## dubbo
-#dubbo:
-#  application:
-#    name: picker-user-service-provider
-#    owner: xuliangliang
-#  scan:
-#    base-packages: com.grasswort.picker.user.service
-#  protocol:
-#    name: dubbo
-#    port: 20880
-#    serialization: kryo
-#  registry:
-#    address: nacos://nacos.grasswort.com:8848
-#    check: false
-## 多数据源配置
-#multidb:
-#  defaultGroup: MASTER
-#  wrappers:
-#    - group: MASTER
-#      weight: 1
-#      dataSource:
-#        url: jdbc:mysql://114.67.99.146:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
-#        username: xuliang
-#        password: xol4l2y2xx
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        type: com.alibaba.druid.pool.DruidDataSource
-#        initialSize: 2
-#        minIdle: 1
-#        maxActive: 20
-#        maxWait: 60000
-#        timeBetweenEvictionRunsMillis: 300000
-#        validationQuery: SELECT 1 FROM DUAL
-#        testWhileIdle: true
-#        testOnBorrow: false
-#        testOnReturn: false
-#        poolPreparedStatements: false
-#        maxPoolPreparedStatementPerConnectionSize: 20
-#        filters: stat,config
-#        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-#        useGlobalDataSourceStat: true
-#    - group: SLAVE
-#      weight: 1
-#      dataSource:
-#        url: jdbc:mysql://114.67.84.153:3306/picker?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=UTC
-#        username: xuliang
-#        password: xol4l2y2xx
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        type: com.alibaba.druid.pool.DruidDataSource
-#        initialSize: 2
-#        minIdle: 1
-#        maxActive: 20
-#        maxWait: 60000
-#        timeBetweenEvictionRunsMillis: 300000
-#        validationQuery: SELECT 1 FROM DUAL
-#        testWhileIdle: true
-#        testOnBorrow: false
-#        testOnReturn: false
-#        poolPreparedStatements: false
-#        maxPoolPreparedStatementPerConnectionSize: 20
-#        filters: stat,config
-#        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-#        useGlobalDataSourceStat: true
-## kafka
-#spring:
-#  kafka:
-#    bootstrap-servers: 182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
-#    producer:
-#      acks: 1
-#  redisson:
-#    address: 114.67.105.79:7001,114.67.105.79:7002,114.67.84.153:7001,114.67.84.153:7002,114.67.104.148:7001,114.67.104.148:7002
-#    password: Xol4l2y2xx
-#    timeout: 3000
-#    database: 0
-#    pool:
-#      max-active: 20
-#      max-idle: 10
-#      max-wait: 3000
-#      min-idle: 4
+
+  kafka:
+    bootstrap-servers: 182.92.3.187:9092,182.92.160.62:9092,39.96.42.239:9092
+    producer:
+      acks: 1
+    consumer:
+      group-id: picker-user-consumer
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      max-poll-records: 100
+
+  redisson:
+    address: 114.67.105.79:7001,114.67.105.79:7002,114.67.84.153:7001,114.67.84.153:7002,114.67.104.148:7001,114.67.104.148:7002
+    password: xol4l2y2xx
+    timeout: 3000
+    database: 0
+    pool:
+      max-active: 20
+      max-idle: 10
+      max-wait: 3000
+      min-idle: 4
 
