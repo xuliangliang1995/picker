@@ -8,7 +8,9 @@ import com.grasswort.picker.commons.constants.cluster.ClusterLoadBalance;
 import com.grasswort.picker.email.model.Mail;
 import com.grasswort.picker.user.IUserActivateService;
 import com.grasswort.picker.user.config.kafka.TopicCaptcha;
+import com.grasswort.picker.user.config.kafka.TopicUserDocUpdate;
 import com.grasswort.picker.user.constants.DBGroup;
+import com.grasswort.picker.user.constants.KafkaTemplateConstant;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.entity.UserActivationCode;
@@ -24,6 +26,7 @@ import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -59,6 +62,8 @@ public class UserActivateServiceImpl implements IUserActivateService {
     @Autowired TopicCaptcha topicCaptcha;
 
     @Autowired ActivateMailGenerator activateMailGenerator;
+
+    @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> userDocKafkaTemplate;
     /**
      * 账号激活链接有效分钟数
      */
@@ -163,6 +168,8 @@ public class UserActivateServiceImpl implements IUserActivateService {
             DBLocalHolder.selectDBGroup(DBGroup.MASTER);
             this.executeActivate(activationCode);
         }
+
+        userDocKafkaTemplate.send(TopicUserDocUpdate.TOPIC, activationCode.getPkUserId());
         // 激活成功
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());

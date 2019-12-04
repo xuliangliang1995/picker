@@ -19,4 +19,7 @@ public interface BlogDao extends Mapper<Blog> {
 
     @Select("select count(*) from pk_blog where pk_user_id = #{pkUserId} and status = 0")
     Long getBlogCount(@Param("pkUserId") Long pkUserId);
+
+    @Select("select pk_user_id from pk_blog where id = #{blogId}")
+    Long getPkUserId(@Param("blogId") Long blogId);
 }

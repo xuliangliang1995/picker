@@ -23,6 +23,7 @@ import com.grasswort.picker.oss.dto.OssRefRequest;
 import com.grasswort.picker.oss.dto.OssRefResponse;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
+import com.grasswort.picker.user.IUserElasticDocUpdateService;
 import com.grasswort.picker.user.IUserSettingService;
 import com.grasswort.picker.user.dto.BlogPushSettingRequest;
 import com.grasswort.picker.user.dto.BlogPushSettingResponse;
@@ -69,6 +70,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
     @Autowired TopicUpdateBlogDoc topicUpdateBlogDoc;
 
     @Autowired @Qualifier(KafkaTemplateConstant.BLOG_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserElasticDocUpdateService iUserElasticDocUpdateService;
 
     @Reference(version = "1.0", timeout = 10000) IUserSettingService iUserSettingService;
 
@@ -155,8 +159,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
                             .build()
             );
         }
-        // 发布 博客更新消息
+        // 更新 es 存储
         kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
+        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
 
         createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -234,8 +239,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         // 存储标签
         processLabels(blog.getId(), labels);
 
-        // 发布 博客更新消息
+        // 更新 es 存储
         kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
+        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
 
         editBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -322,8 +328,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             blogMapper.updateByPrimaryKeySelective(blogSelective);
         }
 
-        // 发布 博客更新消息
+        // 更新 es 存储
         kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
+        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
 
         deleteBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());

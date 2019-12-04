@@ -5,9 +5,12 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.BlogLike;
 import com.grasswort.picker.blog.dao.persistence.BlogLikeMapper;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.user.IUserElasticDocUpdateService;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
@@ -25,6 +28,11 @@ import java.util.Date;
 public class BlogLikeServiceImpl implements IBlogLikeService {
 
     @Autowired BlogLikeMapper blogLikeMapper;
+
+    @Autowired BlogDao blogDao;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserElasticDocUpdateService iUserElasticDocUpdateService;
 
     /**
      * 点赞状态
@@ -88,6 +96,11 @@ public class BlogLikeServiceImpl implements IBlogLikeService {
             like.setGmtCreate(now);
             like.setGmtModified(now);
             blogLikeMapper.insert(like);
+
+            // 更新 es 存储
+            Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
+            iUserElasticDocUpdateService.updateElastic(pkUserId);
+            iUserElasticDocUpdateService.updateElastic(userId);
         }
 
         likeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -116,6 +129,10 @@ public class BlogLikeServiceImpl implements IBlogLikeService {
             BlogLike blogLike = blogLikeMapper.selectOneByExample(example);
             if (blogLike != null) {
                 blogLikeMapper.deleteByPrimaryKey(blogLike.getId());
+                // 更新 es 存储
+                Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
+                iUserElasticDocUpdateService.updateElastic(pkUserId);
+                iUserElasticDocUpdateService.updateElastic(userId);
             }
         }
 

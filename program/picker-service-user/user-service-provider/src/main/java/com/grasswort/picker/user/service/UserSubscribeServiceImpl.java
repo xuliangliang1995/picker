@@ -2,7 +2,9 @@ package com.grasswort.picker.user.service;
 
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserSubscribeService;
+import com.grasswort.picker.user.config.kafka.TopicUserDocUpdate;
 import com.grasswort.picker.user.constants.DBGroup;
+import com.grasswort.picker.user.constants.KafkaTemplateConstant;
 import com.grasswort.picker.user.constants.SubscribeBehaviorEnum;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.UserSubscribeAuthor;
@@ -12,6 +14,8 @@ import com.grasswort.picker.user.dao.persistence.UserSubscribeLogMapper;
 import com.grasswort.picker.user.dto.*;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
@@ -30,6 +34,9 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
     @Autowired UserSubscribeAuthorMapper userSubscribeAuthorMapper;
 
     @Autowired UserSubscribeLogMapper userSubscribeLogMapper;
+
+    @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
+
     /**
      * 关注作者
      *
@@ -67,6 +74,10 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             subscribeLog.setGmtModified(now);
             userSubscribeLogMapper.insertUseGeneratedKeys(subscribeLog);
         }
+
+        // 更新 elastic
+        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
+        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
 
         subscribeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         subscribeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -106,6 +117,10 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             userSubscribeLogMapper.insertUseGeneratedKeys(subscribeLog);
         }
 
+        // 更新 elastic
+        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
+        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
+
         unsubscribeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         unsubscribeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         return unsubscribeResponse;
@@ -125,11 +140,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         Long pkUserId = subscribeStatusRequest.getUserId();
         Long authorId = subscribeStatusRequest.getAuthorId();
 
-        Example example = new Example(UserSubscribeAuthor.class);
-        example.createCriteria().andEqualTo("pkUserId", pkUserId)
-                .andEqualTo("authorId", authorId);
-        UserSubscribeAuthor author = userSubscribeAuthorMapper.selectOneByExample(example);
-        subscribeStatusResponse.setSubscribe(author != null);
+        subscribeStatusResponse.setSubscribe(userSubscribeAuthorMapper.isSubscribe(pkUserId, authorId));
 
         subscribeStatusResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         subscribeStatusResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

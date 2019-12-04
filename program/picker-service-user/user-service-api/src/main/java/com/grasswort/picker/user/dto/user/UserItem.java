@@ -20,14 +20,16 @@ public class UserItem {
 
     private Byte sex;
 
-    private InteractionData interactionData;
+    private Boolean subscribe;
 
+    private InteractionData interactionData;
 
     public static final class Builder {
         private String userId;
         private String nickName;
         private String avatar;
         private Byte sex;
+        private Boolean subscribe;
         private InteractionData interactionData;
 
         private Builder() {
@@ -57,6 +59,11 @@ public class UserItem {
             return this;
         }
 
+        public Builder withSubscribe(Boolean subscribe) {
+            this.subscribe = subscribe;
+            return this;
+        }
+
         public Builder withInteractionData(InteractionData interactionData) {
             this.interactionData = interactionData;
             return this;
@@ -68,6 +75,7 @@ public class UserItem {
             userItem.setNickName(nickName);
             userItem.setAvatar(avatar);
             userItem.setSex(sex);
+            userItem.setSubscribe(subscribe);
             userItem.setInteractionData(interactionData);
             return userItem;
         }

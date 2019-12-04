@@ -5,9 +5,12 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.BlogFavorite;
 import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
+import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.user.IUserElasticDocUpdateService;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
@@ -26,6 +29,11 @@ import java.util.Optional;
 public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
 
     @Autowired BlogFavoriteMapper blogFavoriteMapper;
+
+    @Autowired BlogDao blogDao;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserElasticDocUpdateService iUserElasticDocUpdateService;
 
     /**
      * 博客收藏状态
@@ -78,13 +86,24 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
             return favoriteResponse;
         }
 
-        BlogFavorite favorite = new BlogFavorite();
-        favorite.setUserId(userId);
-        favorite.setBlogId(blogKey.getBlogId());
-        Date now = new Date(System.currentTimeMillis());
-        favorite.setGmtCreate(now);
-        favorite.setGmtModified(now);
-        blogFavoriteMapper.insert(favorite);
+        Example example = new Example(BlogFavorite.class);
+        example.createCriteria().andEqualTo("userId", userId)
+                .andEqualTo("blogId", blogKey.getBlogId());
+        boolean favoriteNotExists = blogFavoriteMapper.selectOneByExample(example) == null;
+        if (favoriteNotExists) {
+            BlogFavorite favorite = new BlogFavorite();
+            favorite.setUserId(userId);
+            favorite.setBlogId(blogKey.getBlogId());
+            Date now = new Date(System.currentTimeMillis());
+            favorite.setGmtCreate(now);
+            favorite.setGmtModified(now);
+            blogFavoriteMapper.insert(favorite);
+
+            // 更新 es 存储
+            Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
+            iUserElasticDocUpdateService.updateElastic(pkUserId);
+            iUserElasticDocUpdateService.updateElastic(userId);
+        }
 
         favoriteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         favoriteResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -118,6 +137,10 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
 
         if (favorite != null) {
             blogFavoriteMapper.deleteByPrimaryKey(favorite.getId());
+            // 更新 es 存储
+            Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
+            iUserElasticDocUpdateService.updateElastic(pkUserId);
+            iUserElasticDocUpdateService.updateElastic(userId);
         }
 
         favoriteCancelResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

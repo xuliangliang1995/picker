@@ -24,16 +24,18 @@ public class UserSearchRequest extends AbstractRequest {
     private Integer pageSize;
 
     private String keyword;
+
+    private Long pkUserId;
     @Override
     public void requestCheck() {
 
     }
 
-
     public static final class Builder {
         private Integer pageNo;
         private Integer pageSize;
         private String keyword;
+        private Long pkUserId;
 
         private Builder() {
         }
@@ -57,11 +59,17 @@ public class UserSearchRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withPkUserId(Long pkUserId) {
+            this.pkUserId = pkUserId;
+            return this;
+        }
+
         public UserSearchRequest build() {
             UserSearchRequest userSearchRequest = new UserSearchRequest();
             userSearchRequest.setPageNo(pageNo);
             userSearchRequest.setPageSize(pageSize);
             userSearchRequest.setKeyword(keyword);
+            userSearchRequest.setPkUserId(pkUserId);
             return userSearchRequest;
         }
     }

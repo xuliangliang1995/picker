@@ -16,7 +16,9 @@ import com.grasswort.picker.oss.dto.OssRefResponse;
 import com.grasswort.picker.oss.manager.aliyunoss.dto.OssRefDTO;
 import com.grasswort.picker.oss.manager.aliyunoss.util.OssUtils;
 import com.grasswort.picker.user.IUserBaseInfoService;
+import com.grasswort.picker.user.config.kafka.TopicUserDocUpdate;
 import com.grasswort.picker.user.constants.DBGroup;
+import com.grasswort.picker.user.constants.KafkaTemplateConstant;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.entity.Captcha;
 import com.grasswort.picker.user.dao.entity.User;
@@ -41,6 +43,8 @@ import org.apache.dubbo.config.annotation.Service;
 import org.joda.time.DateTime;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -80,6 +84,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
     @Autowired UserOssRefMapper userOssRefMapper;
 
     @Autowired CaptchaMapper captchaMapper;
+
+    @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
 
     @Reference(version = "1.0", timeout = 10000) IWxMpUserInfoService iWxMpUserInfoService;
 
@@ -155,6 +161,9 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         editResponse.setEmail(user.getEmail());
         editResponse.setAvatar(user.getAvatar());
         editResponse.setSignature(user.getSignature());
+
+        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, user.getId());
+
         editResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return editResponse;

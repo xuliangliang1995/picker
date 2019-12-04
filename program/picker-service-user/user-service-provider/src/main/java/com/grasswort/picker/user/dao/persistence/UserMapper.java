@@ -9,4 +9,5 @@ public interface UserMapper extends TkMapper<User> {
 
     @Select("select private_mp_qrcode from pk_user where id = #{userId}")
     String getPrivateMpQrcode(@Param("userId") Long userId);
+
 }
