@@ -62,6 +62,8 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
                 return super.preHandle(request, response, handler);
             }
         }
+
+        PickerInfoHolder.setPickerInfo(null);
         // 未通过身份校验、但是要求强制校验的、抛出异常
         if (tokenForceValid) {
             throw TokenVerifyFailException.getInstance();
