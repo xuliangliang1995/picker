@@ -173,7 +173,7 @@ public class BlogServiceImpl implements IBlogService {
         long matchedBlogCount = blogMapper.selectCountByExample(example);
         response.setTotal(matchedBlogCount);
         if (matchedBlogCount > 0) {
-            example.setOrderByClause("id desc");
+            example.setOrderByClause("gmt_modified desc");
 
             List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
             response.setBlogs(
