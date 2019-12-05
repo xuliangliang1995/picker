@@ -6,9 +6,9 @@ import com.grasswort.picker.blog.service.elastic.dto.SearchParams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,12 +60,9 @@ public class BlogSearchService {
         if (StringUtils.isNotBlank(keyword)) {
             boolQueryBuilder.must(
                     QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery("title", keyword).boost(3.0f))
-                            .should(QueryBuilders.prefixQuery("title", keyword).boost(2.0f))
-                            .should(QueryBuilders.matchQuery("labels", keyword).boost(2.0f))
-                            .should(QueryBuilders.prefixQuery("labels", keyword).boost(1.0f))
-                            .should(QueryBuilders.matchQuery("summary", keyword).boost(1.0f))
-                            .should(QueryBuilders.prefixQuery("summary", keyword).boost(1.0f))
+                            .should(QueryBuilders.fuzzyQuery("title", keyword))
+                            .should(QueryBuilders.fuzzyQuery("labels", keyword))
+                            .should(QueryBuilders.fuzzyQuery("summary", keyword))
             );
         }
 
@@ -76,7 +73,11 @@ public class BlogSearchService {
             boolFilterBuilder.filter(QueryBuilders.termQuery("authorId", authorId));
         }
 
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Sort sort = StringUtils.isNotBlank(keyword)
+                ? new Sort(Sort.Direction.DESC, "_score").and(new Sort(Sort.Direction.DESC, "gmtModified"))
+                : new Sort(Sort.Direction.DESC, "gmtModified");
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
         SearchQuery query = new NativeSearchQueryBuilder()
                 .withFilter(boolFilterBuilder)
