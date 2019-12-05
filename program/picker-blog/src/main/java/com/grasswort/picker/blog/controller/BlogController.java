@@ -88,13 +88,31 @@ public class BlogController {
                 .withPageNo(form.getPageNo())
                 .withPageSize(form.getPageSize())
                 .build();
-
         OwnBlogListResponse ownBlogListResponse = iBlogService.ownBlogList(ownBlogListRequest);
 
         return Optional.ofNullable(ownBlogListResponse)
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(ownBlogListResponse.getBlogs()).setTotal(ownBlogListResponse.getTotal())
                         : new ResponseUtil<>().setErrorMsg(ownBlogListResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation("回收站")
+    @GetMapping("/recycle/bin")
+    public ResponseData recycleBin(@Validated RecycleBinForm recycleBinForm, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+        RecyclableBlogRequest recyclableBlogRequest = RecyclableBlogRequest.Builder.aRecyclableBlogRequest()
+                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withPageNo(recycleBinForm.getPageNo())
+                .withPageSize(recycleBinForm.getPageSize())
+                .build();
+        RecyclableBlogResponse recyclableBlogResponse = iBlogService.recyclableBlogList(recyclableBlogRequest);
+
+        return Optional.ofNullable(recyclableBlogResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(recyclableBlogResponse.getBlogs()).setTotal(recyclableBlogResponse.getTotal())
+                        : new ResponseUtil<>().setErrorMsg(recyclableBlogResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

@@ -13,6 +13,7 @@ import com.grasswort.picker.blog.dao.persistence.*;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.blog.BlogItem;
+import com.grasswort.picker.blog.dto.blog.BlogItemRecycle;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithMarkdown;
 import com.grasswort.picker.blog.dto.blog.InteractionData;
 import com.grasswort.picker.blog.util.BlogHtml;
@@ -26,6 +27,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -132,6 +135,72 @@ public class BlogServiceImpl implements IBlogService {
                                 .withBrowse(blogBrowseMapper.getBrowseCount(blog.getId()))
                                 .build();
                         blogItem.setInteraction(interactionData);
+
+                        return blogItem;
+                    }).collect(Collectors.toList())
+            );
+        } else {
+            response.setBlogs(Collections.EMPTY_LIST);
+        }
+
+        response.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return response;
+    }
+
+    /**
+     * 可回收列表
+     *
+     * @param recyclableBlogRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public RecyclableBlogResponse recyclableBlogList(RecyclableBlogRequest recyclableBlogRequest) {
+        RecyclableBlogResponse response = new RecyclableBlogResponse();
+
+        Long userId = recyclableBlogRequest.getUserId();
+        Integer pageNo = recyclableBlogRequest.getPageNo();
+        Integer pageSize = recyclableBlogRequest.getPageSize();
+
+        RowBounds rowBounds = new RowBounds(pageSize * (pageNo - 1), pageSize);
+        Example example = new Example(Blog.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("pkUserId", userId);
+        criteria.andEqualTo("status", BlogStatusEnum.RECOVERABLE.status());
+        criteria.andGreaterThan("gmtModified", Instant.now().plus(-7, ChronoUnit.DAYS));
+
+        long matchedBlogCount = blogMapper.selectCountByExample(example);
+        response.setTotal(matchedBlogCount);
+        if (matchedBlogCount > 0) {
+            example.setOrderByClause("id desc");
+
+            List<Blog> blogs = blogMapper.selectByExampleAndRowBounds(example, rowBounds);
+            response.setBlogs(
+                    blogs.parallelStream().map(blog -> {
+                        // 分类
+                        String category = Optional.ofNullable(blog.getCategoryId())
+                                .map(cId -> {
+                                    if (cId > 0) {
+                                        return Optional.ofNullable(blogCategoryMapper.selectByPrimaryKey(cId))
+                                                .map(BlogCategory::getCategory)
+                                                .orElse(StringUtils.EMPTY);
+                                    }
+                                    return StringUtils.EMPTY;
+                                }).orElse(StringUtils.EMPTY);
+
+                        BlogItemRecycle blogItem =  BlogItemRecycle.Builder.aBlogItemRecycle()
+                                .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
+                                .withBlogId(BlogIdEncrypt.encrypt(blog.getId()))
+                                .withTitle(blog.getTitle())
+                                .withSummary(blog.getSummary())
+                                .withCoverImg(blog.getCoverImg())
+                                .withCategory(category)
+                                .withVersion(blog.getVersion())
+                                .withGmtCreate(blog.getGmtCreate())
+                                .withGmtModified(blog.getGmtModified())
+                                .withRecycleDeadline(new Date(blog.getGmtModified().toInstant().plus(7, ChronoUnit.DAYS).toEpochMilli()))
+                                .build();
 
                         return blogItem;
                     }).collect(Collectors.toList())

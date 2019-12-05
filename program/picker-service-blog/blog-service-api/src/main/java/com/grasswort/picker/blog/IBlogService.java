@@ -18,6 +18,13 @@ public interface IBlogService {
     OwnBlogListResponse ownBlogList(OwnBlogListRequest ownBlogListRequest);
 
     /**
+     * 可回收列表
+     * @param recyclableBlogRequest
+     * @return
+     */
+    RecyclableBlogResponse recyclableBlogList(RecyclableBlogRequest recyclableBlogRequest);
+
+    /**
      * 获取博客 markdown 内容
      * @param markdownRequest
      * @return

@@ -1,7 +1,6 @@
 package com.grasswort.picker.blog.dto.blog;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,72 +8,23 @@ import java.util.List;
 
 /**
  * @author xuliangliang
- * @Classname BlogItem
- * @Description 博客
- * @Date 2019/10/30 22:18
+ * @Classname BlogItemRecycle
+ * @Description 可回收博客（带回收截止时间）
+ * @Date 2019/12/5 14:11
  * @blame Java Team
  */
 @Data
-public class BlogItem {
+public class BlogItemRecycle extends BlogItem {
     /**
-     * 交互数据
-     */
-    private InteractionData interaction;
-    /**
-     * 作者ID
-     */
-    private String pickerId;
-    /**
-     * 博客 ID
-     */
-    private String blogId;
-    /**
-     * 标题
-     */
-    private String title;
-    /**
-     * 摘要
-     */
-    private String summary;
-    /**
-     * 封面配图
-     */
-    private String coverImg;
-    /**
-     * 分类 id
-     */
-    private Long categoryId;
-    /**
-     * 分类
-     */
-    private String category;
-    /**
-     * 标签
-     */
-    private List<String> labels;
-    /**
-     * 版本
-     */
-    private Integer version;
-    /**
-     * 推送触发状态（
-     * @see BlogCurveStatusEnum
-     */
-    private Integer triggerStatus;
-    /**
-     * 创建时间
+     * 回收 deadline
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    private Date gmtCreate;
-    /**
-     * 最后一次更新时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    private Date gmtModified;
+    private Date recycleDeadline;
 
 
     public static final class Builder {
         private InteractionData interaction;
+        private Date recycleDeadline;
         private String pickerId;
         private String blogId;
         private String title;
@@ -91,12 +41,17 @@ public class BlogItem {
         private Builder() {
         }
 
-        public static Builder aBlogItem() {
+        public static Builder aBlogItemRecycle() {
             return new Builder();
         }
 
         public Builder withInteraction(InteractionData interaction) {
             this.interaction = interaction;
+            return this;
+        }
+
+        public Builder withRecycleDeadline(Date recycleDeadline) {
+            this.recycleDeadline = recycleDeadline;
             return this;
         }
 
@@ -160,22 +115,23 @@ public class BlogItem {
             return this;
         }
 
-        public BlogItem build() {
-            BlogItem blogItem = new BlogItem();
-            blogItem.setInteraction(interaction);
-            blogItem.setPickerId(pickerId);
-            blogItem.setBlogId(blogId);
-            blogItem.setTitle(title);
-            blogItem.setSummary(summary);
-            blogItem.setCoverImg(coverImg);
-            blogItem.setCategoryId(categoryId);
-            blogItem.setCategory(category);
-            blogItem.setLabels(labels);
-            blogItem.setVersion(version);
-            blogItem.setTriggerStatus(triggerStatus);
-            blogItem.setGmtCreate(gmtCreate);
-            blogItem.setGmtModified(gmtModified);
-            return blogItem;
+        public BlogItemRecycle build() {
+            BlogItemRecycle blogItemRecycle = new BlogItemRecycle();
+            blogItemRecycle.setInteraction(interaction);
+            blogItemRecycle.setRecycleDeadline(recycleDeadline);
+            blogItemRecycle.setPickerId(pickerId);
+            blogItemRecycle.setBlogId(blogId);
+            blogItemRecycle.setTitle(title);
+            blogItemRecycle.setSummary(summary);
+            blogItemRecycle.setCoverImg(coverImg);
+            blogItemRecycle.setCategoryId(categoryId);
+            blogItemRecycle.setCategory(category);
+            blogItemRecycle.setLabels(labels);
+            blogItemRecycle.setVersion(version);
+            blogItemRecycle.setTriggerStatus(triggerStatus);
+            blogItemRecycle.setGmtCreate(gmtCreate);
+            blogItemRecycle.setGmtModified(gmtModified);
+            return blogItemRecycle;
         }
     }
 }
