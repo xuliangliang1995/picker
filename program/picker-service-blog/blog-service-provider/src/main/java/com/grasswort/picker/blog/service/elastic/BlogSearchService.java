@@ -60,9 +60,9 @@ public class BlogSearchService {
         if (StringUtils.isNotBlank(keyword)) {
             boolQueryBuilder.must(
                     QueryBuilders.boolQuery()
-                            .should(QueryBuilders.fuzzyQuery("title", keyword))
-                            .should(QueryBuilders.fuzzyQuery("labels", keyword))
-                            .should(QueryBuilders.fuzzyQuery("summary", keyword))
+                            .should(QueryBuilders.prefixQuery("title", keyword))
+                            .should(QueryBuilders.prefixQuery("labels", keyword))
+                            .should(QueryBuilders.prefixQuery("summary", keyword))
             );
         }
 
