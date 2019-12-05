@@ -8,6 +8,7 @@ import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.annotation.Anoymous;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
@@ -42,6 +43,7 @@ public class BlogPoolController {
 
         BlogPoolQueryRequest queryRequest = BlogPoolQueryRequest.Builder.aBlogPoolQueryRequest()
                 .withKeyword(form.getKeyword())
+                .withAuthorId(PickerIdEncrypt.decrypt(form.getAuthorId()))
                 .withPageNo(form.getPageNo())
                 .withPageSize(form.getPageSize())
                 .build();

@@ -10,6 +10,7 @@ import com.grasswort.picker.blog.dto.BlogPoolQueryResponse;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
 import com.grasswort.picker.blog.service.elastic.BlogSearchService;
+import com.grasswort.picker.blog.service.elastic.dto.SearchParams;
 import com.grasswort.picker.blog.service.hotword.SearchHotWordService;
 import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
@@ -64,8 +65,10 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
 
         // 统计搜索热词
         searchHotWordService.staticsSearchHotWord(keyword);
+
         // 根据关键词搜索
-        Page<BlogDoc> blogDocs = blogSearchService.search(keyword, pageNo, pageSize);
+        SearchParams searchParams = SearchParams.builder().keyword(keyword).build();
+        Page<BlogDoc> blogDocs = blogSearchService.search(searchParams, pageNo, pageSize);
         response.setBlogs(
                 blogDocs.getContent().stream()
                         .map(doc -> blogDocConverter.blogDoc2BlogItemWithAuthor(doc))

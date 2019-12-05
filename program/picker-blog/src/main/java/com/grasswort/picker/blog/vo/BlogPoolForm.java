@@ -17,6 +17,8 @@ import javax.validation.constraints.NotNull;
 public class BlogPoolForm {
 
     private String keyword;
+
+    private String authorId;
     @NotNull
     @Min(1)
     private Integer pageNo;

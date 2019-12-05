@@ -2,9 +2,11 @@ package com.grasswort.picker.blog.service.elastic;
 
 import com.grasswort.picker.blog.constant.BlogStatusEnum;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
+import com.grasswort.picker.blog.service.elastic.dto.SearchParams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.data.domain.Page;
@@ -44,21 +46,17 @@ public class BlogSearchService {
 
     private final static HighlightBuilder HIGH_LIGHT_BUILDER = new HighlightBuilder().preTags("<strong style='color:red'>").postTags("</strong>");
 
-
-    /*@PostConstruct
-    public void test() {
-        blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
-    }*/
-
     /**
      *
-     * @param keyword
+     * @param searchParams
      * @param pageNo
      * @param pageSize
      * @return
      */
-    public Page<BlogDoc> search(String keyword, int pageNo, int pageSize) {
+    public Page<BlogDoc> search(SearchParams searchParams, int pageNo, int pageSize) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+        String keyword = searchParams.getKeyword();
         if (StringUtils.isNotBlank(keyword)) {
             boolQueryBuilder.must(
                     QueryBuilders.boolQuery()
@@ -70,11 +68,18 @@ public class BlogSearchService {
                             .should(QueryBuilders.prefixQuery("summary", keyword).boost(1.0f))
             );
         }
-        // Sort sort = new Sort(Sort.Direction.DESC, "");
+
+        Long authorId = searchParams.getAuthorId();
+        BoolQueryBuilder boolFilterBuilder = QueryBuilders.boolQuery();
+        boolFilterBuilder.filter(QueryBuilders.termQuery("status", BlogStatusEnum.NORMAL.status()));
+        if (authorId != null && authorId > 0L) {
+            boolFilterBuilder.filter(QueryBuilders.termQuery("authorId", authorId));
+        }
+
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         SearchQuery query = new NativeSearchQueryBuilder()
-                .withFilter(QueryBuilders.termQuery("status", BlogStatusEnum.NORMAL.status()))
+                .withFilter(boolFilterBuilder)
                 .withQuery(boolQueryBuilder)
                 .withPageable(pageable)
                 .withHighlightBuilder(HIGH_LIGHT_BUILDER)

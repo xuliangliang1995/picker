@@ -19,6 +19,9 @@ public class BlogPoolQueryRequest extends AbstractRequest {
 
     private String keyword;
 
+    @Min(1)
+    private Long authorId;
+
     @NotNull
     @Min(1)
     private Integer pageNo;
@@ -35,6 +38,7 @@ public class BlogPoolQueryRequest extends AbstractRequest {
 
     public static final class Builder {
         private String keyword;
+        private Long authorId;
         private Integer pageNo;
         private Integer pageSize;
 
@@ -47,6 +51,11 @@ public class BlogPoolQueryRequest extends AbstractRequest {
 
         public Builder withKeyword(String keyword) {
             this.keyword = keyword;
+            return this;
+        }
+
+        public Builder withAuthorId(Long authorId) {
+            this.authorId = authorId;
             return this;
         }
 
@@ -63,6 +72,7 @@ public class BlogPoolQueryRequest extends AbstractRequest {
         public BlogPoolQueryRequest build() {
             BlogPoolQueryRequest blogPoolQueryRequest = new BlogPoolQueryRequest();
             blogPoolQueryRequest.setKeyword(keyword);
+            blogPoolQueryRequest.setAuthorId(authorId);
             blogPoolQueryRequest.setPageNo(pageNo);
             blogPoolQueryRequest.setPageSize(pageSize);
             return blogPoolQueryRequest;

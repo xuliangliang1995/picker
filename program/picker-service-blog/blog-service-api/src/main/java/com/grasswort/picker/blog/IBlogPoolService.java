@@ -17,4 +17,6 @@ public interface IBlogPoolService {
      * @return
      */
     BlogPoolQueryResponse blogPool(BlogPoolQueryRequest queryRequest);
+
+
 }

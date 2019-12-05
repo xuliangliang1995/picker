@@ -62,7 +62,7 @@ public class BlogDoc {
     /**
      * 作者 id
      */
-    @Field(type = FieldType.Long, index = false)
+    @Field(type = FieldType.Long)
     private Long authorId;
 
     /**
