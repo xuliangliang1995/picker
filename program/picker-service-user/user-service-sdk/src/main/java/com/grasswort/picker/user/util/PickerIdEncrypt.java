@@ -38,9 +38,10 @@ public class PickerIdEncrypt {
     public static Long decrypt(String cipherText) {
         if (StringUtils.isNotBlank(cipherText)) {
             cipherText = cipherText.toUpperCase();
+            String blogKey = CIPHER.decrypt(cipherText, KEY);
+            return Long.valueOf(blogKey);
         }
-        String blogKey = CIPHER.decrypt(cipherText, KEY);
-        return Long.valueOf(blogKey);
+        return null;
     }
 
 
