@@ -199,7 +199,9 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         FollowerResponse followerResponse = new FollowerResponse();
         Integer pageNo = followerRequest.getPageNo();
         Integer pageSize = followerRequest.getPageSize();
-        Long authorId = followerRequest.getUserId();
+        Long userId = followerRequest.getUserId();
+        Long authorId = followerRequest.getAuthorId();
+
         RList<Long> followers = redissonClient.getList(String.format(FOLLOWERS_KEY_TEMPLATE, authorId));
         if (! followers.isExists()) {
             followers.addAll(userSubscribeAuthorMapper.followerIdList(authorId));
@@ -209,7 +211,11 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         List<UserItem> subFollowers = followers.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
             Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
             if (userDoc.isPresent()) {
-                return userDocConverter.userDoc2Item(userDoc.get());
+                UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
+                if (userId != null && userId > 0L) {
+                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, authorId));
+                }
+                return userItem;
             } else {
                 // can't reach here
                 log.error("未从 ES 中查询到作者信息：{}", followerId);
@@ -237,7 +243,9 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         FollowingResponse followingResponse = new FollowingResponse();
         Integer pageNo = followingRequest.getPageNo();
         Integer pageSize = followingRequest.getPageSize();
-        Long authorId = followingRequest.getUserId();
+        Long userId = followingRequest.getUserId();
+        Long authorId = followingRequest.getAuthorId();
+
         RList<Long> authors = redissonClient.getList(String.format(FOLLOWING_KEY_TEMPLATE, authorId));
         if (! authors.isExists()) {
             authors.addAll(userSubscribeAuthorMapper.followingIdList(authorId));
@@ -247,7 +255,11 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         List<UserItem> subFollowingAuthors = authors.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
             Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
             if (userDoc.isPresent()) {
-                return userDocConverter.userDoc2Item(userDoc.get());
+                UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
+                if (userId != null && userId > 0L) {
+                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, authorId));
+                }
+                return userItem;
             } else {
                 // can't reach here
                 log.error("未从 ES 中查询到作者信息：{}", followerId);

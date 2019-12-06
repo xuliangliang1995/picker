@@ -8,6 +8,8 @@ import com.grasswort.picker.user.*;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.model.PickerInfo;
+import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import com.grasswort.picker.user.vo.LoginForm;
 import com.grasswort.picker.user.vo.PageForm;
@@ -117,13 +119,15 @@ public class UserController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
+    @Anoymous(resolve = true)
     @ApiOperation(value = "关注列表")
     @GetMapping("/{pickerID}/following")
     public ResponseData followingList(@Validated PageForm pageForm, BindingResult bindingResult, @PathVariable("pickerID")String pickerID) {
         ValidatorTool.check(bindingResult);
 
         FollowingRequest followingRequest = FollowingRequest.Builder.aFollowingRequest()
-                .withUserId(PickerIdEncrypt.decrypt(pickerID))
+                .withUserId(Optional.ofNullable(PickerInfoHolder.getPickerInfo()).map(PickerInfo::getId).orElse(null))
+                .withAuthorId(PickerIdEncrypt.decrypt(pickerID))
                 .withPageNo(pageForm.getPageNo())
                 .withPageSize(pageForm.getPageSize())
                 .build();
@@ -137,13 +141,15 @@ public class UserController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
+    @Anoymous(resolve = true)
     @ApiOperation(value = "粉丝列表")
     @GetMapping("/{pickerID}/follower")
     public ResponseData followersList(@Validated PageForm pageForm, BindingResult bindingResult, @PathVariable("pickerID")String pickerID) {
         ValidatorTool.check(bindingResult);
 
         FollowerRequest followerRequest = FollowerRequest.Builder.aFollowerRequest()
-                .withUserId(PickerIdEncrypt.decrypt(pickerID))
+                .withUserId(Optional.ofNullable(PickerInfoHolder.getPickerInfo()).map(PickerInfo::getId).orElse(null))
+                .withAuthorId(PickerIdEncrypt.decrypt(pickerID))
                 .withPageNo(pageForm.getPageNo())
                 .withPageSize(pageForm.getPageSize())
                 .build();

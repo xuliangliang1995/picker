@@ -17,8 +17,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class FollowingRequest extends AbstractRequest {
     @Min(1)
-    @NotNull
     private Long userId;
+    @Min(1)
+    @NotNull
+    private Long authorId;
     @Min(1)
     @NotNull
     private Integer pageNo;
@@ -33,6 +35,7 @@ public class FollowingRequest extends AbstractRequest {
 
     public static final class Builder {
         private Long userId;
+        private Long authorId;
         private Integer pageNo;
         private Integer pageSize;
 
@@ -45,6 +48,11 @@ public class FollowingRequest extends AbstractRequest {
 
         public Builder withUserId(Long userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder withAuthorId(Long authorId) {
+            this.authorId = authorId;
             return this;
         }
 
@@ -61,6 +69,7 @@ public class FollowingRequest extends AbstractRequest {
         public FollowingRequest build() {
             FollowingRequest followingRequest = new FollowingRequest();
             followingRequest.setUserId(userId);
+            followingRequest.setAuthorId(authorId);
             followingRequest.setPageNo(pageNo);
             followingRequest.setPageSize(pageSize);
             return followingRequest;
