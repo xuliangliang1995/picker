@@ -208,7 +208,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         }
 
         long total = followers.size();
-        List<UserItem> subFollowers = followers.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
+        List<UserItem> subFollowers = followers.subList(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
             Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
             if (userDoc.isPresent()) {
                 UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
@@ -252,7 +252,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         }
 
         long total = authors.size();
-        List<UserItem> subFollowingAuthors = authors.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
+        List<UserItem> subFollowingAuthors = authors.subList(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
             Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
             if (userDoc.isPresent()) {
                 UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
