@@ -213,6 +213,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             } else {
                 // can't reach here
                 log.error("未从 ES 中查询到作者信息：{}", followerId);
+                followers.deleteAsync();
                 return null;
             }
         }).collect(Collectors.toList());
@@ -250,6 +251,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             } else {
                 // can't reach here
                 log.error("未从 ES 中查询到作者信息：{}", followerId);
+                authors.deleteAsync();
                 return null;
             }
         }).collect(Collectors.toList());
