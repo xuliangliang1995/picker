@@ -16,6 +16,7 @@ import com.grasswort.picker.user.dto.user.UserItem;
 import com.grasswort.picker.user.elastic.entity.UserDoc;
 import com.grasswort.picker.user.elastic.repository.UserDocRepository;
 import com.grasswort.picker.user.service.elastic.UserDocConverter;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.redisson.api.RList;
@@ -213,7 +214,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             if (userDoc.isPresent()) {
                 UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
                 if (userId != null && userId > 0L) {
-                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, authorId));
+                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, PickerIdEncrypt.decrypt(userItem.getUserId())));
                 }
                 return userItem;
             } else {
@@ -257,7 +258,7 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             if (userDoc.isPresent()) {
                 UserItem userItem = userDocConverter.userDoc2Item(userDoc.get());
                 if (userId != null && userId > 0L) {
-                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, authorId));
+                    userItem.setSubscribe(userSubscribeAuthorMapper.isSubscribe(userId, PickerIdEncrypt.decrypt(userItem.getUserId())));
                 }
                 return userItem;
             } else {
