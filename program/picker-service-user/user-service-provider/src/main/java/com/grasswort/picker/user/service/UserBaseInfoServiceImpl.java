@@ -2,6 +2,9 @@ package com.grasswort.picker.user.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.grasswort.picker.blog.IUserInteractionDataService;
+import com.grasswort.picker.blog.dto.UserInteractionDataRequest;
+import com.grasswort.picker.blog.dto.UserInteractionDataResponse;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.config.DBLocalHolder;
 import com.grasswort.picker.commons.constants.TOrF;
@@ -26,8 +29,10 @@ import com.grasswort.picker.user.dao.entity.UserOssRef;
 import com.grasswort.picker.user.dao.persistence.CaptchaMapper;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dao.persistence.UserOssRefMapper;
+import com.grasswort.picker.user.dao.persistence.UserSubscribeAuthorMapper;
 import com.grasswort.picker.user.dao.persistence.ext.UserDao;
 import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.dto.user.InteractionData;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.service.token.UserTokenGenerator;
 import com.grasswort.picker.wechat.ITemplateMsgService;
@@ -85,6 +90,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
 
     @Autowired CaptchaMapper captchaMapper;
 
+    @Autowired UserSubscribeAuthorMapper userSubscribeAuthorMapper;
+
     @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
 
     @Reference(version = "1.0", timeout = 10000) IWxMpUserInfoService iWxMpUserInfoService;
@@ -92,6 +99,8 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
     @Reference(version = "1.0", timeout = 10000) IOssRefService iOssRefService;
 
     @Reference(version = "1.0", timeout = 10000) ITemplateMsgService iTemplateMsgService;
+
+    @Reference(version = "1.0", timeout = 10000) IUserInteractionDataService iUserInteractionDataService;
 
     /**
      * 获取用户基本信息
@@ -111,6 +120,20 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
             return baseInfoResponse;
         }
 
+        InteractionData interactionData = new InteractionData();
+
+        UserInteractionDataResponse interactionDataResponse = iUserInteractionDataService.userInteractionData(new UserInteractionDataRequest(user.getId()));
+        if (interactionDataResponse != null && interactionDataResponse.isSuccess()) {
+            interactionData.setBlogCount(interactionDataResponse.getBlogCount());
+            interactionData.setLikedCount(interactionDataResponse.getLikedCount());
+        } else {
+            interactionData.setBlogCount(0L);
+            interactionData.setLikedCount(0L);
+        }
+
+        interactionData.setSubscribeCount(userSubscribeAuthorMapper.subscribeCount(user.getId()));
+        interactionData.setFansCount(userSubscribeAuthorMapper.fansCount(user.getId()));
+
         baseInfoResponse.setName(user.getName());
         baseInfoResponse.setSex(user.getSex());
         baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
@@ -120,6 +143,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         baseInfoResponse.setMpNickName(user.getMpNickName());
         baseInfoResponse.setMpHeadImgUrl(user.getMpHeadImgUrl());
         baseInfoResponse.setBindWechat(StringUtils.isNotBlank(user.getMpOpenId()));
+        baseInfoResponse.setInteractionData(interactionData);
         baseInfoResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         baseInfoResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return baseInfoResponse;

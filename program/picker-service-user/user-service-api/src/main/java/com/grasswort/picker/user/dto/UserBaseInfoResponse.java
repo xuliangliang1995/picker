@@ -2,6 +2,7 @@ package com.grasswort.picker.user.dto;
 
 import com.grasswort.picker.commons.result.AbstractResponse;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
+import com.grasswort.picker.user.dto.user.InteractionData;
 import lombok.Data;
 
 /**
@@ -31,6 +32,8 @@ public class UserBaseInfoResponse extends AbstractResponse {
     private String mpNickName;
 
     private String mpHeadImgUrl;
+
+    private InteractionData interactionData;
 
     @Override
     public boolean isSuccess() {
