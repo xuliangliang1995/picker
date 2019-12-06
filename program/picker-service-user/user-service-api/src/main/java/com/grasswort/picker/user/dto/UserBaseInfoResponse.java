@@ -15,6 +15,8 @@ import lombok.Data;
 @Data
 public class UserBaseInfoResponse extends AbstractResponse {
 
+    private String authorId;
+
     private String name;
 
     private String phone;

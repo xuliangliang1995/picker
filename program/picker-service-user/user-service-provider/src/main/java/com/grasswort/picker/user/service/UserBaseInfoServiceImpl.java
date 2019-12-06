@@ -35,6 +35,7 @@ import com.grasswort.picker.user.dto.*;
 import com.grasswort.picker.user.dto.user.InteractionData;
 import com.grasswort.picker.user.service.redissonkey.PkUserVersionCacheable;
 import com.grasswort.picker.user.service.token.UserTokenGenerator;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import com.grasswort.picker.wechat.ITemplateMsgService;
 import com.grasswort.picker.wechat.IWxMpUserInfoService;
 import com.grasswort.picker.wechat.dto.WxMpTemplateMsgRequest;
@@ -134,6 +135,7 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         interactionData.setSubscribeCount(userSubscribeAuthorMapper.subscribeCount(user.getId()));
         interactionData.setFansCount(userSubscribeAuthorMapper.fansCount(user.getId()));
 
+        baseInfoResponse.setAuthorId(PickerIdEncrypt.encrypt(baseInfoRequest.getUserId()));
         baseInfoResponse.setName(user.getName());
         baseInfoResponse.setSex(user.getSex());
         baseInfoResponse.setEmail(MaskUtil.maskEmail(user.getEmail()));
