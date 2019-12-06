@@ -16,6 +16,8 @@ public class UserItem {
 
     private String nickName;
 
+    private String signature;
+
     private String avatar;
 
     private Byte sex;
@@ -24,9 +26,11 @@ public class UserItem {
 
     private InteractionData interactionData;
 
+
     public static final class Builder {
         private String userId;
         private String nickName;
+        private String signature;
         private String avatar;
         private Byte sex;
         private Boolean subscribe;
@@ -46,6 +50,11 @@ public class UserItem {
 
         public Builder withNickName(String nickName) {
             this.nickName = nickName;
+            return this;
+        }
+
+        public Builder withSignature(String signature) {
+            this.signature = signature;
             return this;
         }
 
@@ -73,6 +82,7 @@ public class UserItem {
             UserItem userItem = new UserItem();
             userItem.setUserId(userId);
             userItem.setNickName(nickName);
+            userItem.setSignature(signature);
             userItem.setAvatar(avatar);
             userItem.setSex(sex);
             userItem.setSubscribe(subscribe);

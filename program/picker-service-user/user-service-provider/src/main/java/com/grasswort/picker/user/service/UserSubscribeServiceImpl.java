@@ -12,7 +12,14 @@ import com.grasswort.picker.user.dao.entity.UserSubscribeLog;
 import com.grasswort.picker.user.dao.persistence.UserSubscribeAuthorMapper;
 import com.grasswort.picker.user.dao.persistence.UserSubscribeLogMapper;
 import com.grasswort.picker.user.dto.*;
+import com.grasswort.picker.user.dto.user.UserItem;
+import com.grasswort.picker.user.elastic.entity.UserDoc;
+import com.grasswort.picker.user.elastic.repository.UserDocRepository;
+import com.grasswort.picker.user.service.elastic.UserDocConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author xuliangliang
@@ -28,6 +38,7 @@ import java.util.Date;
  * @Date 2019/11/21 14:52
  * @blame Java Team
  */
+@Slf4j
 @Service(version = "1.0", timeout = 10000)
 public class UserSubscribeServiceImpl implements IUserSubscribeService {
 
@@ -35,7 +46,18 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
 
     @Autowired UserSubscribeLogMapper userSubscribeLogMapper;
 
+    @Autowired RedissonClient redissonClient;
+
+    @Autowired UserDocRepository userDocRepository;
+
+    @Autowired UserDocConverter userDocConverter;
+
     @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
+
+    // 粉丝列表
+    private final String FOLLOWERS_KEY_TEMPLATE = "pk_user:%s:follower";
+    // 关注列表
+    private final String FOLLOWING_KEY_TEMPLATE = "pk_user:%s:following";
 
     /**
      * 关注作者
@@ -73,11 +95,19 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             subscribeLog.setGmtCreate(now);
             subscribeLog.setGmtModified(now);
             userSubscribeLogMapper.insertUseGeneratedKeys(subscribeLog);
+            // 更新 redis 缓存
+            RList<Long> followingList = redissonClient.getList(String.format(FOLLOWING_KEY_TEMPLATE, pkUserId));
+            if (followingList.isExists()) {
+                followingList.addAsync(authorId);
+            }
+            RList<Long> followersList = redissonClient.getList(String.format(FOLLOWERS_KEY_TEMPLATE, authorId));
+            if (followersList.isExists()) {
+                followersList.addAsync(pkUserId);
+            }
+            // 更新 elastic
+            kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
+            kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
         }
-
-        // 更新 elastic
-        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
-        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
 
         subscribeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         subscribeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -115,11 +145,21 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
             subscribeLog.setGmtCreate(now);
             subscribeLog.setGmtModified(now);
             userSubscribeLogMapper.insertUseGeneratedKeys(subscribeLog);
-        }
 
-        // 更新 elastic
-        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
-        kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
+            // 更新 redis 缓存
+            RList<Long> followingList = redissonClient.getList(String.format(FOLLOWING_KEY_TEMPLATE, pkUserId));
+            if (followingList.isExists()) {
+                followingList.removeAsync(authorId);
+            }
+            RList<Long> followersList = redissonClient.getList(String.format(FOLLOWERS_KEY_TEMPLATE, authorId));
+            if (followersList.isExists()) {
+                followersList.removeAsync(pkUserId);
+            }
+
+            // 更新 elastic
+            kafkaTemplate.send(TopicUserDocUpdate.TOPIC, pkUserId);
+            kafkaTemplate.send(TopicUserDocUpdate.TOPIC, authorId);
+        }
 
         unsubscribeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         unsubscribeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -145,5 +185,79 @@ public class UserSubscribeServiceImpl implements IUserSubscribeService {
         subscribeStatusResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         subscribeStatusResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         return subscribeStatusResponse;
+    }
+
+    /**
+     * 粉丝列表
+     *
+     * @param followerRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public FollowerResponse followers(FollowerRequest followerRequest) {
+        FollowerResponse followerResponse = new FollowerResponse();
+        Integer pageNo = followerRequest.getPageNo();
+        Integer pageSize = followerRequest.getPageSize();
+        Long authorId = followerRequest.getUserId();
+        RList<Long> followers = redissonClient.getList(String.format(FOLLOWERS_KEY_TEMPLATE, authorId));
+        if (! followers.isExists()) {
+            followers.addAll(userSubscribeAuthorMapper.followerIdList(authorId));
+        }
+
+        long total = followers.size();
+        List<UserItem> subFollowers = followers.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
+            Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
+            if (userDoc.isPresent()) {
+                return userDocConverter.userDoc2Item(userDoc.get());
+            } else {
+                // can't reach here
+                log.error("未从 ES 中查询到作者信息：{}", followerId);
+                return null;
+            }
+        }).collect(Collectors.toList());
+
+        followerResponse.setFollowers(subFollowers);
+        followerResponse.setTotal(total);
+        followerResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        followerResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        return followerResponse;
+    }
+
+    /**
+     * 关注列表
+     *
+     * @param followingRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public FollowingResponse following(FollowingRequest followingRequest) {
+        FollowingResponse followingResponse = new FollowingResponse();
+        Integer pageNo = followingRequest.getPageNo();
+        Integer pageSize = followingRequest.getPageSize();
+        Long authorId = followingRequest.getUserId();
+        RList<Long> authors = redissonClient.getList(String.format(FOLLOWING_KEY_TEMPLATE, authorId));
+        if (! authors.isExists()) {
+            authors.addAll(userSubscribeAuthorMapper.followingIdList(authorId));
+        }
+
+        long total = authors.size();
+        List<UserItem> subFollowingAuthors = authors.range(pageSize * (pageNo - 1), pageSize).stream().map(followerId -> {
+            Optional<UserDoc> userDoc = userDocRepository.findById(followerId);
+            if (userDoc.isPresent()) {
+                return userDocConverter.userDoc2Item(userDoc.get());
+            } else {
+                // can't reach here
+                log.error("未从 ES 中查询到作者信息：{}", followerId);
+                return null;
+            }
+        }).collect(Collectors.toList());
+
+        followingResponse.setUsers(subFollowingAuthors);
+        followingResponse.setTotal(total);
+        followingResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        followingResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        return followingResponse;
     }
 }

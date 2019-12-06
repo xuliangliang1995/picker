@@ -4,16 +4,13 @@ import com.grasswort.picker.commons.constants.TOrF;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
-import com.grasswort.picker.user.IUserBaseInfoService;
-import com.grasswort.picker.user.IUserLoginService;
-import com.grasswort.picker.user.IUserPrivateMpQrcodeService;
-import com.grasswort.picker.user.IUserRegisterService;
+import com.grasswort.picker.user.*;
 import com.grasswort.picker.user.annotation.Anoymous;
 import com.grasswort.picker.user.constants.JwtTokenConstants;
 import com.grasswort.picker.user.dto.*;
-import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import com.grasswort.picker.user.vo.LoginForm;
+import com.grasswort.picker.user.vo.PageForm;
 import com.grasswort.picker.user.vo.SignUpForm;
 import com.grasswort.picker.user.vo.SignUpVO;
 import io.swagger.annotations.Api;
@@ -50,6 +47,9 @@ public class UserController {
 
     @Reference(version = "1.0", timeout = 10000)
     IUserPrivateMpQrcodeService iUserPrivateMpQrcodeService;
+
+    @Reference(version = "1.0", timeout = 10000)
+    IUserSubscribeService iUserSubscribeService;
 
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
@@ -113,6 +113,45 @@ public class UserController {
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(baseInfoResponse)
                         : new ResponseUtil<>().setErrorMsg(baseInfoResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "关注列表")
+    @GetMapping("/{pickerID}/following")
+    public ResponseData followingList(@Validated PageForm pageForm, BindingResult bindingResult, @PathVariable("pickerID")String pickerID) {
+        ValidatorTool.check(bindingResult);
+
+        FollowingRequest followingRequest = FollowingRequest.Builder.aFollowingRequest()
+                .withUserId(PickerIdEncrypt.decrypt(pickerID))
+                .withPageNo(pageForm.getPageNo())
+                .withPageSize(pageForm.getPageSize())
+                .build();
+
+        FollowingResponse followingResponse = iUserSubscribeService.following(followingRequest);
+        return Optional.ofNullable(followingResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(followingResponse.getUsers()).setTotal(followingResponse.getTotal())
+                        : new ResponseUtil<>().setErrorMsg(followingResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "粉丝列表")
+    @GetMapping("/{pickerID}/follower")
+    public ResponseData followersList(@Validated PageForm pageForm, BindingResult bindingResult, @PathVariable("pickerID")String pickerID) {
+        ValidatorTool.check(bindingResult);
+
+        FollowerRequest followerRequest = FollowerRequest.Builder.aFollowerRequest()
+                .withUserId(PickerIdEncrypt.decrypt(pickerID))
+                .withPageNo(pageForm.getPageNo())
+                .withPageSize(pageForm.getPageSize())
+                .build();
+        FollowerResponse followerResponse = iUserSubscribeService.followers(followerRequest);
+        return Optional.ofNullable(followerResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(followerResponse.getFollowers()).setTotal(followerResponse.getTotal())
+                        : new ResponseUtil<>().setErrorMsg(followerResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

@@ -30,4 +30,18 @@ public interface IUserSubscribeService {
      * @return
      */
     SubscribeStatusResponse subscribeStatus(SubscribeStatusRequest subscribeStatusRequest);
+
+    /**
+     * 粉丝列表
+     * @param followerRequest
+     * @return
+     */
+    FollowerResponse followers(FollowerRequest followerRequest);
+
+    /**
+     * 关注列表
+     * @param followingRequest
+     * @return
+     */
+    FollowingResponse following(FollowingRequest followingRequest);
 }

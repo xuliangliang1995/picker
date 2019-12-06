@@ -81,6 +81,7 @@ public class UserDocConverter {
                 .withNickName(userDoc.getNickName())
                 .withAvatar(userDoc.getAvatar())
                 .withSex(Byte.valueOf(String.valueOf(userDoc.getSex())))
+                .withSignature(userDoc.getSignature())
                 .withInteractionData(interactionData)
                 .build();
 
