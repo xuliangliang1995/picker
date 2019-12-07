@@ -63,6 +63,7 @@ public class BlogSearchService {
                             .should(QueryBuilders.prefixQuery("title", keyword))
                             .should(QueryBuilders.prefixQuery("labels", keyword))
                             .should(QueryBuilders.prefixQuery("summary", keyword))
+                            .should(QueryBuilders.matchQuery("markdown", keyword))
             );
         }
 
