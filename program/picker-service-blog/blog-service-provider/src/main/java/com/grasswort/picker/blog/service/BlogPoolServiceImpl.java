@@ -60,6 +60,7 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
         BlogPoolQueryResponse response = new BlogPoolQueryResponse();
 
         String keyword = queryRequest.getKeyword();
+        Long authorId = queryRequest.getAuthorId();
         Integer pageNo = queryRequest.getPageNo();
         Integer pageSize = queryRequest.getPageSize();
 
@@ -67,7 +68,10 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
         searchHotWordService.staticsSearchHotWord(keyword);
 
         // 根据关键词搜索
-        SearchParams searchParams = SearchParams.builder().keyword(keyword).build();
+        SearchParams searchParams = SearchParams.builder()
+                .keyword(keyword)
+                .authorId(authorId)
+                .build();
         Page<BlogDoc> blogDocs = blogSearchService.search(searchParams, pageNo, pageSize);
         response.setBlogs(
                 blogDocs.getContent().stream()
