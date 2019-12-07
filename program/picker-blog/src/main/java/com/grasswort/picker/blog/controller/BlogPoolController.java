@@ -51,7 +51,7 @@ public class BlogPoolController {
 
         return Optional.ofNullable(queryResponse)
                 .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(queryResponse.getBlogs())
+                        ? new ResponseUtil<>().setData(queryResponse.getBlogs()).setTotal(queryResponse.getTotal())
                         : new ResponseUtil<>().setErrorMsg(queryResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
