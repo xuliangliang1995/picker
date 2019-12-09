@@ -3,11 +3,12 @@ package com.grasswort.picker.blog.service.elastic.converter;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
-import com.grasswort.picker.blog.dao.persistence.*;
+import com.grasswort.picker.blog.dao.persistence.BlogBrowseMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogContentMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
+import com.grasswort.picker.blog.dao.persistence.BlogLikeMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
-import com.grasswort.picker.blog.elastic.repository.BlogDocRepository;
-import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
 import com.grasswort.picker.blog.service.heat.HackerNewsHeat;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
@@ -18,7 +19,6 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.Instant;
@@ -48,20 +48,6 @@ public class Blog2DocConverter {
 
     @Reference(version = "1.0", timeout = 10000)
     IUserBaseInfoService iUserBaseInfoService;
-
-    @Resource
-    BlogMapper blogMapper;
-
-    @Resource
-    BlogDocRepository blogDocRepository;
-
-    @Resource
-    BlogDocConverter blogDocConverter;
-
-    @PostConstruct
-    public void init() {
-        blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
-    }
 
     /**
      * blog2BlogDoc

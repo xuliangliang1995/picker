@@ -1,8 +1,6 @@
 package com.grasswort.picker.blog.service.task;
 
-import com.grasswort.picker.blog.dao.persistence.BlogMapper;
-import com.grasswort.picker.blog.elastic.repository.BlogDocRepository;
-import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
+import com.grasswort.picker.blog.service.elastic.BlogDocInitService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -25,15 +23,12 @@ public class BlogDocInitJob extends QuartzJobBean {
     public static final String JOB_GROUP = "BLOG_GROUP";
     public static final String JOB_NAME = "BLOG_DOC_INIT_JOB";
 
-    @Resource BlogMapper blogMapper;
-
-    @Resource BlogDocRepository blogDocRepository;
-
-    @Resource BlogDocConverter blogDocConverter;
+    @Resource
+    BlogDocInitService blogDocInitService;
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("\n执行博客ES存储更新任务");
-        blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
+        blogDocInitService.init();
     }
 }

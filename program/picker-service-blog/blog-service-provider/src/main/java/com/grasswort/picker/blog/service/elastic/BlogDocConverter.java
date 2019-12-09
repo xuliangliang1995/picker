@@ -2,9 +2,6 @@ package com.grasswort.picker.blog.service.elastic;
 
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.dao.entity.Blog;
-import com.grasswort.picker.blog.dao.persistence.BlogBrowseMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogLikeMapper;
 import com.grasswort.picker.blog.dto.blog.BlogItemWithAuthor;
 import com.grasswort.picker.blog.dto.blog.InteractionData;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
@@ -28,12 +25,6 @@ public class BlogDocConverter {
     @Resource Blog2DocConverter blog2DocConverter;
 
     @Resource BlogDocMapStructConverter blogDocMapStructConverter;
-
-    @Resource BlogLikeMapper blogLikeMapper;
-
-    @Resource BlogFavoriteMapper blogFavoriteMapper;
-
-    @Resource BlogBrowseMapper blogBrowseMapper;
 
     /**
      * blog2BlogDoc

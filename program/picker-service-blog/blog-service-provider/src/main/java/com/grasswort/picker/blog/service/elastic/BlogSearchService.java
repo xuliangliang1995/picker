@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,14 +30,6 @@ import javax.annotation.Resource;
 @Slf4j
 @Service
 public class BlogSearchService {
-
-    /*@Resource
-    BlogMapper blogMapper;
-
-    @Resource
-    BlogDocRepository blogDocRepository;
-
-    @Resource BlogDocConverter blogDocConverter;*/
 
     @Resource ElasticsearchTemplate elasticsearchTemplate;
 
@@ -75,8 +66,8 @@ public class BlogSearchService {
         }
 
         Sort sort = StringUtils.isNotBlank(keyword)
-                ? new Sort(Sort.Direction.DESC, "_score").and(new Sort(Sort.Direction.DESC, "gmtModified"))
-                : new Sort(Sort.Direction.DESC, "gmtModified");
+                ? new Sort(Sort.Direction.DESC, "_score").and(new Sort(Sort.Direction.DESC, "heat"))
+                : new Sort(Sort.Direction.DESC, "heat");
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
