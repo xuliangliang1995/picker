@@ -15,6 +15,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,5 +56,13 @@ public class BlogPoolController {
                         : new ResponseUtil<>().setErrorMsg(queryResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "初始化")
+    @Anoymous
+    @PostMapping
+    public ResponseData initPool() {
+        iBlogPoolService.init();
+        return new ResponseUtil<>().setData(null);
     }
 }
