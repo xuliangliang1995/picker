@@ -67,7 +67,7 @@ public class QuartzDataSourceConfiguration {
                 .forJob(jobDetail)
                 .withIdentity("BLOG_DOC_INIT_TRIGGER", "BLOG_TRIGGER_GROUP")
                 .withSchedule(
-                        CronScheduleBuilder.cronSchedule("0 0 16 * * ? ")
+                        CronScheduleBuilder.cronSchedule("0 0 0/1 * * ?")
                 ).build();
     }
 }

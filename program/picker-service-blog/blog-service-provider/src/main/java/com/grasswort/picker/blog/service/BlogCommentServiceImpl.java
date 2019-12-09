@@ -12,6 +12,7 @@ import com.grasswort.picker.blog.dto.AddCommentResponse;
 import com.grasswort.picker.blog.dto.BlogCommentRequest;
 import com.grasswort.picker.blog.dto.BlogCommentResponse;
 import com.grasswort.picker.blog.dto.comment.CommentItem;
+import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
@@ -42,6 +43,8 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
     @Autowired BlogCommentMapper blogCommentMapper;
 
     @Autowired BlogCommentContentMapper blogCommentContentMapper;
+
+    @Autowired BlogDocUpdateService blogDocUpdateService;
 
     @Reference(version = "1.0", timeout = 10000) IUserBaseInfoService iUserBaseInfoService;
 
@@ -84,6 +87,8 @@ public class BlogCommentServiceImpl implements IBlogCommentService {
         commentContent.setGmtCreate(now);
         commentContent.setGmtModified(now);
         blogCommentContentMapper.insertUseGeneratedKeys(commentContent);
+        // 更新博客 ES 存储
+        blogDocUpdateService.updateBlogDoc(blogKey.getBlogId());
 
         addCommentResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         addCommentResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

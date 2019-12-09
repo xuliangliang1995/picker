@@ -34,6 +34,15 @@ public class LexiconCacheable {
     }
 
     /**
+     * 添加新分词
+     * @param word
+     */
+    public void addWord(String word) {
+        RSet<String> lexicon = redissonClient.getSet(LEXICON_BUCKET);
+        lexicon.addAsync(word);
+    }
+
+    /**
      * 获取词库
      * @return
      */

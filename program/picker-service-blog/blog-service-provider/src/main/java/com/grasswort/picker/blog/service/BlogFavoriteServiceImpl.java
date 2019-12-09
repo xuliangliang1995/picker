@@ -7,10 +7,9 @@ import com.grasswort.picker.blog.dao.entity.BlogFavorite;
 import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
-import com.grasswort.picker.user.IUserElasticDocUpdateService;
-import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
@@ -32,8 +31,7 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
 
     @Autowired BlogDao blogDao;
 
-    @Reference(version = "1.0", timeout = 10000)
-    IUserElasticDocUpdateService iUserElasticDocUpdateService;
+    @Autowired BlogDocUpdateService blogDocUpdateService;
 
     /**
      * 博客收藏状态
@@ -101,8 +99,7 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
 
             // 更新 es 存储
             Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
-            iUserElasticDocUpdateService.updateElastic(pkUserId);
-            iUserElasticDocUpdateService.updateElastic(userId);
+            blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
         }
 
         favoriteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -137,10 +134,10 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
 
         if (favorite != null) {
             blogFavoriteMapper.deleteByPrimaryKey(favorite.getId());
+
             // 更新 es 存储
             Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
-            iUserElasticDocUpdateService.updateElastic(pkUserId);
-            iUserElasticDocUpdateService.updateElastic(userId);
+            blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
         }
 
         favoriteCancelResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

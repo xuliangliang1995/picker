@@ -7,6 +7,7 @@ import com.grasswort.picker.blog.dao.entity.BlogBrowse;
 import com.grasswort.picker.blog.dao.persistence.BlogBrowseMapper;
 import com.grasswort.picker.blog.dto.BlogBrowseRequest;
 import com.grasswort.picker.blog.dto.BlogBrowseResponse;
+import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
@@ -25,6 +26,9 @@ import java.util.Date;
 public class BlogBrowseServiceImpl implements IBlogBrowseService {
 
     @Autowired BlogBrowseMapper blogBrowseMapper;
+
+    @Autowired BlogDocUpdateService blogDocUpdateService;
+
     /**
      * 博客浏览
      *
@@ -45,6 +49,8 @@ public class BlogBrowseServiceImpl implements IBlogBrowseService {
             browse.setGmtCreate(now);
             browse.setGmtModified(now);
             blogBrowseMapper.insert(browse);
+            // 更新 ES 存储
+            blogDocUpdateService.updateBlogDoc(blogKey.getBlogId());
         }
 
         blogBrowseResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

@@ -7,10 +7,9 @@ import com.grasswort.picker.blog.dao.entity.BlogLike;
 import com.grasswort.picker.blog.dao.persistence.BlogLikeMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
-import com.grasswort.picker.user.IUserElasticDocUpdateService;
-import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
@@ -31,8 +30,7 @@ public class BlogLikeServiceImpl implements IBlogLikeService {
 
     @Autowired BlogDao blogDao;
 
-    @Reference(version = "1.0", timeout = 10000)
-    IUserElasticDocUpdateService iUserElasticDocUpdateService;
+    @Autowired BlogDocUpdateService blogDocUpdateService;
 
     /**
      * 点赞状态
@@ -99,8 +97,7 @@ public class BlogLikeServiceImpl implements IBlogLikeService {
 
             // 更新 es 存储
             Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
-            iUserElasticDocUpdateService.updateElastic(pkUserId);
-            iUserElasticDocUpdateService.updateElastic(userId);
+            blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
         }
 
         likeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -131,8 +128,7 @@ public class BlogLikeServiceImpl implements IBlogLikeService {
                 blogLikeMapper.deleteByPrimaryKey(blogLike.getId());
                 // 更新 es 存储
                 Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
-                iUserElasticDocUpdateService.updateElastic(pkUserId);
-                iUserElasticDocUpdateService.updateElastic(userId);
+                blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
             }
         }
 

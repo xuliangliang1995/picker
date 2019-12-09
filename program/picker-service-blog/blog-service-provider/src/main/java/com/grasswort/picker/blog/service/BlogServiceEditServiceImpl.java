@@ -1,8 +1,10 @@
 package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.IBlogEditService;
-import com.grasswort.picker.blog.configuration.kafka.TopicUpdateBlogDoc;
-import com.grasswort.picker.blog.constant.*;
+import com.grasswort.picker.blog.constant.BlogCurveStatusEnum;
+import com.grasswort.picker.blog.constant.BlogStatusEnum;
+import com.grasswort.picker.blog.constant.DBGroup;
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.Blog;
 import com.grasswort.picker.blog.dao.entity.BlogContent;
 import com.grasswort.picker.blog.dao.entity.BlogLabel;
@@ -14,6 +16,8 @@ import com.grasswort.picker.blog.dao.persistence.BlogOssRefMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogCategoryDao;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogLabelDao;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
+import com.grasswort.picker.blog.service.redisson.LexiconCacheable;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.commons.config.DBLocalHolder;
@@ -32,8 +36,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -67,12 +69,11 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
 
     @Autowired RetentionCurveServiceImpl retentionCurveServiceImpl;
 
-    @Autowired TopicUpdateBlogDoc topicUpdateBlogDoc;
+    @Autowired BlogDocUpdateService blogDocUpdateService;
 
-    @Autowired @Qualifier(KafkaTemplateConstant.BLOG_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
+    @Autowired LexiconCacheable lexiconCacheable;
 
-    @Reference(version = "1.0", timeout = 10000)
-    IUserElasticDocUpdateService iUserElasticDocUpdateService;
+    @Reference(version = "1.0", timeout = 10000) IUserElasticDocUpdateService iUserElasticDocUpdateService;
 
     @Reference(version = "1.0", timeout = 10000) IUserSettingService iUserSettingService;
 
@@ -160,8 +161,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
             );
         }
         // 更新 es 存储
-        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
-        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
+        blogDocUpdateService.updateBlogDocAndAuthorDoc(blog.getId(), blog.getPkUserId());
 
         createBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -240,8 +240,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         processLabels(blog.getId(), labels);
 
         // 更新 es 存储
-        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
-        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
+        blogDocUpdateService.updateBlogDocAndAuthorDoc(blog.getId(), blog.getPkUserId());
 
         editBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -329,8 +328,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         }
 
         // 更新 es 存储
-        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
-        iUserElasticDocUpdateService.updateElastic(blog.getPkUserId());
+        blogDocUpdateService.updateBlogDocAndAuthorDoc(blog.getId(), blog.getPkUserId());
 
         deleteBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -373,7 +371,7 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         }
 
         // 发布 博客更新消息
-        kafkaTemplate.send(topicUpdateBlogDoc.getTopicName(), blog.getId());
+        blogDocUpdateService.updateBlogDoc(blog.getId());
 
         recycleBlogResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         recycleBlogResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -451,6 +449,9 @@ public class BlogServiceEditServiceImpl implements IBlogEditService {
         Date now = new Date(System.currentTimeMillis());
         labels.forEach(label -> {
                     if (StringUtils.isNotBlank(label)) {
+                        // 更新 ik 词库
+                        lexiconCacheable.addWord(label);
+                        // 持久化
                         BlogLabel blogLabel = new BlogLabel();
                         blogLabel.setBlogId(blogId);
                         blogLabel.setLabel(label);

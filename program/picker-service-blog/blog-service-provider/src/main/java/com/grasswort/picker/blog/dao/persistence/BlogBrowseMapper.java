@@ -9,4 +9,5 @@ public interface BlogBrowseMapper extends TkMapper<BlogBrowse> {
 
     @Select("select count(*) from pk_blog_browse where blog_id = #{blogId}")
     long getBrowseCount(@Param("blogId") long blogId);
+
 }

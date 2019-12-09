@@ -27,7 +27,7 @@ public class LexiconServiceImpl implements ILexiconService {
     @Resource LexiconCacheable lexiconCacheable;
 
     /**
-     * 获取词库（所有标签和热搜前十（热搜前十暂不加））
+     * 获取词库（所有标签）
      *
      * @return
      */
