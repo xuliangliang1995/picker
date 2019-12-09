@@ -22,6 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -77,7 +78,7 @@ public class Blog2DocConverter {
         Long favorite = blogFavoriteMapper.getBlogFavoriteCount(blog.getId());
         Long browse = blogBrowseMapper.getBrowseCount(blog.getId());
         Date gmtCreate = blog.getGmtCreate();
-        Double heat = HackerNewsHeat.calculate((like + favorite) * 5, Duration.between(gmtCreate.toInstant(), Instant.now()).get(ChronoUnit.MINUTES) / (24 * 60));
+        Double heat = HackerNewsHeat.calculate((like + favorite) * 5, Duration.between(gmtCreate.toInstant(), Instant.now()).get(ChronoUnit.SECONDS) / (24 * 60 * 60));
 
         BlogDoc blogDoc = BlogDoc.Builder.aBlogDoc()
                 .withBlogId(blog.getId())
