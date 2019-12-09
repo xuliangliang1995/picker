@@ -94,6 +94,26 @@ public class BlogDoc {
      */
     @Field(type = FieldType.Date)
     private Date gmtModified;
+    /**
+     * 热度
+     */
+    @Field(type = FieldType.Double)
+    private Double heat;
+    /**
+     * 喜欢
+     */
+    @Field(type = FieldType.Long)
+    private Long like;
+    /**
+     * 收藏
+     */
+    @Field(type = FieldType.Long)
+    private Long favorite;
+    /**
+     * 浏览量
+     */
+    @Field(type = FieldType.Long)
+    private Long browse;
 
     public Long getBlogId() {
         return blogId;
@@ -207,6 +227,38 @@ public class BlogDoc {
         this.authorId = authorId;
     }
 
+    public Double getHeat() {
+        return heat;
+    }
+
+    public void setHeat(Double heat) {
+        this.heat = heat;
+    }
+
+    public Long getLike() {
+        return like;
+    }
+
+    public void setLike(Long like) {
+        this.like = like;
+    }
+
+    public Long getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Long favorite) {
+        this.favorite = favorite;
+    }
+
+    public Long getBrowse() {
+        return browse;
+    }
+
+    public void setBrowse(Long browse) {
+        this.browse = browse;
+    }
+
     public static final class Builder {
         private Long blogId;
         private Integer status;
@@ -222,6 +274,10 @@ public class BlogDoc {
         private String markdown;
         private Date gmtCreate;
         private Date gmtModified;
+        private Double heat;
+        private Long like;
+        private Long favorite;
+        private Long browse;
 
         private Builder() {
         }
@@ -300,6 +356,26 @@ public class BlogDoc {
             return this;
         }
 
+        public Builder withHeat(Double heat) {
+            this.heat = heat;
+            return this;
+        }
+
+        public Builder withLike(Long like) {
+            this.like = like;
+            return this;
+        }
+
+        public Builder withFavorite(Long favorite) {
+            this.favorite = favorite;
+            return this;
+        }
+
+        public Builder withBrowse(Long browse) {
+            this.browse = browse;
+            return this;
+        }
+
         public BlogDoc build() {
             BlogDoc blogDoc = new BlogDoc();
             blogDoc.setBlogId(blogId);
@@ -316,6 +392,10 @@ public class BlogDoc {
             blogDoc.setMarkdown(markdown);
             blogDoc.setGmtCreate(gmtCreate);
             blogDoc.setGmtModified(gmtModified);
+            blogDoc.setHeat(heat);
+            blogDoc.setLike(like);
+            blogDoc.setFavorite(favorite);
+            blogDoc.setBrowse(browse);
             return blogDoc;
         }
     }

@@ -54,9 +54,9 @@ public class BlogDocConverter {
         Long blogId = blogDoc.getBlogId();
         BlogItemWithAuthor blogItemWithAuthor = blogDocMapStructConverter.doc2BlogItemWithAuthor(blogDoc);
         InteractionData interactionData = InteractionData.Builder.anInteractionData()
-                .withLike(blogLikeMapper.getLikeCount(blogDoc.getBlogId()))
-                .withFavorite(blogFavoriteMapper.getBlogFavoriteCount(blogDoc.getBlogId()))
-                .withBrowse(blogBrowseMapper.getBrowseCount(blogDoc.getBlogId()))
+                .withLike(blogDoc.getLike())
+                .withFavorite(blogDoc.getFavorite())
+                .withBrowse(blogDoc.getBrowse())
                 .build();
         blogItemWithAuthor.setBlogId(BlogIdEncrypt.encrypt(blogId));
         blogItemWithAuthor.setInteraction(interactionData);
