@@ -4,7 +4,6 @@ import com.grasswort.picker.blog.dao.persistence.BlogMapper;
 import com.grasswort.picker.blog.elastic.repository.BlogDocRepository;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -26,7 +25,9 @@ public class BlogDocInitService {
     @Resource
     BlogDocConverter blogDocConverter;
 
-    @PostConstruct
+    /**
+     * 初始化
+     */
     public void init() {
         blogMapper.selectAll().forEach(blog -> blogDocRepository.save(blogDocConverter.blog2BlogDoc(blog)));
     }

@@ -18,5 +18,9 @@ public interface IBlogPoolService {
      */
     BlogPoolQueryResponse blogPool(BlogPoolQueryRequest queryRequest);
 
+    /**
+     * 初始化
+     */
+    void init();
 
 }

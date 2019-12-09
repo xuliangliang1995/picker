@@ -9,6 +9,7 @@ import com.grasswort.picker.blog.dto.BlogPoolQueryRequest;
 import com.grasswort.picker.blog.dto.BlogPoolQueryResponse;
 import com.grasswort.picker.blog.elastic.entity.BlogDoc;
 import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
+import com.grasswort.picker.blog.service.elastic.BlogDocInitService;
 import com.grasswort.picker.blog.service.elastic.BlogSearchService;
 import com.grasswort.picker.blog.service.elastic.dto.SearchParams;
 import com.grasswort.picker.blog.service.hotword.SearchHotWordService;
@@ -46,7 +47,9 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
 
     @Autowired BlogSearchService blogSearchService;
 
-    @Resource SearchHotWordService searchHotWordService;
+    @Autowired SearchHotWordService searchHotWordService;
+
+    @Autowired BlogDocInitService blogDocInitService;
 
     /**
      * 获取博客列表
@@ -83,6 +86,15 @@ public class BlogPoolServiceImpl implements IBlogPoolService {
         response.setCode(SysRetCodeConstants.SUCCESS.getCode());
         response.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return response;
+    }
+
+    /**
+     * 初始化
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public void init() {
+        blogDocInitService.init();
     }
 
 
