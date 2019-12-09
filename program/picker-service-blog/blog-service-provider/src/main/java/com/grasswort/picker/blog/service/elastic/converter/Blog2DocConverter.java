@@ -78,7 +78,7 @@ public class Blog2DocConverter {
         Long favorite = blogFavoriteMapper.getBlogFavoriteCount(blog.getId());
         Long browse = blogBrowseMapper.getBrowseCount(blog.getId());
         Date gmtCreate = blog.getGmtCreate();
-        Double heat = HackerNewsHeat.calculate((like + favorite) * 5, Duration.between(gmtCreate.toInstant(), Instant.now()).get(ChronoUnit.SECONDS) / (24 * 60 * 60));
+        Double heat = HackerNewsHeat.calculate((like + favorite) * 10 + browse, Duration.between(gmtCreate.toInstant(), Instant.now()).get(ChronoUnit.SECONDS) / (24 * 60 * 60));
 
         BlogDoc blogDoc = BlogDoc.Builder.aBlogDoc()
                 .withBlogId(blog.getId())

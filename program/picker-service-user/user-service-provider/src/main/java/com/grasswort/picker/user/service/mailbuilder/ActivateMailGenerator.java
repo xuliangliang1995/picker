@@ -51,8 +51,9 @@ public class ActivateMailGenerator extends AbstractMailGenerator<ActivateMailInf
 
         contentBuilder.append(lifelineConfiguration.getActivationCodeLifeMinutes());
         contentBuilder.append("分钟内有效）。如非本人操作，请忽略。</p>\n" +
-                "            <p><a>");
+                "            <p><a href='");
         contentBuilder.append(url);
+        contentBuilder.append("'>点击激活");
         contentBuilder.append("</a></p>\n" +
                 "        </div>\n" +
                 "    </div>\n" +

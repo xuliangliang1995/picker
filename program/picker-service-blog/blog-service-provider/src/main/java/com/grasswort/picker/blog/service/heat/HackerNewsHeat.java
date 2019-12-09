@@ -1,5 +1,7 @@
 package com.grasswort.picker.blog.service.heat;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author xuliangliang
  * @Classname HackerNewsHeat
