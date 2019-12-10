@@ -103,7 +103,18 @@
                    enableDeleteByExample="false" enableSelectByExample="false"
                    selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_topic" domainObjectName="Topic"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
+            <table tableName="pk_topic_menu" domainObjectName="TopicMenu"
+                   enableCountByExample="false" enableUpdateByExample="false"
+                   enableDeleteByExample="false" enableSelectByExample="false"
+                   selectByExampleQueryId="false">
+            </table>
         -->
+
 
     </context>
 </generatorConfiguration>
