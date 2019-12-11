@@ -25,6 +25,6 @@ public interface BlogDao extends Mapper<Blog> {
     @Select("select pk_user_id from pk_blog where id = #{blogId}")
     Long getPkUserId(@Param("blogId") Long blogId);
 
-    @Select("select id from pk_blog where pk_user_id = #{pkUserId} order by id desc")
+    @Select("select id from pk_blog where pk_user_id = #{authorId} order by id desc")
     List<Long> listBlogIdByAuthorId(@Param("authorId") Long authorId);
 }
