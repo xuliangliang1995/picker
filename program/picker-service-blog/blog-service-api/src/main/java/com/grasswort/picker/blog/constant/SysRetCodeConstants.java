@@ -29,6 +29,7 @@ public enum SysRetCodeConstants {
     PARENT_MENU_NOT_EXISTS          ("005001", "父级菜单不存在"),
     MENU_LEVEL_TOO_HIGH            ("005002", "菜单层级过高"),
     MENU_NOT_VALID                 ("005003", "菜单创建不规范"),
+    MENU_CAN_NOT_DELETE             ("005004", "菜单不可以删除"),
 
     TOPIC_NOT_EXISTS                ("006001", "专题不存在");
 

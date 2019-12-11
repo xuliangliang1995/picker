@@ -9,10 +9,7 @@ import com.grasswort.picker.blog.dao.entity.TopicMenu;
 import com.grasswort.picker.blog.dao.persistence.TopicMapper;
 import com.grasswort.picker.blog.dao.persistence.TopicMenuMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
-import com.grasswort.picker.blog.dto.TopicMenuCreateRequest;
-import com.grasswort.picker.blog.dto.TopicMenuCreateResponse;
-import com.grasswort.picker.blog.dto.TopicMenuRequest;
-import com.grasswort.picker.blog.dto.TopicMenuResponse;
+import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItem;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItemBuilder;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
@@ -175,6 +172,36 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         topicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         topicMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return topicMenuResponse;
+    }
+
+    /**
+     * 删除专题菜单
+     *
+     * @param deleteRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public DeleteTopicMenuResponse deleteTopicMenu(DeleteTopicMenuRequest deleteRequest) {
+        DeleteTopicMenuResponse deleteTopicMenuResponse = new DeleteTopicMenuResponse();
+
+        Long menuId = deleteRequest.getMenuId();
+        Long pkUserId = deleteRequest.getPkUserId();
+        TopicMenu topicMenu = topicMenuMapper.selectByPrimaryKey(menuId);
+        if (topicMenu != null) {
+            Topic topic = topicMapper.selectByPrimaryKey(topicMenu.getTopicId());
+            if (Objects.equals(topic.getPkUserId(), pkUserId)) {
+                boolean hasChildren = topicMenuMapper.hasChildren(topicMenu.getId());
+                if (hasChildren) {
+                    deleteTopicMenuResponse.setCode(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getCode());
+                    deleteTopicMenuResponse.setMsg(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getMsg());
+                    return deleteTopicMenuResponse;
+                }
+            }
+        }
+        deleteTopicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        deleteTopicMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return deleteTopicMenuResponse;
     }
 
     /**

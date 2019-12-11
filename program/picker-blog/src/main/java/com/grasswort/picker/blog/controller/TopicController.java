@@ -122,4 +122,20 @@ public class TopicController {
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
+
+    @ApiOperation(value = "删除专题菜单")
+    @DeleteMapping("/{topicId}/menu/{menuId}")
+    public ResponseData deleteMenu(@PathVariable("menuId") Long menuId) {
+        DeleteTopicMenuRequest deleteRequest = DeleteTopicMenuRequest.Builder.aDeleteTopicMenuRequest()
+                .withMenuId(menuId)
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+        DeleteTopicMenuResponse deleteTopicMenuResponse = iBlogTopicMenuService.deleteTopicMenu(deleteRequest);
+        return Optional.ofNullable(deleteTopicMenuResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(deleteTopicMenuResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
 }

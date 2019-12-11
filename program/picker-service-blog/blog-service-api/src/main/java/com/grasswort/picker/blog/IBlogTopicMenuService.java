@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.TopicMenuCreateRequest;
-import com.grasswort.picker.blog.dto.TopicMenuCreateResponse;
-import com.grasswort.picker.blog.dto.TopicMenuRequest;
-import com.grasswort.picker.blog.dto.TopicMenuResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -27,4 +24,11 @@ public interface IBlogTopicMenuService {
      * @return
      */
     TopicMenuResponse topicMenu(TopicMenuRequest topicMenuRequest);
+
+    /**
+     * 删除专题菜单
+     * @param deleteRequest
+     * @return
+     */
+    DeleteTopicMenuResponse deleteTopicMenu(DeleteTopicMenuRequest deleteRequest);
 }
