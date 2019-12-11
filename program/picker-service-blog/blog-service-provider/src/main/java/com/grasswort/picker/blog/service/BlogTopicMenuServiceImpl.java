@@ -165,7 +165,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
 
         Example example = new Example(TopicMenu.class);
         example.createCriteria().andEqualTo("topicId", topicId).andEqualTo("parentMenuId", 0L);
-        example.setOrderByClause("weight desc");
+        example.setOrderByClause("weight asc");
 
         List<TopicMenuItem> topicMenus = topicMenuMapper.selectByExample(example)
                 .stream().map(tm -> topicMenu2Item(tm)).collect(Collectors.toList());
@@ -190,7 +190,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
 
         Example example = new Example(TopicMenu.class);
         example.createCriteria().andEqualTo("topicId", topicMenu.getTopicId()).andEqualTo("parentMenuId", topicMenu.getId());
-        example.setOrderByClause("weight desc");
+        example.setOrderByClause("weight asc");
         List<TopicMenuItem> childrenMenus = topicMenuMapper.selectByExample(example)
                 .stream().map(tm -> topicMenu2Item(tm)).collect(Collectors.toList());
 
