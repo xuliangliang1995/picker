@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.util.List;
+
 /**
  * @author xuliangliang
  * @Classname BlogDao
@@ -22,4 +24,7 @@ public interface BlogDao extends Mapper<Blog> {
 
     @Select("select pk_user_id from pk_blog where id = #{blogId}")
     Long getPkUserId(@Param("blogId") Long blogId);
+
+    @Select("select id from pk_blog where pk_user_id = #{pkUserId} order by id desc")
+    List<Long> listBlogIdByAuthorId(@Param("authorId") Long authorId);
 }

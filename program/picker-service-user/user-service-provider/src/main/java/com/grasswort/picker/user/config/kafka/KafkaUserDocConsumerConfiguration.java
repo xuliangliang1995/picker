@@ -1,10 +1,12 @@
 package com.grasswort.picker.user.config.kafka;
 
+import com.grasswort.picker.blog.IBlogRefreshService;
 import com.grasswort.picker.user.dao.entity.User;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.elastic.repository.UserDocRepository;
 import com.grasswort.picker.user.service.elastic.UserDocConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.LongDeserializer;
@@ -43,6 +45,8 @@ public class KafkaUserDocConsumerConfiguration {
 
     @Resource UserDocConverter userDocConverter;
 
+    @Reference(version = "1.0", timeout = 10000) IBlogRefreshService iBlogRefreshService;
+
 
     @Bean
     public DefaultKafkaConsumerFactory kafkaUserDocUpdateConsumerFactory() {
@@ -74,6 +78,7 @@ public class KafkaUserDocConsumerConfiguration {
                 .orElse(null);
         if (user != null) {
             userDocRepository.save(userDocConverter.user2Doc(user));
+            iBlogRefreshService.refreshByAuthorId(user.getId());
         }
         acknowledgment.acknowledge();
     }
