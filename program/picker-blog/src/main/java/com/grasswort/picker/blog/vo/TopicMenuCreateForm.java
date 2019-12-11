@@ -15,7 +15,7 @@ import javax.validation.constraints.*;
 public class TopicMenuCreateForm {
 
     @NotNull
-    @Min(1)
+    @Min(0)
     private Long parentMenuId;
     @NotEmpty
     @Size(max = 50)
