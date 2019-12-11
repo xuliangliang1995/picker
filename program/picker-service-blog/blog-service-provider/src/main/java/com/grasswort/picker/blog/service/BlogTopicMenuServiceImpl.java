@@ -197,6 +197,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
                     deleteTopicMenuResponse.setMsg(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getMsg());
                     return deleteTopicMenuResponse;
                 }
+                topicMenuMapper.deleteByPrimaryKey(menuId);
             }
         }
         deleteTopicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
