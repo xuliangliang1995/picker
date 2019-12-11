@@ -102,7 +102,7 @@ public class TopicController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
-    @Anoymous
+    @Anoymous(resolve = true)
     @ApiOperation(value = "专题菜单")
     @GetMapping("/{topicId}/menu")
     public ResponseData topicMenu(@PathVariable("topicId") String topicId) {
