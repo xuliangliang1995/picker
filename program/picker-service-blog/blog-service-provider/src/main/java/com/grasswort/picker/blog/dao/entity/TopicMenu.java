@@ -18,7 +18,7 @@ public class TopicMenu {
     private String menuName;
 
     @Column(name = "menu_type")
-    private Byte menuType;
+    private Integer menuType;
 
     @Column(name = "blog_id")
     private Long blogId;
@@ -90,14 +90,14 @@ public class TopicMenu {
     /**
      * @return menu_type
      */
-    public Byte getMenuType() {
+    public Integer getMenuType() {
         return menuType;
     }
 
     /**
      * @param menuType
      */
-    public void setMenuType(Byte menuType) {
+    public void setMenuType(Integer menuType) {
         this.menuType = menuType;
     }
 

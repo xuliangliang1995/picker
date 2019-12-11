@@ -27,4 +27,9 @@ public interface BlogDao extends Mapper<Blog> {
 
     @Select("select id from pk_blog where pk_user_id = #{authorId} order by id desc")
     List<Long> listBlogIdByAuthorId(@Param("authorId") Long authorId);
+
+    @Select("select if(count(*) > 0, 1, 0)  from pk_blog where id = #{blogId} and status = 0")
+    Boolean existsAndNormal(@Param("blogId") Long blogId);
+
+
 }

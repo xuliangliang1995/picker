@@ -24,7 +24,13 @@ public enum SysRetCodeConstants {
 
     CURVE_NOT_EXISTS                 ("003001", "记忆曲线节点不存在"),
 
-    COMMENT_NOT_EXISTS              ("004001", "目标评论不存在或已被删除");
+    COMMENT_NOT_EXISTS              ("004001", "目标评论不存在或已被删除"),
+
+    PARENT_MENU_NOT_EXISTS          ("005001", "父级菜单不存在"),
+    MENU_LEVEL_TOO_HIGH            ("005002", "菜单层级过高"),
+    MENU_NOT_VALID                 ("005003", "菜单创建不规范"),
+
+    TOPIC_NOT_EXISTS                ("006001", "专题不存在");
 
     private String code;
     private String msg;
