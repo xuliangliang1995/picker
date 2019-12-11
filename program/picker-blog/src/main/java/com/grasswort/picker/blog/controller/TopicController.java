@@ -16,10 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -40,7 +37,7 @@ public class TopicController {
 
     @ApiOperation(value = "创建专题")
     @PostMapping
-    public ResponseData createTopic(@Validated TopicForm topicForm, BindingResult bindingResult) {
+    public ResponseData createTopic(@RequestBody @Validated TopicForm topicForm, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
 
         TopicCreateRequest createRequest = TopicCreateRequest.Builder.aTopicCreateRequest()
