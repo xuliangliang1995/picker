@@ -64,7 +64,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
 
         // topic
         Topic topic = topicMapper.selectByPrimaryKey(topicId);
-        if (topic == null || Objects.equals(topic.getPkUserId(), pkUserId)) {
+        if (topic == null || ! Objects.equals(topic.getPkUserId(), pkUserId)) {
             menuCreateResponse.setCode(SysRetCodeConstants.TOPIC_NOT_EXISTS.getCode());
             menuCreateResponse.setMsg(SysRetCodeConstants.TOPIC_NOT_EXISTS.getMsg());
             return menuCreateResponse;
