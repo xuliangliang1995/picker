@@ -126,9 +126,10 @@ public class TopicController {
 
     @ApiOperation(value = "删除专题菜单")
     @DeleteMapping("/{topicId}/menu/{menuId}")
-    public ResponseData deleteMenu(@PathVariable("menuId") Long menuId) {
+    public ResponseData deleteMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
         DeleteTopicMenuRequest deleteRequest = DeleteTopicMenuRequest.Builder.aDeleteTopicMenuRequest()
                 .withMenuId(menuId)
+                .withTopicId(topicId)
                 .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
                 .build();
         DeleteTopicMenuResponse deleteTopicMenuResponse = iBlogTopicMenuService.deleteTopicMenu(deleteRequest);

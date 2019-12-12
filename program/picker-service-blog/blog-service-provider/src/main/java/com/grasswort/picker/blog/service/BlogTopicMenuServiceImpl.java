@@ -187,20 +187,28 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
     public DeleteTopicMenuResponse deleteTopicMenu(DeleteTopicMenuRequest deleteRequest) {
         DeleteTopicMenuResponse deleteTopicMenuResponse = new DeleteTopicMenuResponse();
 
+        Long topicId = TopicIdEncrypt.decrypt(deleteRequest.getTopicId());
         Long menuId = deleteRequest.getMenuId();
         Long pkUserId = deleteRequest.getPkUserId();
+
+        Topic topic = Optional.ofNullable(topicId).map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+        if (topic == null) {
+            deleteTopicMenuResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            deleteTopicMenuResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return deleteTopicMenuResponse;
+        }
+
         TopicMenu topicMenu = topicMenuMapper.selectByPrimaryKey(menuId);
         if (topicMenu != null) {
-            Topic topic = topicMapper.selectByPrimaryKey(topicMenu.getTopicId());
-            if (Objects.equals(topic.getPkUserId(), pkUserId)) {
-                boolean hasChildren = topicMenuMapper.hasChildren(topicMenu.getId());
-                if (hasChildren) {
-                    deleteTopicMenuResponse.setCode(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getCode());
-                    deleteTopicMenuResponse.setMsg(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getMsg());
-                    return deleteTopicMenuResponse;
-                }
-                topicMenuMapper.deleteByPrimaryKey(menuId);
+            boolean hasChildren = topicMenuMapper.hasChildren(topicMenu.getId());
+            if (hasChildren) {
+                deleteTopicMenuResponse.setCode(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getCode());
+                deleteTopicMenuResponse.setMsg(SysRetCodeConstants.MENU_CAN_NOT_DELETE.getMsg());
+                return deleteTopicMenuResponse;
             }
+            topicMenuMapper.deleteByPrimaryKey(menuId);
         }
         deleteTopicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteTopicMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
