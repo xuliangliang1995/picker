@@ -184,7 +184,7 @@ public class TopicController {
         TopicMenuMoveDownRequest moveDownRequest = TopicMenuMoveDownRequest.Builder.aTopicMenuMoveDownRequest()
                 .withTopicId(topicId)
                 .withMenuId(menuId)
-                .withTopicId(topicId)
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
                 .build();
         TopicMenuMoveDownResponse moveDownResponse = iBlogTopicMenuService.moveDown(moveDownRequest);
         return Optional.ofNullable(moveDownResponse)
