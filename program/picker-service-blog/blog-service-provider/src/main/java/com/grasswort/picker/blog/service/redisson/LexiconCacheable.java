@@ -39,7 +39,9 @@ public class LexiconCacheable {
      */
     public void addWord(String word) {
         RSet<String> lexicon = redissonClient.getSet(LEXICON_BUCKET);
-        lexicon.addAsync(word);
+        lexicon.add(word);
+        RBucket<Long> modifiedTime = redissonClient.getBucket(LEXICON_MODIFIED_TIME);
+        modifiedTime.setAsync(System.currentTimeMillis());
     }
 
     /**

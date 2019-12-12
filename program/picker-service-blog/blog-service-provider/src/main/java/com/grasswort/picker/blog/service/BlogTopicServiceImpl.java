@@ -108,6 +108,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
                             .withCoverImg(topic.getCoverImg())
                             .withOwnerName(ownerName)
                             .withOwnerAvatar(avatar)
+                            .withStatus(topic.getStatus())
                             .withGmtCreate(topic.getGmtCreate())
                             .withGmtModified(topic.getGmtModified())
                             .build())

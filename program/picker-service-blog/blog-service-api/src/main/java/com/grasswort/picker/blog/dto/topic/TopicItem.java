@@ -28,11 +28,13 @@ public class TopicItem {
     private String coverImg;
 
     private String summary;
+
+    private Integer status;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
-
 
     public static final class Builder {
         private String topicId;
@@ -42,6 +44,7 @@ public class TopicItem {
         private String title;
         private String coverImg;
         private String summary;
+        private Integer status;
         private Date gmtCreate;
         private Date gmtModified;
 
@@ -87,6 +90,11 @@ public class TopicItem {
             return this;
         }
 
+        public Builder withStatus(Integer status) {
+            this.status = status;
+            return this;
+        }
+
         public Builder withGmtCreate(Date gmtCreate) {
             this.gmtCreate = gmtCreate;
             return this;
@@ -106,6 +114,7 @@ public class TopicItem {
             topicItem.setTitle(title);
             topicItem.setCoverImg(coverImg);
             topicItem.setSummary(summary);
+            topicItem.setStatus(status);
             topicItem.setGmtCreate(gmtCreate);
             topicItem.setGmtModified(gmtModified);
             return topicItem;
