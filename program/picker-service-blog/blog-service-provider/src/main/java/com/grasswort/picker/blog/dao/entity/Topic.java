@@ -18,6 +18,9 @@ public class Topic {
 
     private String summary;
 
+    @Column(name = "status")
+    private Integer status;
+
     @Column(name = "gmt_create")
     private Date gmtCreate;
 
@@ -120,5 +123,13 @@ public class Topic {
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

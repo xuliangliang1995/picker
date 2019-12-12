@@ -3,6 +3,7 @@ package com.grasswort.picker.blog.service;
 import com.grasswort.picker.blog.IBlogTopicService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
+import com.grasswort.picker.blog.constant.TopicStatusEnum;
 import com.grasswort.picker.blog.dao.entity.Topic;
 import com.grasswort.picker.blog.dao.persistence.TopicMapper;
 import com.grasswort.picker.blog.dto.MyTopicListRequest;
@@ -54,6 +55,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         Topic topic = new Topic();
         topic.setPkUserId(createRequest.getPkUserId());
         topic.setTitle(createRequest.getTitle());
+        topic.setStatus(TopicStatusEnum.PRIVATE.getStatus());
         topic.setSummary(createRequest.getSummary());
         topic.setCoverImg(createRequest.getCoverImg());
         Date now = new Date();

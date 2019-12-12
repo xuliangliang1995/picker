@@ -16,7 +16,9 @@ import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
@@ -206,6 +208,125 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
     }
 
     /**
+     * 菜单上移
+     *
+     * @param moveUpRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public TopicMenuMoveUpResponse moveUp(TopicMenuMoveUpRequest moveUpRequest) {
+        TopicMenuMoveUpResponse topicMenuMoveUpResponse = new TopicMenuMoveUpResponse();
+
+        Long pkUserId = moveUpRequest.getPkUserId();
+        Long topicId = TopicIdEncrypt.decrypt(moveUpRequest.getTopicId());
+        Long menuId = moveUpRequest.getMenuId();
+
+        Topic topic = Optional.ofNullable(topicId).map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+        if (topic == null) {
+            topicMenuMoveUpResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            topicMenuMoveUpResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return topicMenuMoveUpResponse;
+        }
+
+        TopicMenu topicMenu = topicMenuMapper.selectByPrimaryKey(menuId);
+        if (topicMenu == null) {
+            topicMenuMoveUpResponse.setCode(SysRetCodeConstants.MENU_NOT_EXISTS.getCode());
+            topicMenuMoveUpResponse.setMsg(SysRetCodeConstants.MENU_NOT_EXISTS.getMsg());
+            return topicMenuMoveUpResponse;
+        }
+
+        this.move(topicMenu, true);
+
+        topicMenuMoveUpResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        topicMenuMoveUpResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return topicMenuMoveUpResponse;
+    }
+
+    /**
+     * 菜单下移
+     *
+     * @param moveDownRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public TopicMenuMoveDownResponse moveDown(TopicMenuMoveDownRequest moveDownRequest) {
+        TopicMenuMoveDownResponse topicMenuMoveDownResponse = new TopicMenuMoveDownResponse();
+
+        Long pkUserId = moveDownRequest.getPkUserId();
+        Long topicId = TopicIdEncrypt.decrypt(moveDownRequest.getTopicId());
+        Long menuId = moveDownRequest.getMenuId();
+
+        Topic topic = Optional.ofNullable(topicId).map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+        if (topic == null) {
+            topicMenuMoveDownResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            topicMenuMoveDownResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return topicMenuMoveDownResponse;
+        }
+
+        TopicMenu topicMenu = topicMenuMapper.selectByPrimaryKey(menuId);
+        if (topicMenu == null) {
+            topicMenuMoveDownResponse.setCode(SysRetCodeConstants.MENU_NOT_EXISTS.getCode());
+            topicMenuMoveDownResponse.setMsg(SysRetCodeConstants.MENU_NOT_EXISTS.getMsg());
+            return topicMenuMoveDownResponse;
+        }
+
+        this.move(topicMenu, false);
+
+        topicMenuMoveDownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        topicMenuMoveDownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return topicMenuMoveDownResponse;
+    }
+
+    /**
+     * 重命名
+     *
+     * @param renameMenuRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public RenameMenuResponse rename(RenameMenuRequest renameMenuRequest) {
+        RenameMenuResponse renameMenuResponse = new RenameMenuResponse();
+
+        Long pkUserId = renameMenuRequest.getPkUserId();
+        Long topicId = TopicIdEncrypt.decrypt(renameMenuRequest.getTopicId());
+        Long menuId = renameMenuRequest.getMenuId();
+        String menuName = renameMenuRequest.getMenuName();
+
+        Topic topic = Optional.ofNullable(topicId).map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+        if (topic == null) {
+            renameMenuResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            renameMenuResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return renameMenuResponse;
+        }
+
+        TopicMenu topicMenu = topicMenuMapper.selectByPrimaryKey(menuId);
+        if (topicMenu == null) {
+            renameMenuResponse.setCode(SysRetCodeConstants.MENU_NOT_EXISTS.getCode());
+            renameMenuResponse.setMsg(SysRetCodeConstants.MENU_NOT_EXISTS.getMsg());
+            return renameMenuResponse;
+        }
+
+        TopicMenu menuSelective = new TopicMenu();
+        menuSelective.setId(menuId);
+        menuSelective.setMenuName(menuName);
+        menuSelective.setGmtModified(new Date());
+        topicMenuMapper.updateByPrimaryKeySelective(menuSelective);
+
+        renameMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        renameMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return renameMenuResponse;
+    }
+
+    /**
      * topicMenu2Item
      * @param topicMenu
      * @return
@@ -232,6 +353,41 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
                 .build();
 
         return item;
+    }
+
+    /**
+     * 移动菜单
+     * @param topicMenu
+     * @param up
+     */
+    private void move(TopicMenu topicMenu, boolean up) {
+        RowBounds rowBounds = new RowBounds(0, 1);
+
+        Example example = new Example(TopicMenu.class);
+        example.createCriteria()
+                .andEqualTo("topicId", topicMenu.getTopicId())
+                .andEqualTo("parentMenuId", topicMenu.getParentMenuId())
+                .andLessThan("weight", topicMenu.getWeight());
+        example.setOrderByClause(up ? "weight desc" : "weight asc");
+        List<TopicMenu> upMenus = topicMenuMapper.selectByExampleAndRowBounds(example, rowBounds);
+
+        if (! CollectionUtils.isEmpty(upMenus)) {
+            TopicMenu upMenu = upMenus.get(0);
+            Date now = new Date();
+            // 交换二者权重
+            TopicMenu currentMenuSelective = new TopicMenu();
+            currentMenuSelective.setId(topicMenu.getId());
+            currentMenuSelective.setWeight(upMenu.getWeight());
+            currentMenuSelective.setGmtModified(now);
+
+            TopicMenu upMenuSelective = new TopicMenu();
+            upMenuSelective.setId(upMenu.getId());
+            upMenuSelective.setWeight(topicMenu.getWeight());
+            upMenuSelective.setGmtModified(now);
+
+            topicMenuMapper.updateByPrimaryKeySelective(currentMenuSelective);
+            topicMenuMapper.updateByPrimaryKeySelective(upMenuSelective);
+        }
     }
 }
 

@@ -3,6 +3,7 @@ package com.grasswort.picker.blog.controller;
 import com.grasswort.picker.blog.IBlogTopicMenuService;
 import com.grasswort.picker.blog.IBlogTopicService;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.vo.MenuRenameForm;
 import com.grasswort.picker.blog.vo.TopicForm;
 import com.grasswort.picker.blog.vo.TopicListForm;
 import com.grasswort.picker.blog.vo.TopicMenuCreateForm;
@@ -135,6 +136,60 @@ public class TopicController {
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(null)
                         : new ResponseUtil<>().setErrorMsg(deleteTopicMenuResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "重命名")
+    @PatchMapping("/{topicId}/menu/{menuId}")
+    public ResponseData rename(@RequestBody@Validated MenuRenameForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
+        ValidatorTool.check(bindingResult);
+
+        RenameMenuRequest renameMenuRequest = RenameMenuRequest.Builder.aRenameMenuRequest()
+                .withTopicId(topicId)
+                .withMenuId(menuId)
+                .withMenuName(form.getMenuName())
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+        RenameMenuResponse renameMenuResponse = iBlogTopicMenuService.rename(renameMenuRequest);
+        return Optional.ofNullable(renameMenuResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(renameMenuResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "上移")
+    @PatchMapping("/{topicId}/menu/{menuId}/up")
+    public ResponseData moveUpMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
+        TopicMenuMoveUpRequest moveUpRequest = TopicMenuMoveUpRequest.Builder.aTopicMenuMoveUpRequest()
+                .withMenuId(menuId)
+                .withTopicId(topicId)
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+        TopicMenuMoveUpResponse moveUpResponse = iBlogTopicMenuService.moveUp(moveUpRequest);
+        return Optional.ofNullable(moveUpResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(moveUpResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @ApiOperation(value = "下移")
+    @PatchMapping("/{topicId}/menu/{menuId}/down")
+    public ResponseData moveDownMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
+        TopicMenuMoveDownRequest moveDownRequest = TopicMenuMoveDownRequest.Builder.aTopicMenuMoveDownRequest()
+                .withTopicId(topicId)
+                .withMenuId(menuId)
+                .withTopicId(topicId)
+                .build();
+        TopicMenuMoveDownResponse moveDownResponse = iBlogTopicMenuService.moveDown(moveDownRequest);
+        return Optional.ofNullable(moveDownResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(moveDownResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

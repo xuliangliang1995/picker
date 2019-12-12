@@ -31,4 +31,27 @@ public interface IBlogTopicMenuService {
      * @return
      */
     DeleteTopicMenuResponse deleteTopicMenu(DeleteTopicMenuRequest deleteRequest);
+
+    /**
+     * 菜单上移
+     * @param moveUpRequest
+     * @return
+     */
+    TopicMenuMoveUpResponse moveUp(TopicMenuMoveUpRequest moveUpRequest);
+
+    /**
+     * 菜单下移
+     * @param moveDownRequest
+     * @return
+     */
+    TopicMenuMoveDownResponse moveDown(TopicMenuMoveDownRequest moveDownRequest);
+
+    /**
+     * 重命名
+     * @param renameMenuRequest
+     * @return
+     */
+    RenameMenuResponse rename(RenameMenuRequest renameMenuRequest);
+
+
 }

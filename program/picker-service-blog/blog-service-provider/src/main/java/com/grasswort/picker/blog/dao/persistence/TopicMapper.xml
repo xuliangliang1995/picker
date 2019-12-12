@@ -10,6 +10,7 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="cover_img" jdbcType="VARCHAR" property="coverImg" />
     <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="status" jdbcType="TINYINT" property="status"/>
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>
