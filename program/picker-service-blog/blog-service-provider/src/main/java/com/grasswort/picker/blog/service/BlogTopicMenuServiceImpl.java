@@ -372,13 +372,18 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         RowBounds rowBounds = new RowBounds(0, 1);
 
         Example example = new Example(TopicMenu.class);
-        example.createCriteria()
-                .andEqualTo("topicId", topicMenu.getTopicId())
-                .andEqualTo("parentMenuId", topicMenu.getParentMenuId())
-                .andLessThan("weight", topicMenu.getWeight());
-        example.setOrderByClause(up ? "weight desc" : "weight asc");
-        List<TopicMenu> upMenus = topicMenuMapper.selectByExampleAndRowBounds(example, rowBounds);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("topicId", topicMenu.getTopicId());
+        criteria.andEqualTo("parentMenuId", topicMenu.getParentMenuId());
+        if (up) {
+            criteria.andLessThan("weight", topicMenu.getWeight());
+            example.setOrderByClause("weight desc");
+        } else {
+            criteria.andGreaterThan("weight", topicMenu.getWeight());
+            example.setOrderByClause("weight asc");
+        }
 
+        List<TopicMenu> upMenus = topicMenuMapper.selectByExampleAndRowBounds(example, rowBounds);
         if (! CollectionUtils.isEmpty(upMenus)) {
             TopicMenu upMenu = upMenus.get(0);
             Date now = new Date();
