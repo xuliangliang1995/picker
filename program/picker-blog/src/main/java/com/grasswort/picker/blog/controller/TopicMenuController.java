@@ -27,6 +27,7 @@ import java.util.Optional;
  * @blame Java Team
  */
 @Api(tags = "专题菜单")
+@RestController
 @RequestMapping("/topic/{topicId}/menu")
 public class TopicMenuController {
 
