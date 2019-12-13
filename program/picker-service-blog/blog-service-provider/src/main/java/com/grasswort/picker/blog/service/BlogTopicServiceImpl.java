@@ -6,10 +6,7 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.constant.TopicStatusEnum;
 import com.grasswort.picker.blog.dao.entity.Topic;
 import com.grasswort.picker.blog.dao.persistence.TopicMapper;
-import com.grasswort.picker.blog.dto.MyTopicListRequest;
-import com.grasswort.picker.blog.dto.MyTopicListResponse;
-import com.grasswort.picker.blog.dto.TopicCreateRequest;
-import com.grasswort.picker.blog.dto.TopicCreateResponse;
+import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.topic.TopicItem;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
@@ -23,9 +20,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +61,40 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         createResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return createResponse;
+    }
+
+    /**
+     * 编辑专题
+     *
+     * @param editRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public TopicEditResponse editTopic(TopicEditRequest editRequest) {
+        TopicEditResponse editResponse = new TopicEditResponse();
+
+        Long topicId = TopicIdEncrypt.decrypt(editRequest.getTopicId());
+        Long pkUserId = editRequest.getPkUserId();
+        Topic topic = Optional.ofNullable(topicId)
+                .map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+
+        if (topic == null) {
+            editResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            editResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return editResponse;
+        }
+        topic.setTitle(editRequest.getTitle());
+        topic.setSummary(editRequest.getSummary());
+        topic.setCoverImg(editRequest.getCoverImg());
+        topic.setGmtModified(new Date());
+        topicMapper.updateByPrimaryKey(topic);
+
+        editResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        editResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return editResponse;
     }
 
     /**
@@ -122,5 +151,42 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         topicListResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         topicListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return topicListResponse;
+    }
+
+    /**
+     * 博客状态更改
+     *
+     * @param changeRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public TopicStatusChangeResponse changeStatus(TopicStatusChangeRequest changeRequest) {
+        TopicStatusChangeResponse statusChangeResponse = new TopicStatusChangeResponse();
+
+
+        Long topicId = TopicIdEncrypt.decrypt(changeRequest.getTopicId());
+        Long pkUserId = changeRequest.getPkUserId();
+        Topic topic = Optional.ofNullable(topicId)
+                .map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+
+        if (topic == null) {
+            statusChangeResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            statusChangeResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return statusChangeResponse;
+        }
+
+        Integer status = changeRequest.getStatus();
+        Topic topicSelective = new Topic();
+        topicSelective.setId(topicId);
+        topicSelective.setStatus(status);
+        topicSelective.setGmtModified(new Date());
+        topicMapper.updateByPrimaryKeySelective(topicSelective);
+
+        statusChangeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        statusChangeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return statusChangeResponse;
     }
 }

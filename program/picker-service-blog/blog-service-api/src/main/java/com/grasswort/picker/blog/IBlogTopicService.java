@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.MyTopicListRequest;
-import com.grasswort.picker.blog.dto.MyTopicListResponse;
-import com.grasswort.picker.blog.dto.TopicCreateRequest;
-import com.grasswort.picker.blog.dto.TopicCreateResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -22,9 +19,23 @@ public interface IBlogTopicService {
     TopicCreateResponse createTopic(TopicCreateRequest createRequest);
 
     /**
+     * 编辑专题
+     * @param editRequest
+     * @return
+     */
+    TopicEditResponse editTopic(TopicEditRequest editRequest);
+
+    /**
      * 专题列表
      * @param topicListRequest
      * @return
      */
     MyTopicListResponse topics(MyTopicListRequest topicListRequest);
+
+    /**
+     * 博客状态更改
+     * @param changeRequest
+     * @return
+     */
+    TopicStatusChangeResponse changeStatus(TopicStatusChangeRequest changeRequest);
 }

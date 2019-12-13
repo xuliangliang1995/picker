@@ -1,17 +1,13 @@
 package com.grasswort.picker.blog.controller;
 
-import com.grasswort.picker.blog.IBlogTopicMenuService;
 import com.grasswort.picker.blog.IBlogTopicService;
 import com.grasswort.picker.blog.dto.*;
-import com.grasswort.picker.blog.vo.MenuRenameForm;
 import com.grasswort.picker.blog.vo.TopicForm;
 import com.grasswort.picker.blog.vo.TopicListForm;
-import com.grasswort.picker.blog.vo.TopicMenuCreateForm;
+import com.grasswort.picker.blog.vo.TopicStatusForm;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
-import com.grasswort.picker.user.annotation.Anoymous;
-import com.grasswort.picker.user.model.PickerInfo;
 import com.grasswort.picker.user.model.PickerInfoHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,8 +33,24 @@ public class TopicController {
     @Reference(version = "1.0", timeout = 10000)
     IBlogTopicService iBlogTopicService;
 
-    @Reference(version = "1.0", timeout = 10000)
-    IBlogTopicMenuService iBlogTopicMenuService;
+    @ApiOperation(value = "专题列表")
+    @GetMapping
+    public ResponseData topics(@Validated TopicListForm listForm, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+
+        MyTopicListRequest myTopicListRequest = MyTopicListRequest.Builder.aMyTopicListRequest()
+                .withPageNo(listForm.getPageNo())
+                .withPageSize(listForm.getPageSize())
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+        MyTopicListResponse myTopicListResponse = iBlogTopicService.topics(myTopicListRequest);
+        return Optional.ofNullable(myTopicListResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(myTopicListResponse.getTopics()).setTotal(myTopicListResponse.getTotal())
+                        : new ResponseUtil<>().setErrorMsg(myTopicListResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
 
     @ApiOperation(value = "创建专题")
     @PostMapping
@@ -61,137 +73,45 @@ public class TopicController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
-    @ApiOperation(value = "专题列表")
-    @GetMapping
-    public ResponseData topics(@Validated TopicListForm listForm, BindingResult bindingResult) {
+    @ApiOperation(value = "编辑专题")
+    @PutMapping("/{topicId}")
+    public ResponseData editTopic(@RequestBody @Validated TopicForm topicForm, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
         ValidatorTool.check(bindingResult);
 
-        MyTopicListRequest myTopicListRequest = MyTopicListRequest.Builder.aMyTopicListRequest()
-                .withPageNo(listForm.getPageNo())
-                .withPageSize(listForm.getPageSize())
+        TopicEditRequest editRequest = TopicEditRequest.Builder.aTopicEditRequest()
+                .withTopicId(topicId)
                 .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withTitle(topicForm.getTitle())
+                .withSummary(topicForm.getSummary())
+                .withCoverImg(topicForm.getCoverImg())
                 .build();
-        MyTopicListResponse myTopicListResponse = iBlogTopicService.topics(myTopicListRequest);
-        return Optional.ofNullable(myTopicListResponse)
+        TopicEditResponse editResponse = iBlogTopicService.editTopic(editRequest);
+        return Optional.ofNullable(editResponse)
                 .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(myTopicListResponse.getTopics()).setTotal(myTopicListResponse.getTotal())
-                        : new ResponseUtil<>().setErrorMsg(myTopicListResponse.getMsg())
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(editResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
-
-    @ApiOperation(value = "创建菜单")
-    @PostMapping("/{topicId}/menu")
-    public ResponseData createTopicMenu(@RequestBody @Validated TopicMenuCreateForm menuCreateForm, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
+    @ApiOperation(value = "修改状态")
+    @PatchMapping("/{topicId}/status")
+    public ResponseData changeTopicStatus(TopicStatusForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
         ValidatorTool.check(bindingResult);
 
-        TopicMenuCreateRequest menuCreateRequest = TopicMenuCreateRequest.Builder.aTopicMenuCreateRequest()
-                .withTopicId(topicId)
-                .withName(menuCreateForm.getName())
-                .withType(menuCreateForm.getType())
-                .withBlogId(menuCreateForm.getBlogId())
-                .withParentMenuId(menuCreateForm.getParentMenuId())
-                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
-                .build();
-        TopicMenuCreateResponse createResponse = iBlogTopicMenuService.createMenu(menuCreateRequest);
-        return Optional.ofNullable(createResponse)
-                .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(createResponse.getMsg())
-                )
-                .orElse(ResponseData.SYSTEM_ERROR);
-    }
-
-    @Anoymous(resolve = true)
-    @ApiOperation(value = "专题菜单")
-    @GetMapping("/{topicId}/menu")
-    public ResponseData topicMenu(@PathVariable("topicId") String topicId) {
-        TopicMenuRequest menuRequest = TopicMenuRequest.Builder.aTopicMenuRequest()
-                .withTopicId(topicId)
-                .withPkUserId(
-                        Optional.ofNullable(PickerInfoHolder.getPickerInfo())
-                                .map(PickerInfo::getId)
-                                .orElse(null)
-                ).build();
-
-        TopicMenuResponse menuResponse = iBlogTopicMenuService.topicMenu(menuRequest);
-        return Optional.ofNullable(menuResponse)
-                .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(menuResponse)
-                        : new ResponseUtil<>().setErrorMsg(menuResponse.getMsg())
-                )
-                .orElse(ResponseData.SYSTEM_ERROR);
-    }
-
-    @ApiOperation(value = "删除专题菜单")
-    @DeleteMapping("/{topicId}/menu/{menuId}")
-    public ResponseData deleteMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
-        DeleteTopicMenuRequest deleteRequest = DeleteTopicMenuRequest.Builder.aDeleteTopicMenuRequest()
-                .withMenuId(menuId)
+        TopicStatusChangeRequest changeRequest = TopicStatusChangeRequest.Builder.aTopicStatusChangeRequest()
                 .withTopicId(topicId)
                 .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withStatus(form.getStatus())
                 .build();
-        DeleteTopicMenuResponse deleteTopicMenuResponse = iBlogTopicMenuService.deleteTopicMenu(deleteRequest);
-        return Optional.ofNullable(deleteTopicMenuResponse)
+        TopicStatusChangeResponse changeResponse = iBlogTopicService.changeStatus(changeRequest);
+        return Optional.ofNullable(changeResponse)
                 .map(r -> r.isSuccess()
                         ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(deleteTopicMenuResponse.getMsg())
+                        : new ResponseUtil<>().setErrorMsg(changeResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
-    @ApiOperation(value = "重命名")
-    @PatchMapping("/{topicId}/menu/{menuId}")
-    public ResponseData rename(@RequestBody@Validated MenuRenameForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
-        ValidatorTool.check(bindingResult);
 
-        RenameMenuRequest renameMenuRequest = RenameMenuRequest.Builder.aRenameMenuRequest()
-                .withTopicId(topicId)
-                .withMenuId(menuId)
-                .withMenuName(form.getMenuName())
-                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
-                .build();
-        RenameMenuResponse renameMenuResponse = iBlogTopicMenuService.rename(renameMenuRequest);
-        return Optional.ofNullable(renameMenuResponse)
-                .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(renameMenuResponse.getMsg())
-                )
-                .orElse(ResponseData.SYSTEM_ERROR);
-    }
-
-    @ApiOperation(value = "上移")
-    @PatchMapping("/{topicId}/menu/{menuId}/up")
-    public ResponseData moveUpMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
-        TopicMenuMoveUpRequest moveUpRequest = TopicMenuMoveUpRequest.Builder.aTopicMenuMoveUpRequest()
-                .withMenuId(menuId)
-                .withTopicId(topicId)
-                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
-                .build();
-        TopicMenuMoveUpResponse moveUpResponse = iBlogTopicMenuService.moveUp(moveUpRequest);
-        return Optional.ofNullable(moveUpResponse)
-                .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(moveUpResponse.getMsg())
-                )
-                .orElse(ResponseData.SYSTEM_ERROR);
-    }
-
-    @ApiOperation(value = "下移")
-    @PatchMapping("/{topicId}/menu/{menuId}/down")
-    public ResponseData moveDownMenu(@PathVariable("topicId") String topicId, @PathVariable("menuId") Long menuId) {
-        TopicMenuMoveDownRequest moveDownRequest = TopicMenuMoveDownRequest.Builder.aTopicMenuMoveDownRequest()
-                .withTopicId(topicId)
-                .withMenuId(menuId)
-                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
-                .build();
-        TopicMenuMoveDownResponse moveDownResponse = iBlogTopicMenuService.moveDown(moveDownRequest);
-        return Optional.ofNullable(moveDownResponse)
-                .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(moveDownResponse.getMsg())
-                )
-                .orElse(ResponseData.SYSTEM_ERROR);
-    }
 }
