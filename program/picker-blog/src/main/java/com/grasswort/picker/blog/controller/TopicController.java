@@ -94,9 +94,28 @@ public class TopicController {
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
 
+    @ApiOperation(value = "删除专题")
+    @DeleteMapping("/{topicId}")
+    public ResponseData deleteTopic(@PathVariable("topicId") String topicId) {
+        if (! PickerInfoHolder.getPickerInfo().isPrivilege()) {
+            return new ResponseUtil<>().setErrorMsg("权限不足");
+        }
+        TopicDeleteRequest deleteRequest = TopicDeleteRequest.Builder.aTopicDeleteRequest()
+                .withTopicId(topicId)
+                .withPkUserId(PickerInfoHolder.getPickerInfo().getId())
+                .build();
+        TopicDeleteResponse deleteResponse = iBlogTopicService.deleteTopic(deleteRequest);
+        return Optional.ofNullable(deleteResponse)
+                .map(r -> r.isSuccess()
+                        ? new ResponseUtil<>().setData(null)
+                        : new ResponseUtil<>().setErrorMsg(deleteResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
     @ApiOperation(value = "修改状态")
     @PatchMapping("/{topicId}/status")
-    public ResponseData changeTopicStatus(TopicStatusForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
+    public ResponseData changeTopicStatus(@RequestBody @Validated TopicStatusForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
         ValidatorTool.check(bindingResult);
 
         TopicStatusChangeRequest changeRequest = TopicStatusChangeRequest.Builder.aTopicStatusChangeRequest()

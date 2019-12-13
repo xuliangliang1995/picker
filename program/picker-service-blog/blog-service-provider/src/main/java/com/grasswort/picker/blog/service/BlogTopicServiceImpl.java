@@ -154,7 +154,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
     }
 
     /**
-     * 博客状态更改
+     * 状态更改
      *
      * @param changeRequest
      * @return
@@ -163,7 +163,6 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
     @DB(DBGroup.MASTER)
     public TopicStatusChangeResponse changeStatus(TopicStatusChangeRequest changeRequest) {
         TopicStatusChangeResponse statusChangeResponse = new TopicStatusChangeResponse();
-
 
         Long topicId = TopicIdEncrypt.decrypt(changeRequest.getTopicId());
         Long pkUserId = changeRequest.getPkUserId();
@@ -188,5 +187,36 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         statusChangeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         statusChangeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return statusChangeResponse;
+    }
+
+    /**
+     * 删除专题
+     *
+     * @param deleteRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.MASTER)
+    public TopicDeleteResponse deleteTopic(TopicDeleteRequest deleteRequest) {
+        TopicDeleteResponse deleteResponse = new TopicDeleteResponse();
+
+        Long topicId = TopicIdEncrypt.decrypt(deleteRequest.getTopicId());
+        Long pkUserId = deleteRequest.getPkUserId();
+        Topic topic = Optional.ofNullable(topicId)
+                .map(topicMapper::selectByPrimaryKey)
+                .filter(t -> Objects.equals(t.getPkUserId(), pkUserId))
+                .orElse(null);
+
+        if (topic == null) {
+            deleteResponse.setCode(SysRetCodeConstants.BLOG_NOT_EXISTS.getCode());
+            deleteResponse.setMsg(SysRetCodeConstants.BLOG_NOT_EXISTS.getMsg());
+            return deleteResponse;
+        }
+
+        topicMapper.deleteByPrimaryKey(topic);
+
+        deleteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        deleteResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return deleteResponse;
     }
 }

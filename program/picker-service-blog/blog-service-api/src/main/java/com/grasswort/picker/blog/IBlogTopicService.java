@@ -33,9 +33,16 @@ public interface IBlogTopicService {
     MyTopicListResponse topics(MyTopicListRequest topicListRequest);
 
     /**
-     * 博客状态更改
+     * 专题状态更改
      * @param changeRequest
      * @return
      */
     TopicStatusChangeResponse changeStatus(TopicStatusChangeRequest changeRequest);
+
+    /**
+     * 删除专题
+     * @param deleteRequest
+     * @return
+     */
+    TopicDeleteResponse deleteTopic(TopicDeleteRequest deleteRequest);
 }
