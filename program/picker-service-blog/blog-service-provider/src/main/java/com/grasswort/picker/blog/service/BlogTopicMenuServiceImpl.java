@@ -170,7 +170,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
 
         Optional<TopicDoc> topicDoc = topicDocRepository.findById(topicId);
 
-        boolean topicExists =  ! topicDoc.isPresent() ;
+        boolean topicExists = topicDoc.isPresent() ;
         if (! topicExists) {
             topicMenuResponse.setCode(SysRetCodeConstants.TOPIC_NOT_EXISTS.getCode());
             topicMenuResponse.setMsg(SysRetCodeConstants.TOPIC_NOT_EXISTS.getMsg());
