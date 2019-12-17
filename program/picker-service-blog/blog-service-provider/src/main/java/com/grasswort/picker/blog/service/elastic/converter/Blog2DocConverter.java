@@ -22,7 +22,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -80,27 +79,26 @@ public class Blog2DocConverter {
         Date gmtCreate = blog.getGmtCreate();
         Double heat = HackerNewsHeat.calculate((like + favorite) * 10 + browse, Duration.between(gmtCreate.toInstant(), Instant.now()).get(ChronoUnit.SECONDS) / (24 * 60 * 60));
 
-        BlogDoc blogDoc = BlogDoc.Builder.aBlogDoc()
-                .withBlogId(blog.getId())
-                .withPickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
-                .withTitle(blog.getTitle())
-                .withSummary(blog.getSummary())
-                .withCoverImg(blog.getCoverImg())
-                .withVersion(blog.getVersion())
-                .withGmtCreate(blog.getGmtCreate())
-                .withGmtModified(content.getGmtModified())
-                .withLabels(labels)
-                .withMarkdown(content.getMarkdown())
-                .withAuthorId(blog.getPkUserId())
-                .withAuthor(author)
-                .withAuthorAvatar(authorAvatar)
-                .withStatus(blog.getStatus())
-                .withLike(like)
-                .withFavorite(favorite)
-                .withBrowse(browse)
-                .withHeat(heat)
+        BlogDoc blogDoc = BlogDoc.builder()
+                .blogId(blog.getId())
+                .pickerId(PickerIdEncrypt.encrypt(blog.getPkUserId()))
+                .title(blog.getTitle())
+                .summary(blog.getSummary())
+                .coverImg(blog.getCoverImg())
+                .version(blog.getVersion())
+                .gmtCreate(blog.getGmtCreate())
+                .gmtModified(content.getGmtModified())
+                .labels(labels)
+                .markdown(content.getMarkdown())
+                .authorId(blog.getPkUserId())
+                .author(author)
+                .authorAvatar(authorAvatar)
+                .status(blog.getStatus())
+                .like(like)
+                .favorite(favorite)
+                .browse(browse)
+                .heat(heat)
                 .build();
-
         return blogDoc;
     }
 }

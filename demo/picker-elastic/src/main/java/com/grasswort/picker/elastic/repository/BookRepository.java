@@ -10,6 +10,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * @Date 2019/11/30 9:55
  * @blame Java Team
  */
-public interface BookRepository extends ElasticsearchRepository<BookBean, String> {
+public interface BookRepository extends ElasticsearchRepository<BookBean, Long> {
 
 }

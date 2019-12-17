@@ -1,5 +1,6 @@
 package com.grasswort.picker.elastic.service;
 
+import com.grasswort.picker.elastic.entity.AuthorBean;
 import com.grasswort.picker.elastic.entity.BookBean;
 import com.grasswort.picker.elastic.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +21,21 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-    //@PostConstruct
-    public void addABook() {
-        BookBean bookBean = new BookBean("1", "本草纲目", "李时珍", "2018-10-01");
+    @PostConstruct
+    public void addABook() { //new AuthorBean(1L, "李时珍")
+        BookBean bookBean = new BookBean(1L, "本草纲目", "1", "2018-10-01");
         bookRepository.save(bookBean);
     }
 
     @PostConstruct
     public void findById() {
-        Optional<BookBean> bookBeanOpt = this.findById("1");
+        Optional<BookBean> bookBeanOpt = this.findById(1L);
         if (bookBeanOpt.isPresent()) {
             System.out.println(bookBeanOpt.get());
         }
     }
 
-    public Optional<BookBean> findById(String id) {
+    public Optional<BookBean> findById(Long id) {
         return bookRepository.findById(id);
     }
 }

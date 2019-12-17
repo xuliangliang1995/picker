@@ -12,9 +12,14 @@ import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItem;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItemBuilder;
+import com.grasswort.picker.blog.elastic.entity.TopicDoc;
+import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
+import com.grasswort.picker.blog.service.elastic.TopicDocRefreshService;
+import com.grasswort.picker.blog.service.redisson.TopicMenuCacheable;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
+import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.dubbo.config.annotation.Service;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +44,13 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
     @Autowired BlogDao blogDao;
 
     @Autowired TopicMapper topicMapper;
+
+    @Autowired TopicDocRepository topicDocRepository;
+
+    @Autowired TopicDocRefreshService topicDocRefreshService;
+
+    @Autowired TopicMenuCacheable topicMenuCacheable;
+
     /**
      * 菜单创建
      *
@@ -136,6 +148,8 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         topicMenu.setGmtModified(now);
         topicMenuMapper.insertUseGeneratedKeys(topicMenu);
 
+        topicDocRefreshService.refreshTopic(topic);
+
         menuCreateResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         menuCreateResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return menuCreateResponse;
@@ -153,24 +167,23 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         TopicMenuResponse topicMenuResponse = new TopicMenuResponse();
         Long topicId = TopicIdEncrypt.decrypt(topicMenuRequest.getTopicId());
         Long pkUserId = topicMenuRequest.getPkUserId();
-        Topic topic = (topicId != null && topicId > 0L) ? topicMapper.selectByPrimaryKey(topicId) : null;
 
-        boolean topicExists =  topic != null ;
+        Optional<TopicDoc> topicDoc = topicDocRepository.findById(topicId);
+
+        boolean topicExists =  ! topicDoc.isPresent() ;
         if (! topicExists) {
             topicMenuResponse.setCode(SysRetCodeConstants.TOPIC_NOT_EXISTS.getCode());
             topicMenuResponse.setMsg(SysRetCodeConstants.TOPIC_NOT_EXISTS.getMsg());
             return topicMenuResponse;
         }
 
-        Example example = new Example(TopicMenu.class);
-        example.createCriteria().andEqualTo("topicId", topicId).andEqualTo("parentMenuId", 0L);
-        example.setOrderByClause("weight asc");
-
-        List<TopicMenuItem> topicMenus = topicMenuMapper.selectByExample(example)
-                .stream().map(tm -> topicMenu2Item(tm)).collect(Collectors.toList());
+        List<TopicMenuItem> topicMenus = topicMenuCacheable.topicMenus(topicId);
+        if (topicMenus == null) {
+            topicMenus = this.topicMenus(topicDoc.get().getTopicId());
+        }
 
         topicMenuResponse.setMenu(topicMenus);
-        topicMenuResponse.setEditable(Objects.equals(pkUserId, topic.getPkUserId()));
+        topicMenuResponse.setEditable(Objects.equals(pkUserId, PickerIdEncrypt.decrypt(topicDoc.get().getPickerId())));
         topicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         topicMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return topicMenuResponse;
@@ -210,6 +223,9 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
             }
             topicMenuMapper.deleteByPrimaryKey(menuId);
         }
+
+        topicDocRefreshService.refreshTopic(topic);
+
         deleteTopicMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteTopicMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return deleteTopicMenuResponse;
@@ -247,6 +263,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         }
 
         this.move(topicMenu, true);
+        topicDocRefreshService.refreshTopic(topic);
 
         topicMenuMoveUpResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         topicMenuMoveUpResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -285,6 +302,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         }
 
         this.move(topicMenu, false);
+        topicDocRefreshService.refreshTopic(topic);
 
         topicMenuMoveDownResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         topicMenuMoveDownResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -329,9 +347,29 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
         menuSelective.setGmtModified(new Date());
         topicMenuMapper.updateByPrimaryKeySelective(menuSelective);
 
+        topicDocRefreshService.refreshTopic(topic);
+
         renameMenuResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         renameMenuResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return renameMenuResponse;
+    }
+
+
+    /**
+     * 专题菜单
+     * @param topicId
+     * @return
+     */
+    @DB(DBGroup.SLAVE)
+    public List<TopicMenuItem> topicMenus(Long topicId) {
+        Example example = new Example(TopicMenu.class);
+        example.createCriteria().andEqualTo("topicId", topicId).andEqualTo("parentMenuId", 0L);
+        example.setOrderByClause("weight asc");
+
+        List<TopicMenuItem> topicMenus = topicMenuMapper.selectByExample(example)
+                .stream().map(tm -> topicMenu2Item(tm)).collect(Collectors.toList());
+
+        return topicMenus;
     }
 
     /**
@@ -362,6 +400,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
 
         return item;
     }
+
 
     /**
      * 移动菜单
@@ -402,5 +441,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
             topicMenuMapper.updateByPrimaryKeySelective(upMenuSelective);
         }
     }
+
+
 }
 

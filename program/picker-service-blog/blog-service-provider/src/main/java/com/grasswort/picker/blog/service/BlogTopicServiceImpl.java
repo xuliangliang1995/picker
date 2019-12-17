@@ -8,19 +8,28 @@ import com.grasswort.picker.blog.dao.entity.Topic;
 import com.grasswort.picker.blog.dao.persistence.TopicMapper;
 import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.topic.TopicItem;
+import com.grasswort.picker.blog.elastic.entity.TopicDoc;
+import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
+import com.grasswort.picker.blog.service.elastic.TopicDocRefreshService;
+import com.grasswort.picker.blog.service.redisson.TopicMenuCacheable;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserBaseInfoService;
-import com.grasswort.picker.user.dto.UserBaseInfoRequest;
-import com.grasswort.picker.user.dto.UserBaseInfoResponse;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
-import org.apache.ibatis.session.RowBounds;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import tk.mybatis.mapper.entity.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +44,13 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
 
     @Autowired TopicMapper topicMapper;
 
+    @Autowired TopicDocRefreshService topicDocRefreshService;
+
     @Reference(version = "1.0", timeout = 10000) IUserBaseInfoService iUserBaseInfoService;
+
+    @Autowired TopicDocRepository topicDocRepository;
+
+    @Autowired TopicMenuCacheable topicMenuCacheable;
     /**
      * 创建专题
      *
@@ -57,6 +72,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         topic.setGmtCreate(now);
         topic.setGmtModified(now);
         topicMapper.insertUseGeneratedKeys(topic);
+        topicDocRefreshService.refreshTopic(topic);
 
         createResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         createResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -91,6 +107,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         topic.setCoverImg(editRequest.getCoverImg());
         topic.setGmtModified(new Date());
         topicMapper.updateByPrimaryKey(topic);
+        topicDocRefreshService.refreshTopic(topic);
 
         editResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         editResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -111,7 +128,37 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         Integer pageNo = topicListRequest.getPageNo();
         Integer pageSize = topicListRequest.getPageSize();
 
-        Example example = new Example(Topic.class);
+        BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("pickerId", PickerIdEncrypt.encrypt(pkUserId)));
+
+        Sort sort = new Sort(Sort.Direction.DESC, "gmtCreate");
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+
+        Page<TopicDoc> page = topicDocRepository.search(queryBuilders, pageable);
+        List<TopicItem> topicItems = page.getContent().stream()
+                .map(topic -> TopicItem.Builder.aTopicItem()
+                        .withTopicId(TopicIdEncrypt.encrypt(topic.getTopicId()))
+                        .withPkUserId(topic.getPickerId())
+                        .withTitle(topic.getTitle())
+                        .withSummary(topic.getSummary())
+                        .withCoverImg(topic.getCoverImg())
+                        .withOwnerName(topic.getOwnerName())
+                        .withOwnerAvatar(topic.getOwnerAvatar())
+                        .withStatus(topic.getStatus())
+                        .withLinks(topic.getLinks())
+                        .withGmtCreate(topic.getGmtCreate())
+                        .withGmtModified(topic.getGmtModified())
+                        .build())
+                .collect(Collectors.toList());
+
+        topicListResponse.setTopics(topicItems);
+        topicListResponse.setTotal(page.getTotalElements());
+        topicListResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        topicListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return topicListResponse;
+
+        /// 从 mysal 数据库中查询，暂时不删
+        /*Example example = new Example(Topic.class);
         example.createCriteria().andEqualTo("pkUserId", pkUserId);
         long total = topicMapper.selectCountByExample(example);
 
@@ -147,10 +194,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         } else {
             topicListResponse.setTotal(total);
             topicListResponse.setTopics(Collections.EMPTY_LIST);
-        }
-        topicListResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
-        topicListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
-        return topicListResponse;
+        }*/
     }
 
     /**
@@ -183,6 +227,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         topicSelective.setStatus(status);
         topicSelective.setGmtModified(new Date());
         topicMapper.updateByPrimaryKeySelective(topicSelective);
+        topicDocRefreshService.refreshTopic(topic);
 
         statusChangeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         statusChangeResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
@@ -214,9 +259,13 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         }
 
         topicMapper.deleteByPrimaryKey(topic);
+        topicDocRepository.deleteById(topic.getId());
+        topicMenuCacheable.removeTopicMenu(topic.getId());
 
         deleteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         deleteResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return deleteResponse;
     }
+
+
 }

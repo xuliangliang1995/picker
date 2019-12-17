@@ -2,6 +2,7 @@ package com.grasswort.picker.blog.dto.topic;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @blame Java Team
  */
 @Data
-public class TopicMenuItem {
+public class TopicMenuItem implements Serializable {
 
     private Long menuId;
 
@@ -25,7 +26,5 @@ public class TopicMenuItem {
     private String blogId;
 
     private List<TopicMenuItem> children;
-
-
 
 }

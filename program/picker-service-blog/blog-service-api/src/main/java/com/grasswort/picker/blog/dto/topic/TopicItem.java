@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xuliangliang
@@ -31,6 +32,8 @@ public class TopicItem {
 
     private Integer status;
 
+    private List<MenuLink> links;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
@@ -45,6 +48,7 @@ public class TopicItem {
         private String coverImg;
         private String summary;
         private Integer status;
+        private List<MenuLink> links;
         private Date gmtCreate;
         private Date gmtModified;
 
@@ -95,6 +99,11 @@ public class TopicItem {
             return this;
         }
 
+        public Builder withLinks(List<MenuLink> links) {
+            this.links = links;
+            return this;
+        }
+
         public Builder withGmtCreate(Date gmtCreate) {
             this.gmtCreate = gmtCreate;
             return this;
@@ -115,6 +124,7 @@ public class TopicItem {
             topicItem.setCoverImg(coverImg);
             topicItem.setSummary(summary);
             topicItem.setStatus(status);
+            topicItem.setLinks(links);
             topicItem.setGmtCreate(gmtCreate);
             topicItem.setGmtModified(gmtModified);
             return topicItem;

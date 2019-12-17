@@ -1,6 +1,7 @@
 package com.grasswort.picker.blog.service.task;
 
 import com.grasswort.picker.blog.service.elastic.BlogDocInitService;
+import com.grasswort.picker.blog.service.elastic.TopicDocInitService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -26,9 +27,14 @@ public class BlogDocInitJob extends QuartzJobBean {
     @Resource
     BlogDocInitService blogDocInitService;
 
+    @Resource
+    TopicDocInitService topicDocInitService;
+
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("\n执行博客ES存储更新任务");
         blogDocInitService.init();
+        log.info("\n执行博客专题ES存储更新任务");
+        topicDocInitService.init();
     }
 }
