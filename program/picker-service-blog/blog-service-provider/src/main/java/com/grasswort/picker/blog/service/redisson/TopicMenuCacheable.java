@@ -43,7 +43,7 @@ public class TopicMenuCacheable {
     public List<TopicMenuItem> topicMenus(Long topicId) {
         String key = key(topicId);
         RList<TopicMenuItem> topicMenus = redissonClient.getList(key);
-        return topicMenus.isExists() ? topicMenus : null;
+        return topicMenus.isExists() ? topicMenus.readAll() : null;
     }
 
     /**
