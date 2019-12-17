@@ -35,7 +35,7 @@ public class TopicDoc {
     /**
      * 作者ID
      */
-    @Field(type = FieldType.Text, index = false)
+    @Field(type = FieldType.Text)
     private String pickerId;
     /**
      * 所属者
