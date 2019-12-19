@@ -3,10 +3,12 @@ package com.grasswort.picker.blog.service.elastic;
 import com.grasswort.picker.blog.constant.TopicMenuTypeEnum;
 import com.grasswort.picker.blog.dao.entity.Topic;
 import com.grasswort.picker.blog.dto.topic.MenuLink;
+import com.grasswort.picker.blog.dto.topic.TopicItem;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItem;
 import com.grasswort.picker.blog.elastic.entity.TopicDoc;
 import com.grasswort.picker.blog.service.BlogTopicMenuServiceImpl;
 import com.grasswort.picker.blog.service.redisson.TopicMenuCacheable;
+import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.user.IUserBaseInfoService;
 import com.grasswort.picker.user.dto.UserBaseInfoRequest;
 import com.grasswort.picker.user.dto.UserBaseInfoResponse;
@@ -72,6 +74,26 @@ public class TopicDocConverter {
                 .build();
     }
 
+    /**
+     * topicDoc2Item
+     * @param topic
+     * @return
+     */
+    public TopicItem topicDoc2Item(TopicDoc topic) {
+        return TopicItem.Builder.aTopicItem()
+                .withTopicId(TopicIdEncrypt.encrypt(topic.getTopicId()))
+                .withPkUserId(topic.getPickerId())
+                .withTitle(topic.getTitle())
+                .withSummary(topic.getSummary())
+                .withCoverImg(topic.getCoverImg())
+                .withOwnerName(topic.getOwnerName())
+                .withOwnerAvatar(topic.getOwnerAvatar())
+                .withStatus(topic.getStatus())
+                .withLinks(topic.getLinks())
+                .withGmtCreate(topic.getGmtCreate())
+                .withGmtModified(topic.getGmtModified())
+                .build();
+    }
 
 
     /**

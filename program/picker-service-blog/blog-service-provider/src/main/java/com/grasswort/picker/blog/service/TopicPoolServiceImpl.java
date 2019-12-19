@@ -5,6 +5,10 @@ import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.TopicStatusEnum;
 import com.grasswort.picker.blog.dto.TopicPoolRequest;
 import com.grasswort.picker.blog.dto.TopicPoolResponse;
+import com.grasswort.picker.blog.dto.topic.TopicItem;
+import com.grasswort.picker.blog.elastic.entity.TopicDoc;
+import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
+import com.grasswort.picker.blog.service.elastic.TopicDocConverter;
 import com.grasswort.picker.blog.service.elastic.TopicDocInitService;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
@@ -13,9 +17,13 @@ import org.apache.dubbo.config.annotation.Service;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author xuliangliang
@@ -28,6 +36,10 @@ import org.springframework.data.domain.Sort;
 public class TopicPoolServiceImpl implements ITopicPoolService {
 
     @Autowired TopicDocInitService topicDocInitService;
+
+    @Autowired TopicDocRepository topicDocRepository;
+
+    @Autowired TopicDocConverter topicDocConverter;
     /**
      * 专题池
      *
@@ -59,7 +71,13 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
         Sort sort = new Sort(Sort.Direction.DESC, "_score");
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
-        return null;
+        Page<TopicDoc> topicsPage =  topicDocRepository.search(queryBuilder, pageable);
+        List<TopicItem> topics = topicsPage.getContent().stream().map(topicDocConverter::topicDoc2Item)
+                .collect(Collectors.toList());
+
+        poolResponse.setTopics(topics);
+        poolResponse.setTotal(topicsPage.getTotalElements());
+        return poolResponse;
     }
 
     /**
