@@ -2,6 +2,7 @@ package com.grasswort.picker.blog.service;
 
 import com.grasswort.picker.blog.ITopicPoolService;
 import com.grasswort.picker.blog.constant.DBGroup;
+import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.constant.TopicStatusEnum;
 import com.grasswort.picker.blog.dto.TopicPoolRequest;
 import com.grasswort.picker.blog.dto.TopicPoolResponse;
@@ -77,6 +78,8 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
 
         poolResponse.setTopics(topics);
         poolResponse.setTotal(topicsPage.getTotalElements());
+        poolResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        poolResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         return poolResponse;
     }
 
