@@ -157,7 +157,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
         topicListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return topicListResponse;
 
-        /// 从 mysal 数据库中查询，暂时不删
+        /// 从 mysql 数据库中查询，暂时不删
         /*Example example = new Example(Topic.class);
         example.createCriteria().andEqualTo("pkUserId", pkUserId);
         long total = topicMapper.selectCountByExample(example);

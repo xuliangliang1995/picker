@@ -360,7 +360,7 @@ public class BlogTopicMenuServiceImpl implements IBlogTopicMenuService {
      * @param topicId
      * @return
      */
-    @DB(DBGroup.SLAVE)
+    @DB(DBGroup.MASTER)
     public List<TopicMenuItem> topicMenus(Long topicId) {
         Example example = new Example(TopicMenu.class);
         example.createCriteria().andEqualTo("topicId", topicId).andEqualTo("parentMenuId", 0L);
