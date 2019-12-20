@@ -221,12 +221,16 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
             return statusChangeResponse;
         }
 
+        Date now = new Date();
         Integer status = changeRequest.getStatus();
         Topic topicSelective = new Topic();
         topicSelective.setId(topicId);
         topicSelective.setStatus(status);
-        topicSelective.setGmtModified(new Date());
+        topicSelective.setGmtModified(now);
         topicMapper.updateByPrimaryKeySelective(topicSelective);
+
+        topic.setStatus(status);
+        topic.setGmtModified(now);
         topicDocRefreshService.refreshTopic(topic);
 
         statusChangeResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
