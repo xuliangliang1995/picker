@@ -82,7 +82,7 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
                 .collect(Collectors.toList());
 
         if (browseUserId != null && browseUserId > 0L) {
-            topics.stream().forEach(topic -> topic.setFavorite(topicFavoriteMapper.selectIdByUserIdAndTopicId(browseUserId, TopicIdEncrypt.decrypt(topic.getTopicId())) > 0));
+            topics.stream().forEach(topic -> topic.setFavorite(topicFavoriteMapper.selectIdByUserIdAndTopicId(browseUserId, TopicIdEncrypt.decrypt(topic.getTopicId())) != null));
         }
 
         poolResponse.setTopics(topics);
