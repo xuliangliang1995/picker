@@ -118,7 +118,14 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_topic_comment" domainObjectName="TopicComment"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            </table>
         -->
+
 
     </context>
 </generatorConfiguration>
+

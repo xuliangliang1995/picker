@@ -32,7 +32,9 @@ public enum SysRetCodeConstants {
     MENU_CAN_NOT_DELETE             ("005004", "菜单不可以删除"),
     MENU_NOT_EXISTS                 ("005005", "菜单不存在"),
 
-    TOPIC_NOT_EXISTS                ("006001", "专题不存在");
+    TOPIC_NOT_EXISTS                ("006001", "专题不存在"),
+
+    REPEATED_COMMENT                ("007001", "不能重复评价");
 
     private String code;
     private String msg;
