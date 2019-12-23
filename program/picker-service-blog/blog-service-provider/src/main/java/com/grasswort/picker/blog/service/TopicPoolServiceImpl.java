@@ -4,6 +4,7 @@ import com.grasswort.picker.blog.ITopicPoolService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.constant.TopicStatusEnum;
+import com.grasswort.picker.blog.dao.persistence.TopicFavoriteMapper;
 import com.grasswort.picker.blog.dto.TopicPoolRequest;
 import com.grasswort.picker.blog.dto.TopicPoolResponse;
 import com.grasswort.picker.blog.dto.topic.TopicItem;
@@ -11,6 +12,7 @@ import com.grasswort.picker.blog.elastic.entity.TopicDoc;
 import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
 import com.grasswort.picker.blog.service.elastic.TopicDocConverter;
 import com.grasswort.picker.blog.service.elastic.TopicDocInitService;
+import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
     @Autowired TopicDocRepository topicDocRepository;
 
     @Autowired TopicDocConverter topicDocConverter;
+
+    @Autowired TopicFavoriteMapper topicFavoriteMapper;
     /**
      * 专题池
      *
@@ -55,6 +59,7 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
         Long authorId = poolRequest.getAuthorId();
         Integer pageNo = poolRequest.getPageNo();
         Integer pageSize = poolRequest.getPageSize();
+        Long browseUserId = poolRequest.getBrowseUserId();
 
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery("status", TopicStatusEnum.PUBLIC.getStatus()));
@@ -75,6 +80,10 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
         Page<TopicDoc> topicsPage =  topicDocRepository.search(queryBuilder, pageable);
         List<TopicItem> topics = topicsPage.getContent().stream().map(topicDocConverter::topicDoc2Item)
                 .collect(Collectors.toList());
+
+        if (browseUserId != null && browseUserId > 0L) {
+            topics.stream().forEach(topic -> topic.setFavorite(topicFavoriteMapper.selectIdByUserIdAndTopicId(browseUserId, TopicIdEncrypt.decrypt(topic.getTopicId())) > 0));
+        }
 
         poolResponse.setTopics(topics);
         poolResponse.setTotal(topicsPage.getTotalElements());

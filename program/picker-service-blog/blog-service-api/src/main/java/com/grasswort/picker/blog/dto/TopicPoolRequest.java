@@ -31,6 +31,9 @@ public class TopicPoolRequest extends AbstractRequest {
     @Max(100)
     private Integer pageSize;
 
+    @Min(1)
+    private Long browseUserId;
+
     @Override
     public void requestCheck() {
 
@@ -41,6 +44,7 @@ public class TopicPoolRequest extends AbstractRequest {
         private Long authorId;
         private Integer pageNo;
         private Integer pageSize;
+        private Long browseUserId;
 
         private Builder() {
         }
@@ -69,12 +73,18 @@ public class TopicPoolRequest extends AbstractRequest {
             return this;
         }
 
+        public Builder withBrowseUserId(Long browseUserId) {
+            this.browseUserId = browseUserId;
+            return this;
+        }
+
         public TopicPoolRequest build() {
             TopicPoolRequest topicPoolRequest = new TopicPoolRequest();
             topicPoolRequest.setKeyword(keyword);
             topicPoolRequest.setAuthorId(authorId);
             topicPoolRequest.setPageNo(pageNo);
             topicPoolRequest.setPageSize(pageSize);
+            topicPoolRequest.setBrowseUserId(browseUserId);
             return topicPoolRequest;
         }
     }

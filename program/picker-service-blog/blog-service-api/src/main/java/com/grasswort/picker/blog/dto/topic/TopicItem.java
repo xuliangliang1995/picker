@@ -38,6 +38,11 @@ public class TopicItem {
     private Date gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtModified;
+    /**
+     * 浏览者是否已经收藏该专题
+     */
+    private Boolean favorite;
+
 
     public static final class Builder {
         private String topicId;
@@ -51,6 +56,7 @@ public class TopicItem {
         private List<MenuLink> links;
         private Date gmtCreate;
         private Date gmtModified;
+        private Boolean favorite;
 
         private Builder() {
         }
@@ -114,6 +120,11 @@ public class TopicItem {
             return this;
         }
 
+        public Builder withFavorite(Boolean favorite) {
+            this.favorite = favorite;
+            return this;
+        }
+
         public TopicItem build() {
             TopicItem topicItem = new TopicItem();
             topicItem.setTopicId(topicId);
@@ -127,6 +138,7 @@ public class TopicItem {
             topicItem.setLinks(links);
             topicItem.setGmtCreate(gmtCreate);
             topicItem.setGmtModified(gmtModified);
+            topicItem.setFavorite(favorite);
             return topicItem;
         }
     }

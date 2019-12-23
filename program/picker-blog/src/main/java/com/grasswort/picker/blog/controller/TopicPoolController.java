@@ -8,6 +8,8 @@ import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
 import com.grasswort.picker.commons.validator.ValidatorTool;
 import com.grasswort.picker.user.annotation.Anoymous;
+import com.grasswort.picker.user.model.PickerInfo;
+import com.grasswort.picker.user.model.PickerInfoHolder;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +39,7 @@ public class TopicPoolController {
     @Reference(version = "1.0", timeout = 10000)
     ITopicPoolService iTopicPoolService;
 
+    @Anoymous(resolve = true)
     @ApiOperation(value = "专题池")
     @GetMapping
     public ResponseData topicPool(@Validated TopicPoolForm form, BindingResult bindingResult) {
@@ -49,6 +52,9 @@ public class TopicPoolController {
                 .withKeyword(keyword)
                 .withPageNo(form.getPageNo())
                 .withPageSize(form.getPageSize())
+                .withBrowseUserId(
+                        Optional.ofNullable(PickerInfoHolder.getPickerInfo()).map(PickerInfo::getId).orElse(null)
+                )
                 .build();
         TopicPoolResponse poolResponse = iTopicPoolService.topicPool(poolRequest);
         return Optional.ofNullable(poolResponse)
