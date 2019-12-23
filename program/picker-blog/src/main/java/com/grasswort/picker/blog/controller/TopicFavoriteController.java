@@ -42,7 +42,7 @@ public class TopicFavoriteController {
         return Optional.ofNullable(favoriteResponse)
                 .map(r -> r.isSuccess()
                     ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(favoriteResponse.getMsg())
+                    : new ResponseUtil<>().setErrorMsg(favoriteResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
@@ -58,8 +58,8 @@ public class TopicFavoriteController {
 
         return Optional.ofNullable(favoriteCancelResponse)
                 .map(r -> r.isSuccess()
-                        ? new ResponseUtil<>().setData(null)
-                        : new ResponseUtil<>().setErrorMsg(favoriteCancelResponse.getMsg())
+                    ? new ResponseUtil<>().setData(null)
+                    : new ResponseUtil<>().setErrorMsg(favoriteCancelResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }
