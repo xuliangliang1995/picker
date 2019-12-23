@@ -113,8 +113,12 @@
                    enableDeleteByExample="false" enableSelectByExample="false"
                    selectByExampleQueryId="false">
             </table>
+            <table tableName="pk_topic_favorite" domainObjectName="TopicFavorite"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            </table>
         -->
-
 
     </context>
 </generatorConfiguration>
