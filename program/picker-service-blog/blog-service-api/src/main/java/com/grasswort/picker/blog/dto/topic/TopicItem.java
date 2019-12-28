@@ -34,6 +34,8 @@ public class TopicItem {
 
     private List<MenuLink> links;
 
+    private Integer rate;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
@@ -54,6 +56,7 @@ public class TopicItem {
         private String summary;
         private Integer status;
         private List<MenuLink> links;
+        private Integer rate;
         private Date gmtCreate;
         private Date gmtModified;
         private Boolean favorite;
@@ -110,6 +113,11 @@ public class TopicItem {
             return this;
         }
 
+        public Builder withRate(Integer rate) {
+            this.rate = rate;
+            return this;
+        }
+
         public Builder withGmtCreate(Date gmtCreate) {
             this.gmtCreate = gmtCreate;
             return this;
@@ -136,6 +144,7 @@ public class TopicItem {
             topicItem.setSummary(summary);
             topicItem.setStatus(status);
             topicItem.setLinks(links);
+            topicItem.setRate(rate);
             topicItem.setGmtCreate(gmtCreate);
             topicItem.setGmtModified(gmtModified);
             topicItem.setFavorite(favorite);

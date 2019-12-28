@@ -9,4 +9,10 @@ public interface TopicCommentMapper extends TkMapper<TopicComment> {
 
     @Select("select id from pk_topic_comment where topic_id = #{topicId} and user_id = #{userId}")
     Long selectIdByUserIdAndTopicId(@Param("userId") Long userId, @Param("topicId") Long topicId);
+
+    @Select("select ifnull(sum(rate), 0) from pk_topic_comment where topic_id = #{topicId}")
+    Long sumRateForTopic(@Param("topicId")Long topicId);
+
+    @Select("select count(*) from pk_topic_comment where topic_id = #{topicId}")
+    Long topicCommentCount(@Param("topicId")Long topicId);
 }

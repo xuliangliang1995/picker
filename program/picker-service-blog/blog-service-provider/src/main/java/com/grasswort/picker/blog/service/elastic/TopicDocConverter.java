@@ -2,6 +2,7 @@ package com.grasswort.picker.blog.service.elastic;
 
 import com.grasswort.picker.blog.constant.TopicMenuTypeEnum;
 import com.grasswort.picker.blog.dao.entity.Topic;
+import com.grasswort.picker.blog.dao.persistence.TopicCommentMapper;
 import com.grasswort.picker.blog.dto.topic.MenuLink;
 import com.grasswort.picker.blog.dto.topic.TopicItem;
 import com.grasswort.picker.blog.dto.topic.TopicMenuItem;
@@ -39,6 +40,8 @@ public class TopicDocConverter {
 
     @Resource private TopicMenuCacheable topicMenuCacheable;
 
+    @Resource private TopicCommentMapper topicCommentMapper;
+
     /**
      *
      * @param topic
@@ -59,6 +62,15 @@ public class TopicDocConverter {
         // 重新缓存
         topicMenuCacheable.cacheTopicMenus(topic.getId(), topicMenus);
 
+        Integer rate = 5;
+        Long sumRate = topicCommentMapper.sumRateForTopic(topic.getId());
+        if (sumRate > 0L) {
+            Long commentTotal = topicCommentMapper.topicCommentCount(topic.getId());
+            if (commentTotal > 0L) {
+                rate = Long.valueOf(Math.round(sumRate / (double)commentTotal)).intValue();
+            }
+        }
+
         return TopicDoc.builder()
                 .topicId(topic.getId())
                 .pickerId(PickerIdEncrypt.encrypt(topic.getPkUserId()))
@@ -68,6 +80,7 @@ public class TopicDocConverter {
                 .gmtCreate(topic.getGmtCreate())
                 .gmtModified(topic.getGmtModified())
                 .links(this.findLinkFromTopicMenu(topicMenus))
+                .rate(rate)
                 .status(topic.getStatus())
                 .ownerAvatar(authorAvatar)
                 .ownerName(authorName)
@@ -90,6 +103,7 @@ public class TopicDocConverter {
                 .withOwnerAvatar(topic.getOwnerAvatar())
                 .withStatus(topic.getStatus())
                 .withLinks(topic.getLinks())
+                .withRate(topic.getRate())
                 .withGmtCreate(topic.getGmtCreate())
                 .withGmtModified(topic.getGmtModified())
                 .build();
@@ -113,5 +127,6 @@ public class TopicDocConverter {
         }
         return links;
     }
+
 
 }

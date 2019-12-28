@@ -82,5 +82,10 @@ public class TopicDoc {
      */
     @Field(type = FieldType.Object)
     private List<MenuLink> links;
+    /**
+     * 评分星级
+     */
+    @Field(type = FieldType.Integer)
+    private Integer rate;
 
 }

@@ -60,6 +60,7 @@ public class TopicCommentController {
     @ApiOperation(value = "获取评分")
     @GetMapping("/comment")
     public ResponseData comments(@Validated TopicCommentsForm form, BindingResult bindingResult, @PathVariable("topicId") String topicId) {
+        ValidatorTool.check(bindingResult);
         TopicCommentsRequest commentsRequest = TopicCommentsRequest.Builder.aTopicCommentsRequest()
                 .withTopicId(topicId)
                 .withUserId(
