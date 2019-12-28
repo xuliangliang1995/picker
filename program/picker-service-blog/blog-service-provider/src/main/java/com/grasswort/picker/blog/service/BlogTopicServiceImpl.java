@@ -10,6 +10,7 @@ import com.grasswort.picker.blog.dto.*;
 import com.grasswort.picker.blog.dto.topic.TopicItem;
 import com.grasswort.picker.blog.elastic.entity.TopicDoc;
 import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
+import com.grasswort.picker.blog.service.elastic.TopicDocConverter;
 import com.grasswort.picker.blog.service.elastic.TopicDocRefreshService;
 import com.grasswort.picker.blog.service.redisson.TopicMenuCacheable;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
@@ -51,6 +52,8 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
     @Autowired TopicDocRepository topicDocRepository;
 
     @Autowired TopicMenuCacheable topicMenuCacheable;
+
+    @Autowired TopicDocConverter topicDocConverter;
     /**
      * 创建专题
      *
@@ -136,19 +139,7 @@ public class BlogTopicServiceImpl implements IBlogTopicService {
 
         Page<TopicDoc> page = topicDocRepository.search(queryBuilders, pageable);
         List<TopicItem> topicItems = page.getContent().stream()
-                .map(topic -> TopicItem.Builder.aTopicItem()
-                        .withTopicId(TopicIdEncrypt.encrypt(topic.getTopicId()))
-                        .withPkUserId(topic.getPickerId())
-                        .withTitle(topic.getTitle())
-                        .withSummary(topic.getSummary())
-                        .withCoverImg(topic.getCoverImg())
-                        .withOwnerName(topic.getOwnerName())
-                        .withOwnerAvatar(topic.getOwnerAvatar())
-                        .withStatus(topic.getStatus())
-                        .withLinks(topic.getLinks())
-                        .withGmtCreate(topic.getGmtCreate())
-                        .withGmtModified(topic.getGmtModified())
-                        .build())
+                .map(topic -> topicDocConverter.topicDoc2Item(topic))
                 .collect(Collectors.toList());
 
         topicListResponse.setTopics(topicItems);
