@@ -64,7 +64,7 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery("status", TopicStatusEnum.PUBLIC.getStatus()));
         if (authorId != null && authorId > 0L) {
-            queryBuilder.filter(QueryBuilders.termQuery("pkUserId", PickerIdEncrypt.encrypt(authorId)));
+            queryBuilder.filter(QueryBuilders.termQuery("pickerId", PickerIdEncrypt.encrypt(authorId)));
         }
         if (StringUtils.isNotBlank(keyword)) {
             queryBuilder.must(
