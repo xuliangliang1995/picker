@@ -93,7 +93,7 @@ public class TopicFavoriteServiceImpl implements ITopicFavoriteService {
     public TopicFavoriteCancelResponse topicFavoriteCancel(TopicFavoriteCancelRequest cancelRequest) {
         TopicFavoriteCancelResponse cancelResponse = new TopicFavoriteCancelResponse();
         Long userId = cancelRequest.getUserId();
-        Long topicId = PickerIdEncrypt.decrypt(cancelRequest.getTopicId());
+        Long topicId = TopicIdEncrypt.decrypt(cancelRequest.getTopicId());
 
         Long id = topicFavoriteMapper.selectIdByUserIdAndTopicId(userId, topicId);
         if (id != null && id > 0L) {
