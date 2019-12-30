@@ -6,17 +6,24 @@ import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.entity.TopicFavorite;
 import com.grasswort.picker.blog.dao.persistence.TopicFavoriteMapper;
 import com.grasswort.picker.blog.dao.persistence.TopicMapper;
-import com.grasswort.picker.blog.dto.TopicFavoriteCancelRequest;
-import com.grasswort.picker.blog.dto.TopicFavoriteCancelResponse;
-import com.grasswort.picker.blog.dto.TopicFavoriteRequest;
-import com.grasswort.picker.blog.dto.TopicFavoriteResponse;
+import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.dto.topic.TopicItem;
+import com.grasswort.picker.blog.elastic.entity.TopicDoc;
+import com.grasswort.picker.blog.elastic.repository.TopicDocRepository;
+import com.grasswort.picker.blog.service.elastic.TopicDocConverter;
+import com.grasswort.picker.blog.service.redisson.TopicFavoriteCacheable;
 import com.grasswort.picker.blog.util.TopicIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.dubbo.config.annotation.Service;
+import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author xuliangliang
@@ -31,6 +38,12 @@ public class TopicFavoriteServiceImpl implements ITopicFavoriteService {
     @Autowired TopicFavoriteMapper topicFavoriteMapper;
 
     @Autowired TopicMapper topicMapper;
+
+    @Autowired TopicDocRepository topicDocRepository;
+
+    @Autowired TopicFavoriteCacheable topicFavoriteCacheable;
+
+    @Autowired TopicDocConverter topicDocConverter;
 
     /**
      * 收藏
@@ -61,6 +74,7 @@ public class TopicFavoriteServiceImpl implements ITopicFavoriteService {
             topicFavorite.setGmtCreate(now);
             topicFavorite.setGmtModified(now);
             topicFavoriteMapper.insert(topicFavorite);
+            topicFavoriteCacheable.clear(userId);
         }
 
         favoriteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -84,10 +98,60 @@ public class TopicFavoriteServiceImpl implements ITopicFavoriteService {
         Long id = topicFavoriteMapper.selectIdByUserIdAndTopicId(userId, topicId);
         if (id != null && id > 0L) {
             topicFavoriteMapper.deleteByPrimaryKey(id);
+            topicFavoriteCacheable.clear(userId);
         }
 
         cancelResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         cancelResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return cancelResponse;
     }
+
+    /**
+     * 收藏列表
+     *
+     * @param favoriteListRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public TopicFavoriteListResponse listTopicFavorite(TopicFavoriteListRequest favoriteListRequest) {
+        TopicFavoriteListResponse favoriteListResponse = new TopicFavoriteListResponse();
+        Long authorId = favoriteListRequest.getAuthorId();
+        Long browseId = favoriteListRequest.getPickerId();
+        Integer pageNo = favoriteListRequest.getPageNo();
+        Integer pageSize = favoriteListRequest.getPageSize();
+
+        RList<Long> rTopicFavoriteList = topicFavoriteCacheable.listFavorite(authorId);
+        if (rTopicFavoriteList == null) {
+            List<Long> topicIds = topicFavoriteMapper.listTopicFavorite(authorId);
+            topicFavoriteCacheable.cacheUserFavorite(authorId, topicIds);
+            rTopicFavoriteList = topicFavoriteCacheable.listFavorite(authorId);
+        }
+        if (rTopicFavoriteList != null) {
+            List<Long> topicIds = rTopicFavoriteList.range(pageSize * (pageNo - 1), pageNo * pageSize - 1);
+
+            favoriteListResponse.setTotal(Long.valueOf(rTopicFavoriteList.size()));
+            favoriteListResponse.setTopics(topicIds.stream().map(topicId -> {
+                Optional<TopicDoc> topicDocOpt = topicDocRepository.findById(topicId);
+                if (topicDocOpt.isPresent()) {
+                    TopicItem item = topicDocConverter.topicDoc2Item(topicDocOpt.get());
+                    if (browseId != null) {
+                        item.setFavorite(topicFavoriteMapper.selectIdByUserIdAndTopicId(browseId, topicId) != null);
+                    } else {
+                        item.setFavorite(false);
+                    }
+                    return item;
+                }
+                return null;
+            }).filter(i -> i != null).collect(Collectors.toList()));
+        } else {
+            favoriteListResponse.setTopics(Collections.EMPTY_LIST);
+            favoriteListResponse.setTotal(0L);
+        }
+
+        favoriteListResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        favoriteListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return favoriteListResponse;
+    }
+
 }

@@ -4,7 +4,7 @@ import com.grasswort.picker.blog.IUserInteractionDataService;
 import com.grasswort.picker.blog.constant.DBGroup;
 import com.grasswort.picker.blog.constant.SysRetCodeConstants;
 import com.grasswort.picker.blog.dao.persistence.BlogLikeMapper;
-import com.grasswort.picker.blog.dao.persistence.BlogMapper;
+import com.grasswort.picker.blog.dao.persistence.TopicMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.UserInteractionDataRequest;
 import com.grasswort.picker.blog.dto.UserInteractionDataResponse;
@@ -25,6 +25,8 @@ public class UserInteractionDataServiceImpl implements IUserInteractionDataServi
     @Autowired BlogLikeMapper blogLikeMapper;
 
     @Autowired BlogDao blogDao;
+
+    @Autowired TopicMapper topicMapper;
     /**
      * 用户交互数据查询
      *
@@ -39,6 +41,7 @@ public class UserInteractionDataServiceImpl implements IUserInteractionDataServi
         Long userId = interactionDataRequest.getUserId();
         interactionDataResponse.setBlogCount(blogDao.getBlogCount(userId));
         interactionDataResponse.setLikedCount(blogLikeMapper.getUserLikedCount(userId));
+        interactionDataResponse.setTopicCount(topicMapper.countTopic(userId));
 
         interactionDataResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         interactionDataResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

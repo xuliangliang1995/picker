@@ -32,5 +32,11 @@ public interface IBlogFavoriteService {
      */
     BlogFavoriteCancelResponse blogFavoriteCancel(BlogFavoriteCancelRequest favoriteCancelRequest);
 
+    /**
+     * 博客收藏列表
+     * @param favoriteListRequest
+     * @return
+     */
+    BlogFavoriteListResponse listBlogFavorite(BlogFavoriteListRequest favoriteListRequest);
 
 }

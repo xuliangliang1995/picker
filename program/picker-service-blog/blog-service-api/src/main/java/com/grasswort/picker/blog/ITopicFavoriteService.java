@@ -1,9 +1,6 @@
 package com.grasswort.picker.blog;
 
-import com.grasswort.picker.blog.dto.TopicFavoriteCancelRequest;
-import com.grasswort.picker.blog.dto.TopicFavoriteCancelResponse;
-import com.grasswort.picker.blog.dto.TopicFavoriteRequest;
-import com.grasswort.picker.blog.dto.TopicFavoriteResponse;
+import com.grasswort.picker.blog.dto.*;
 
 /**
  * @author xuliangliang
@@ -27,4 +24,11 @@ public interface ITopicFavoriteService {
      * @return
      */
     TopicFavoriteCancelResponse topicFavoriteCancel(TopicFavoriteCancelRequest cancelRequest);
+
+    /**
+     * 收藏列表
+     * @param favoriteListRequest
+     * @return
+     */
+    TopicFavoriteListResponse listTopicFavorite(TopicFavoriteListRequest favoriteListRequest);
 }

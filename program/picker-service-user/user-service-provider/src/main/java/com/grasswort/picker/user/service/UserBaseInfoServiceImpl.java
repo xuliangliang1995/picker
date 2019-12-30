@@ -127,9 +127,11 @@ public class UserBaseInfoServiceImpl implements IUserBaseInfoService {
         if (interactionDataResponse != null && interactionDataResponse.isSuccess()) {
             interactionData.setBlogCount(interactionDataResponse.getBlogCount());
             interactionData.setLikedCount(interactionDataResponse.getLikedCount());
+            interactionData.setTopicCount(interactionDataResponse.getTopicCount());
         } else {
             interactionData.setBlogCount(0L);
             interactionData.setLikedCount(0L);
+            interactionData.setTopicCount(0L);
         }
 
         interactionData.setSubscribeCount(userSubscribeAuthorMapper.subscribeCount(user.getId()));

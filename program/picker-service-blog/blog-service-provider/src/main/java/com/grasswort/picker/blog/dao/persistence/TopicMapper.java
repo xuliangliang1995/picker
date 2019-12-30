@@ -11,4 +11,7 @@ public interface TopicMapper extends TkMapper<Topic> {
 
     @Select("select id from pk_topic where pk_user_id = #{authorId}")
     List<Long> listTopic(@Param("authorId") long authorId);
+
+    @Select("select count(*) from pk_topic where pk_user_id = #{authorId}")
+    Long countTopic(@Param("authorId") long authorId);
 }

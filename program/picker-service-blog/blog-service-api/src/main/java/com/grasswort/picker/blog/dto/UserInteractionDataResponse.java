@@ -16,6 +16,10 @@ public class UserInteractionDataResponse extends AbstractBlogResponse {
      */
     private Long blogCount;
     /**
+     * 专题数量
+     */
+    private Long topicCount;
+    /**
      * 获赞数量
      */
     private Long likedCount;

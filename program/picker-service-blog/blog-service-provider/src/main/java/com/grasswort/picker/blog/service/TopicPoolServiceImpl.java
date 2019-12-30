@@ -100,4 +100,5 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
     public void init() {
         topicDocInitService.init();
     }
+
 }

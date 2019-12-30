@@ -7,15 +7,23 @@ import com.grasswort.picker.blog.dao.entity.BlogFavorite;
 import com.grasswort.picker.blog.dao.persistence.BlogFavoriteMapper;
 import com.grasswort.picker.blog.dao.persistence.ext.BlogDao;
 import com.grasswort.picker.blog.dto.*;
+import com.grasswort.picker.blog.elastic.entity.BlogDoc;
+import com.grasswort.picker.blog.elastic.repository.BlogDocRepository;
+import com.grasswort.picker.blog.service.elastic.BlogDocConverter;
 import com.grasswort.picker.blog.service.elastic.BlogDocUpdateService;
+import com.grasswort.picker.blog.service.redisson.BlogFavoriteCacheable;
 import com.grasswort.picker.blog.util.BlogIdEncrypt;
 import com.grasswort.picker.commons.annotation.DB;
 import org.apache.dubbo.config.annotation.Service;
+import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author xuliangliang
@@ -32,6 +40,12 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
     @Autowired BlogDao blogDao;
 
     @Autowired BlogDocUpdateService blogDocUpdateService;
+
+    @Autowired BlogFavoriteCacheable blogFavoriteCacheable;
+
+    @Autowired BlogDocRepository blogDocRepository;
+
+    @Autowired BlogDocConverter blogDocConverter;
 
     /**
      * 博客收藏状态
@@ -100,6 +114,7 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
             // 更新 es 存储
             Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
             blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
+            blogFavoriteCacheable.clear(userId);
         }
 
         favoriteResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -138,10 +153,53 @@ public class BlogFavoriteServiceImpl implements IBlogFavoriteService {
             // 更新 es 存储
             Long pkUserId = blogDao.getPkUserId(blogKey.getBlogId());
             blogDocUpdateService.updateAuthorDoc(pkUserId, userId);
+            blogFavoriteCacheable.clear(userId);
         }
 
         favoriteCancelResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         favoriteCancelResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         return favoriteCancelResponse;
+    }
+
+    /**
+     * 博客收藏列表
+     *
+     * @param favoriteListRequest
+     * @return
+     */
+    @Override
+    @DB(DBGroup.SLAVE)
+    public BlogFavoriteListResponse listBlogFavorite(BlogFavoriteListRequest favoriteListRequest) {
+        BlogFavoriteListResponse favoriteListResponse = new BlogFavoriteListResponse();
+        Long authorId = favoriteListRequest.getAuthorId();
+        Integer pageNo = favoriteListRequest.getPageNo();
+        Integer pageSize = favoriteListRequest.getPageSize();
+
+        RList<Long> rBlogIds = blogFavoriteCacheable.listFavorite(authorId);
+        if (rBlogIds == null) {
+            List<Long> blogIds = blogFavoriteMapper.listBlogIdFavorite(authorId);
+            blogFavoriteCacheable.cacheUserFavorite(authorId, blogIds);
+            rBlogIds = blogFavoriteCacheable.listFavorite(authorId);
+        }
+
+        if (rBlogIds != null) {
+            favoriteListResponse.setTotal(Long.valueOf(rBlogIds.size()));
+            favoriteListResponse.setBlogList(
+                    rBlogIds.range(pageSize * (pageNo - 1), pageNo * pageSize - 1)
+                    .stream().map(blogId -> {
+                        Optional<BlogDoc> blogDocOpt = blogDocRepository.findById(blogId);
+                        if (blogDocOpt.isPresent()) {
+                            return blogDocConverter.blogDoc2BlogItemWithAuthor(blogDocOpt.get());
+                        }
+                        return null;
+                    }).filter(r -> r != null).collect(Collectors.toList())
+            );
+        } else {
+            favoriteListResponse.setTotal(0L);
+            favoriteListResponse.setBlogList(Collections.EMPTY_LIST);
+        }
+        favoriteListResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
+        favoriteListResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
+        return favoriteListResponse;
     }
 }

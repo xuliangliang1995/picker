@@ -1,8 +1,12 @@
 package com.grasswort.picker.blog.controller;
 
+import com.grasswort.picker.blog.ITopicFavoriteService;
 import com.grasswort.picker.blog.ITopicPoolService;
+import com.grasswort.picker.blog.dto.TopicFavoriteListRequest;
+import com.grasswort.picker.blog.dto.TopicFavoriteListResponse;
 import com.grasswort.picker.blog.dto.TopicPoolRequest;
 import com.grasswort.picker.blog.dto.TopicPoolResponse;
+import com.grasswort.picker.blog.vo.TopicFavoriteListForm;
 import com.grasswort.picker.blog.vo.TopicPoolForm;
 import com.grasswort.picker.commons.result.ResponseData;
 import com.grasswort.picker.commons.result.ResponseUtil;
@@ -39,6 +43,9 @@ public class TopicPoolController {
     @Reference(version = "1.0", timeout = 10000)
     ITopicPoolService iTopicPoolService;
 
+    @Reference(version = "1.0", timeout = 10000)
+    ITopicFavoriteService iTopicFavoriteService;
+
     @Anoymous(resolve = true)
     @ApiOperation(value = "专题池")
     @GetMapping
@@ -61,6 +68,28 @@ public class TopicPoolController {
                 .map(r -> r.isSuccess()
                     ? new ResponseUtil<>().setData(poolResponse.getTopics()).setTotal(poolResponse.getTotal())
                     : new ResponseUtil<>().setErrorMsg(poolResponse.getMsg())
+                )
+                .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+    @Anoymous(resolve = true)
+    @ApiOperation(value = "收藏列表")
+    @GetMapping(value = "/favorite")
+    public ResponseData topicFavoritePool(@Validated TopicFavoriteListForm form, BindingResult bindingResult) {
+        ValidatorTool.check(bindingResult);
+
+        TopicFavoriteListRequest favoriteListRequest = TopicFavoriteListRequest.Builder.aTopicFavoriteListRequest()
+                .withAuthorId(PickerIdEncrypt.decrypt(form.getAuthorId()))
+                .withPageNo(form.getPageNo())
+                .withPageSize(form.getPageSize())
+                .withPickerId(
+                        Optional.ofNullable(PickerInfoHolder.getPickerInfo()).map(PickerInfo::getId).orElse(null)
+                ).build();
+        TopicFavoriteListResponse favoriteListResponse = iTopicFavoriteService.listTopicFavorite(favoriteListRequest);
+        return Optional.ofNullable(favoriteListResponse)
+                .map(r -> r.isSuccess()
+                    ? new ResponseUtil<>().setData(favoriteListResponse.getTopics()).setTotal(favoriteListResponse.getTotal())
+                    : new ResponseUtil<>().setErrorMsg(favoriteListResponse.getMsg())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
     }

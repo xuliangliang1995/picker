@@ -16,6 +16,10 @@ public class InteractionData {
      */
     private Long blogCount;
     /**
+     * 专题数量
+     */
+    private Long topicCount;
+    /**
      * 关注别人的数量
      */
     private Long subscribeCount;
