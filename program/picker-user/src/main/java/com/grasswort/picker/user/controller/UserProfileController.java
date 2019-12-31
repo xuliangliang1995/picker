@@ -55,7 +55,7 @@ public class UserProfileController {
 
     @ApiOperation(value = "修改个人简介")
     @PatchMapping("/intro")
-    public ResponseData setIntro(@Validated EditIntroForm form, BindingResult bindingResult) {
+    public ResponseData setIntro(@RequestBody @Validated EditIntroForm form, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
         UserIntroEditRequest editRequest = UserIntroEditRequest.Builder.anUserIntroEditRequest()
                 .withUserId(PickerInfoHolder.getPickerInfo().getId())
@@ -72,7 +72,7 @@ public class UserProfileController {
 
     @ApiOperation(value = "修改 GitHub 链接，只需传入用户名即可")
     @PatchMapping("/github")
-    public ResponseData setGithubUrl(@Validated EditGithubForm form, BindingResult bindingResult) {
+    public ResponseData setGithubUrl(@RequestBody @Validated EditGithubForm form, BindingResult bindingResult) {
         ValidatorTool.check(bindingResult);
         String github = form.getGithub();
 
