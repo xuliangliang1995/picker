@@ -12,11 +12,13 @@ import com.grasswort.picker.user.vo.EditGithubForm;
 import com.grasswort.picker.user.vo.EditIntroForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -55,10 +57,16 @@ public class UserProfileController {
 
     @ApiOperation(value = "修改个人简介")
     @PatchMapping("/intro")
-    public ResponseData setIntro(@RequestBody @Validated EditIntroForm form, BindingResult bindingResult) {
+    public ResponseData setIntro(@RequestBody @Validated EditIntroForm form, BindingResult bindingResult, @PathVariable("pickerID") String pickerID) {
         ValidatorTool.check(bindingResult);
+        Long pickerId = PickerInfoHolder.getPickerInfo().getId();
+        Long urlPickerId = PickerIdEncrypt.decrypt(pickerID);
+        if (! Objects.equals(pickerId, urlPickerId)) {
+            return new ResponseUtil<>().setErrorMsg("权限不足！");
+        }
+
         UserIntroEditRequest editRequest = UserIntroEditRequest.Builder.anUserIntroEditRequest()
-                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withUserId(pickerId)
                 .withIntro(form.getIntro())
                 .build();
         UserIntroEditResponse editResponse = iUserProfileService.editIntro(editRequest);
@@ -72,16 +80,22 @@ public class UserProfileController {
 
     @ApiOperation(value = "修改 GitHub 链接，只需传入用户名即可")
     @PatchMapping("/github")
-    public ResponseData setGithubUrl(@RequestBody @Validated EditGithubForm form, BindingResult bindingResult) {
+    public ResponseData setGithubUrl(@RequestBody @Validated EditGithubForm form, BindingResult bindingResult, @PathVariable("pickerID") String pickerID) {
         ValidatorTool.check(bindingResult);
         String github = form.getGithub();
 
-        boolean githubUsernameIsNotValid = ! GITHUB_USERNAME_PATTERN.matcher(github).matches();
+        Long pickerId = PickerInfoHolder.getPickerInfo().getId();
+        Long urlPickerId = PickerIdEncrypt.decrypt(pickerID);
+        if (! Objects.equals(pickerId, urlPickerId)) {
+            return new ResponseUtil<>().setErrorMsg("权限不足！");
+        }
+
+        boolean githubUsernameIsNotValid = StringUtils.isNotBlank(github) && ! GITHUB_USERNAME_PATTERN.matcher(github).matches();
         if (githubUsernameIsNotValid) {
             return new ResponseUtil<>().setErrorMsg("github 用户名有误");
         }
         EditGithubUrlRequest editGithubUrlRequest = EditGithubUrlRequest.Builder.anEditGithubUrlRequest()
-                .withUserId(PickerInfoHolder.getPickerInfo().getId())
+                .withUserId(pickerId)
                 .withGithub(github)
                 .build();
         EditGithubUrlResponse urlResponse = iUserProfileService.editGithubUrl(editGithubUrlRequest);

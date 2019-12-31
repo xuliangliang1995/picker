@@ -4,7 +4,6 @@ import com.grasswort.picker.commons.result.AbstractRequest;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -20,7 +19,6 @@ public class EditGithubUrlRequest extends AbstractRequest {
     @NotNull
     @Min(1)
     private Long userId;
-    @NotEmpty
     @Size(max = 45)
     private String github;
 

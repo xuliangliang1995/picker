@@ -2,7 +2,7 @@ package com.grasswort.picker.user.vo;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 /**
  * @author xuliangliang
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 public class EditGithubForm {
-    @NotEmpty
+    @Size(max = 45)
     private String github;
 
 }
