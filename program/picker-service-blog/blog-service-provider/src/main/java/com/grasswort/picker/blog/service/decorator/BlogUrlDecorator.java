@@ -12,7 +12,7 @@ import com.grasswort.picker.blog.util.BlogIdEncrypt;
  */
 public class BlogUrlDecorator extends Blog {
 
-    private static final String URL_TEMPLATE = "https://picker.grasswort.com/api/blog/%s.html";
+    private static final String URL_TEMPLATE = "https://grasswort.com/api/blog/%s.html";
 
     private Blog blog;
 

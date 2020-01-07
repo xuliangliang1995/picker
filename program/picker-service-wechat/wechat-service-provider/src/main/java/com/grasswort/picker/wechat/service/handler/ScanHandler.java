@@ -45,7 +45,7 @@ public class ScanHandler extends AbstractHandler {
             RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
                     , JSON.toJSONString(form));
             Request request = new Request.Builder()
-                    .url("https://picker.grasswort.com".concat(qrcodeInfo.getCallback()))
+                    .url("https://grasswort.com".concat(qrcodeInfo.getCallback()))
                     .post(requestBody)
                     .build();
             try {

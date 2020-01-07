@@ -65,7 +65,7 @@ public class ActivateMailGenerator extends AbstractMailGenerator<ActivateMailInf
         return mail;
     }
 
-    private final String ACTIVATE_URL_TEMPLATE = "https://picker.grasswort.com/api/user/activate?username=%s&code=%s&activateId=%s";
+    private final String ACTIVATE_URL_TEMPLATE = "https://grasswort.com/api/user/activate?username=%s&code=%s&activateId=%s";
 
     private final String SUBJECT = "Picker 账户激活";
 
