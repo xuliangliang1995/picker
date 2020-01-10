@@ -91,7 +91,7 @@ public class UserSettingServiceImpl implements IUserSettingService {
         example.createCriteria().andEqualTo("pkUserId", userId);
         UserConfig userConfig = userConfigMapper.selectOneByExample(example);
 
-        getSettingResponse.setMarkdownTheme(Optional.ofNullable(userConfig).map(UserConfig::getMarkdownTheme).orElse(MarkdownTheme.GITHUB));
+        getSettingResponse.setMarkdownTheme(Optional.ofNullable(userConfig).map(UserConfig::getMarkdownTheme).orElse(MarkdownTheme.AGATE));
         getSettingResponse.setSafetyCheckMode(Optional.ofNullable(userConfig).map(UserConfig::getSafetyCheckMode).orElse(SafetyCheckMode.EMAIL.getId()));
         getSettingResponse.setOpenBlogPush(Optional.ofNullable(userConfig).map(UserConfig::isOpenBlogPush).orElse(false));
         getSettingResponse.setBlogPushMode(Optional.ofNullable(userConfig).map(UserConfig::getBlogPushMode).orElse(BlogPushMode.EMAIL.getId()));
