@@ -25,6 +25,9 @@ public class BlogHtml {
         sb.append(".min.css\">\n" +
                 "</head>\n" +
                 "  <style>\n" +
+                "    body {\n" +
+                "        background-color: #f7f2f2;\n" +
+                "    }\n" +
                 "    #app {\n" +
                 "      font-size: 20px;\n" +
                 "      margin: 10px;\n" +
