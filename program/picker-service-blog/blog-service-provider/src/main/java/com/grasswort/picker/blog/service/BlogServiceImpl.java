@@ -291,7 +291,7 @@ public class BlogServiceImpl implements IBlogService {
 
             String html = BlogHtml.Builder.aBlogHtml()
                     .withContent(content.getHtml())
-                    .withTheme("github")
+                    .withTheme("agate")
                     .build()
                     .toHtml();
 

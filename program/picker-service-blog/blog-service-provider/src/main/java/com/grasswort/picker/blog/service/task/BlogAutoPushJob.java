@@ -49,7 +49,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @DisallowConcurrentExecution
-public class BlogAutoPushJob extends QuartzJobBean {
+public class
+BlogAutoPushJob extends QuartzJobBean {
 
     @Autowired BlogTriggerMapper blogTriggerMapper;
 

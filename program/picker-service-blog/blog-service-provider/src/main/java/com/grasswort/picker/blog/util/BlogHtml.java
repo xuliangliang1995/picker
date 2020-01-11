@@ -27,6 +27,7 @@ public class BlogHtml {
                 "  <style>\n" +
                 "    #app {\n" +
                 "      font-size: 20px;\n" +
+                "      margin-left: 10px;\n" +
                 "    }\n" +
                 "  </style>" +
                 "<body>\n" +
