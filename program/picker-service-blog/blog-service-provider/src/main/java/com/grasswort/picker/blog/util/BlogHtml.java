@@ -33,7 +33,7 @@ public class BlogHtml {
                 "      margin: 10px;\n" +
                 "    }\n" +
                 "    img {" +
-                "        width: 90%;" +
+                "        width: 97%;" +
                 "    }" +
                 "  </style>" +
                 "<body>\n" +
