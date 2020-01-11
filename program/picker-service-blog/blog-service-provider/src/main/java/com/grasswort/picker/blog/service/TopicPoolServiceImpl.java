@@ -71,7 +71,7 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
             queryBuilder.must(
                     QueryBuilders.boolQuery()
                             .should(QueryBuilders.prefixQuery("title", keyword))
-                            .should(QueryBuilders.fuzzyQuery("title", keyword))
+                            .should(QueryBuilders.wildcardQuery("title", String.format("*%s*", keyword)))
                             .should(QueryBuilders.fuzzyQuery("links.title", keyword))
             );
         }
