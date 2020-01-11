@@ -29,7 +29,7 @@ public class BlogHtml {
                 "        background-color: #f7f2f2;\n" +
                 "    }\n" +
                 "    #app {\n" +
-                "      font-size: 20px;\n" +
+                "      font-size: 14px;\n" +
                 "      margin: 10px;\n" +
                 "    }\n" +
                 "    img {" +
