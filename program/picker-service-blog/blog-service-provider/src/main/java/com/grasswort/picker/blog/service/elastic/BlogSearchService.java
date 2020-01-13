@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.join.query.JoinQueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,9 +51,9 @@ public class BlogSearchService {
         if (StringUtils.isNotBlank(keyword)) {
             boolQueryBuilder.must(
                     QueryBuilders.boolQuery()
-                            .should(QueryBuilders.prefixQuery("title", keyword))
-                            .should(QueryBuilders.prefixQuery("labels", keyword))
-                            .should(QueryBuilders.prefixQuery("summary", keyword))
+                            .should(QueryBuilders.matchPhrasePrefixQuery("title", keyword))
+                            .should(QueryBuilders.matchQuery("labels", keyword))
+                            .should(QueryBuilders.matchQuery("summary", keyword))
                             .should(QueryBuilders.matchQuery("markdown", keyword))
             );
         }

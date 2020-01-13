@@ -18,7 +18,6 @@ import com.grasswort.picker.user.util.PickerIdEncrypt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -70,9 +69,8 @@ public class TopicPoolServiceImpl implements ITopicPoolService {
         if (StringUtils.isNotBlank(keyword)) {
             queryBuilder.must(
                     QueryBuilders.boolQuery()
-                            .should(QueryBuilders.fuzzyQuery("title", keyword))
-                            .should(QueryBuilders.matchPhraseQuery("title", keyword))
-                            .should(QueryBuilders.fuzzyQuery("links.title", keyword))
+                            .should(QueryBuilders.matchPhrasePrefixQuery("title", keyword))
+                            .should(QueryBuilders.matchPhrasePrefixQuery("links.title", keyword))
             );
         }
 
