@@ -53,6 +53,9 @@ public class UserController {
     @Reference(version = "1.0", timeout = 10000)
     IUserSubscribeService iUserSubscribeService;
 
+    @Reference(version = "1.0", timeout = 10000)
+    IUserSearchService iUserSearchService;
+
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
     public ResponseData<SignUpVO> register(@RequestBody @Validated SignUpForm form, BindingResult bindingResult) {
@@ -176,5 +179,12 @@ public class UserController {
                         : new ResponseUtil<>().setErrorMsg(mpQrcodeResponse.getQrcode())
                 )
                 .orElse(ResponseData.SYSTEM_ERROR);
+    }
+
+
+    @PostMapping("init")
+    public ResponseData refreshUserPool() {
+        iUserSearchService.refreshUserPool(new RefreshUserPoolRequest());
+        return new ResponseUtil<>().setData(null);
     }
 }

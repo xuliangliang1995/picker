@@ -1,5 +1,6 @@
 package com.grasswort.picker.user;
 
+import com.grasswort.picker.user.dto.RefreshUserPoolRequest;
 import com.grasswort.picker.user.dto.UserSearchRequest;
 import com.grasswort.picker.user.dto.UserSearchResponse;
 
@@ -18,4 +19,10 @@ public interface IUserSearchService {
      * @return
      */
     UserSearchResponse search(UserSearchRequest userSearchRequest);
+
+    /**
+     * 刷新用户池
+     * @param refreshUserPoolRequest
+     */
+    void refreshUserPool(RefreshUserPoolRequest refreshUserPoolRequest);
 }

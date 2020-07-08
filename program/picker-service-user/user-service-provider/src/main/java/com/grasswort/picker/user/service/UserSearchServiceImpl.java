@@ -2,10 +2,13 @@ package com.grasswort.picker.user.service;
 
 import com.grasswort.picker.commons.annotation.DB;
 import com.grasswort.picker.user.IUserSearchService;
+import com.grasswort.picker.user.config.kafka.TopicUserDocUpdate;
 import com.grasswort.picker.user.constants.DBGroup;
+import com.grasswort.picker.user.constants.KafkaTemplateConstant;
 import com.grasswort.picker.user.constants.SysRetCodeConstants;
 import com.grasswort.picker.user.dao.persistence.UserMapper;
 import com.grasswort.picker.user.dao.persistence.UserSubscribeAuthorMapper;
+import com.grasswort.picker.user.dto.RefreshUserPoolRequest;
 import com.grasswort.picker.user.dto.UserSearchRequest;
 import com.grasswort.picker.user.dto.UserSearchResponse;
 import com.grasswort.picker.user.dto.user.UserItem;
@@ -14,7 +17,9 @@ import com.grasswort.picker.user.service.elastic.UserDocConverter;
 import com.grasswort.picker.user.service.elastic.UserSearchService;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +41,8 @@ public class UserSearchServiceImpl implements IUserSearchService {
     @Autowired UserSearchService userSearchService;
 
     @Autowired UserDocConverter userDocConverter;
+
+    @Autowired @Qualifier(KafkaTemplateConstant.USER_DOC_UPDATE) KafkaTemplate<String, Long> kafkaTemplate;
 
     /**
      * 用户查询
@@ -69,5 +76,16 @@ public class UserSearchServiceImpl implements IUserSearchService {
         userSearchResponse.setMsg(SysRetCodeConstants.SUCCESS.getMsg());
         userSearchResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         return userSearchResponse;
+    }
+
+    /**
+     * 刷新用户池
+     *
+     * @param refreshUserPoolRequest
+     */
+    @Override
+    public void refreshUserPool(RefreshUserPoolRequest refreshUserPoolRequest) {
+        List<Long> userIds = userMapper.listUserId();
+        userIds.stream().forEach(userId -> kafkaTemplate.send(TopicUserDocUpdate.TOPIC, userId));
     }
 }
