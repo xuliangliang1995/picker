@@ -21,6 +21,7 @@
         <option value="$PROJECT_DIR$/picker-service-wechat/pom.xml" />
         <option value="$PROJECT_DIR$/picker-wechat/pom.xml" />
         <option value="$PROJECT_DIR$/picker-service-wss/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
