@@ -27,6 +27,7 @@
   * [picker-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-user) // web 
   * [picker-blog](https://github.com/xuliangliang1995/picker/tree/master/program/picker-blog)
   * [picker-wechat](https://github.com/xuliangliang1995/picker/tree/master/program/picker-wechat)
+  * [picker-oss](https://github.com/xuliangliang1995/picker/tree/master/program/picker-oss)
 * [demo](https://github.com/xuliangliang1995/picker/tree/master/demo) // 简单 demo
   * [picker-zookeeper](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-zookeeper) // zookeeper 分布式锁
   * [picker-kafka](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-kafka) // kafka 消息生产和消费 demo
