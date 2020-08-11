@@ -18,7 +18,15 @@
     * [oss-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-api)
     * [oss-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-provider)
     * [oss-service-sdk](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-oss/oss-service-sdk)
+  * [picker-service-blog](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-blog)
+    * [blog-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-blog/blog-service-api)
+    * [blog-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-blog/blog-service-provider)
+  * [picker-service-wechat](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-wechat)
+    * [wechat-service-api](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-wechat/wechat-service-api)
+    * [wechat-service-provider](https://github.com/xuliangliang1995/picker/tree/master/program/picker-service-wechat/wechat-service-provider)
   * [picker-user](https://github.com/xuliangliang1995/picker/tree/master/program/picker-user) // web 
+  * [picker-blog](https://github.com/xuliangliang1995/picker/tree/master/program/picker-blog)
+  * [picker-wechat](https://github.com/xuliangliang1995/picker/tree/master/program/picker-wechat)
 * [demo](https://github.com/xuliangliang1995/picker/tree/master/demo) // 简单 demo
   * [picker-zookeeper](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-zookeeper) // zookeeper 分布式锁
   * [picker-kafka](https://github.com/xuliangliang1995/picker/tree/master/demo/picker-kafka) // kafka 消息生产和消费 demo
